@@ -8,8 +8,9 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-// import { customFonts } from './fonts/Fonts';
 import SplashScreen from "react-native-splash-screen";
+import { customFonts } from './fonts/Fonts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function App() {
   const [appIsLoaded, setAppIsLoaded] = useState(false);
@@ -18,20 +19,7 @@ function App() {
     const prepare = async () => {
       try {
         // Load custom fonts
-        customFonts = {
-          black: "Roboto-Black",
-          blackItalic: "Roboto-BlackItalic",
-          bold: "Roboto-Bold",
-          boldItalic: "Roboto-BoldItalic",
-          italic: "Roboto-Italic",
-          light: "Roboto-Light",
-          lightItalic: "Roboto-LightItalic",
-          medium: "Roboto-Medium",
-          mediumItalic: "Roboto-MediumItalic",
-          regular: "Roboto-Regular",
-          thin: "Roboto-Thin",
-          thinItalic: "Roboto-ThinItalic",
-        };
+        // await loadCustomFonts();
       } catch (error) {
         console.error(error);
       } finally {
@@ -56,18 +44,26 @@ function App() {
   return (
     <SafeAreaView >
       <View>
-        <Text style={styles.text}>Start Page</Text>
+        <Text style={{
+          fontFamily: customFonts.thin,
+          fontSize: 24,
+          color: 'red'
+        }}>Start Page</Text>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  text: {
-    fontFamily: customFonts.bold,
-    fontSize: 24,
-    color: 'red'
-  }
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  label: {
+    color: "black",
+    fontSize: 18,
+    fontFamily: "regular",
+  },
 });
 
 export default App;
