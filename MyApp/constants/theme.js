@@ -1,6 +1,15 @@
 
 import { Dimensions } from 'react-native'
 const { height, width } = Dimensions.get('window');
+import { StyleSheet } from "react-native";
+
+const commonStyles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 const COLORS = {
   primary: "#2A4D50",
@@ -55,4 +64,4 @@ const SHADOWS = {
 };
 
 
-export { COLORS, SIZES , SHADOWS };
+export { COLORS, SIZES , SHADOWS, commonStyles };
