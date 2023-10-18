@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -8,9 +7,13 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import SplashScreen from "react-native-splash-screen";
-import { customFonts } from './fonts/Fonts';
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import SplashScreen from 'react-native-splash-screen';
+import {customFonts} from './fonts/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppNavigator from './navigation/AppNavigator';
+
+// SplashScreen.preventAutoHideAsync();
 
 function App() {
   const [appIsLoaded, setAppIsLoaded] = useState(false);
@@ -20,6 +23,7 @@ function App() {
       try {
         // Load custom fonts
         // await loadCustomFonts();
+        await new Promise(resolve => setTimeout(resolve, 5000));
       } catch (error) {
         console.error(error);
       } finally {
@@ -30,10 +34,9 @@ function App() {
     prepare();
   }, []);
 
-  useEffect(() => {
-    // Hide the splash screen after app is loaded
+  const onLayout = useCallback(async () => {
     if (appIsLoaded) {
-      SplashScreen.hide();
+      await SplashScreen.hideAsync();
     }
   }, [appIsLoaded]);
 
@@ -42,28 +45,25 @@ function App() {
   }
 
   return (
-    <SafeAreaView >
-      <View>
-        <Text style={{
-          fontFamily: customFonts.thin,
-          fontSize: 24,
-          color: 'red'
-        }}>Start Page</Text>
-      </View>
-    </SafeAreaView>
+    // <Provider store={store}>
+      <SafeAreaProvider style={styles.container} onLayout={onLayout}>
+        <AppNavigator />
+      </SafeAreaProvider>
+    // {/* </Provider> */}
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   label: {
-    color: "black",
+    color: 'black',
     fontSize: 18,
-    fontFamily: "regular",
+    fontFamily: 'regular',
   },
 });
 
 export default App;
+

@@ -1,7 +1,9 @@
 package com.tungfammobile;
 
+import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactRootView;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
@@ -29,4 +31,14 @@ public class MainActivity extends ReactActivity {
         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
   }
+
+  // // Add the SplashScreen import
+  // import org.devio.rn.splashscreen.SplashScreen;
+
+  // @Override
+  // protected void onCreate(Bundle savedInstanceState) {
+  //   // Display the splash screen
+  //   SplashScreen.show(this);
+  //   super.onCreate(savedInstanceState);
+  // }
 }
