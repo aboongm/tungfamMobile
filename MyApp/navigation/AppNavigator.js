@@ -1,19 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import MainNavigator from './MainNavigator'
+
 
 const AppNavigator = () => {
   return (
-    <View style={styles.container}>
-      <Text>AppNavigator</Text>
-    </View>
+    <NavigationContainer>
+      <MainNavigator />
+    </NavigationContainer>
   )
 }
 
 export default AppNavigator
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-      },
-})
