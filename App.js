@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
+  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -7,8 +8,8 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import SplashScreen from 'react-native-splash-screen';
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen from 'react-native-splash-screen'
 import {customFonts} from './fonts/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppNavigator from './navigation/AppNavigator';
@@ -23,6 +24,7 @@ function App() {
       try {
         // Load custom fonts
         // await loadCustomFonts();
+        SplashScreen.hide();
         await new Promise(resolve => setTimeout(resolve, 5000));
       } catch (error) {
         console.error(error);
@@ -35,33 +37,28 @@ function App() {
   }, []);
 
   const onLayout = useCallback(async () => {
+    console.log("Did this function ran?");
     if (appIsLoaded) {
-      await SplashScreen.hideAsync();
+      SplashScreen.hide();
     }
   }, [appIsLoaded]);
 
-  if (!appIsLoaded) {
-    return null;
-  }
+
+ 
 
   return (
-    // <Provider store={store}>
+    // // <Provider store={store}>
       <SafeAreaProvider style={styles.container} onLayout={onLayout}>
         <AppNavigator />
       </SafeAreaProvider>
-    // {/* </Provider> */}
+    // // {/* </Provider> */}
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  label: {
-    color: 'black',
-    fontSize: 18,
-    fontFamily: 'regular',
   },
 });
 

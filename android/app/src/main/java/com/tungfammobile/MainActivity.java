@@ -7,6 +7,9 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
+// react-native-splash-screen < 0.3.1
+import org.devio.rn.splashscreen.SplashScreen; // here
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -32,9 +35,11 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
   }
 
-  // // Add the SplashScreen import
-  // import org.devio.rn.splashscreen.SplashScreen;
-
+  @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.show(this);  // here
+        super.onCreate(savedInstanceState);
+    }
   // @Override
   // protected void onCreate(Bundle savedInstanceState) {
   //   // Display the splash screen
