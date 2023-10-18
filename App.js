@@ -10,11 +10,12 @@ import {
 } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from 'react-native-splash-screen'
-import {customFonts} from './fonts/Fonts';
+import {customFonts} from './MyApp/fonts/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppNavigator from './navigation/AppNavigator';
+import AppNavigator from './MyApp/navigation/AppNavigator';
+import { Provider } from "react-redux";
+import { store } from "./MyApp/store/store";
 
-// SplashScreen.preventAutoHideAsync();
 
 function App() {
   const [appIsLoaded, setAppIsLoaded] = useState(false);
@@ -47,12 +48,11 @@ function App() {
  
 
   return (
-    // // <Provider store={store}>
+    <Provider store={store}>
       <SafeAreaProvider style={styles.container} onLayout={onLayout}>
         <AppNavigator />
       </SafeAreaProvider>
-    // // {/* </Provider> */}
-
+    </Provider>
   );
 }
 
