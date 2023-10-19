@@ -1,34 +1,46 @@
-import { StyleSheet, Text, TouchableOpacity, } from 'react-native'
-import React from 'react'
-import { COLORS } from '../constants'
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {COLORS} from '../constants';
 
-const SubmitButton = (props) => {
-  const enabledBgColor = props.color || COLORS.primary
-  const disabledBgColor = COLORS.lightGrey
-  const bgColor = props.disabled ? disabledBgColor : enabledBgColor
+const SubmitButton = props => {
+  const enabledBgColor = props.color || COLORS.tungfamDarkNavyblue;
+  const disabledBgColor = COLORS.tungfamPurple;
+  const bgColor = props.disabled ? disabledBgColor : enabledBgColor;
 
   return (
-    <TouchableOpacity 
-        onPress={props.disabled ? () => {} : props.onPress} 
+    <TouchableOpacity
+      onPress={props.disabled ? () => {} : props.onPress}
+      style={{
+        ...styles.button,
+        ...props.style,
+        ...{backgroundColor: bgColor},
+      }}>
+      <Text
         style={{
-            ...styles.button, 
-            ...props.style,
-            ...{backgroundColor: bgColor}
-        }}
-    >
-      <Text style={{color: props.disabled ? COLORS.grey : "white"}}>{props.title}</Text>
+          color: props.disabled
+            ? COLORS.tungfamDisabled
+            : COLORS.tungfamPurple,
+          ...styles.text,
+        }}>
+        {props.title}
+      </Text>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
-export default SubmitButton
+export default SubmitButton;
 
 const styles = StyleSheet.create({
   button: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 14,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
-}
-})
+    alignItems: 'center',
+  },
+  text: {
+    fontFamily: "regular",
+    fontSize: 15,
+    fontWeight: '600',
+  },
+});

@@ -12,6 +12,21 @@ const commonStyles = StyleSheet.create({
 });
 
 const COLORS = {
+  tungfamDarkNavyblue: '#193b59',
+  tungfamDarkBlue1: '#2f4659',
+  tungfamLightBlue: '#c4ddf2',
+  tungfamTorquoise: '#2cb1bf',
+  tungfamTorquoiseLight: '#77f2f2',
+  tungfamPurple: "#a7c0f2",
+  tungfamBeige: "#f2e8d5",
+  tungfamBrick: "#d95959",
+  tungfamGrey: "#95b3bf",
+  tungfamDarkBlue: "#45718c",
+  tungfamDarkerBlue: "#395d73",
+
+  tungfamWarning: "#f24444",
+  tungfamDisabled: "#718c6d",
+
   // primary: "#2A4D50",
   primary: "#32d48e",
   secondary: "#8acbff",

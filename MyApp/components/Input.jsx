@@ -5,7 +5,7 @@ import { COLORS } from "../constants";
 
 const Input = (props) => {
   const [value, setValue] = useState(props.initialValue)
-  
+  console.log(props)
   const onChangeText = (text) => {
     setValue(text)
     props.onInputChanged(props.id, text);
@@ -49,12 +49,14 @@ const styles = StyleSheet.create({
   label: {
     marginVertical: 8,
     fontFamily: "bold",
+    fontSize: 15,
+    fontWeight: "900",
     letterSpacing: 0.3,
-    color: COLORS.textColor,
+    color: COLORS.tungfamBeige,
   },
   inputContainer: {
     width: "100%",
-    backgroundColor: COLORS.nearlyWhite,
+    backgroundColor: COLORS.tungfamPurple,
     paddingHorizontal: 10,
     paddingVertical: 0,
     borderRadius: 2,
@@ -63,20 +65,23 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-    color: COLORS.grey,
+    color: COLORS.tungfamDarkerBlue,
   },
   input: {
-    color: COLORS.textColor,
+    color: COLORS.tungfamDarkerBlue,
     flex: 1,
     fontFamily: "regular",
+    fontSize: 15,
+    fontWeight: '800',
     letterSpacing: 0.3,
   },
   errorContainer: {
     marginVertical: 5,
   },
   errorText: {
-    color: "red",
-    fontSize: 13,
+    color: COLORS.tungfamWarning,
+    fontSize: 15,
+    fontWeight: '800',
     fontFamily: "regular",
     letterSpacing: 0.3,
   },

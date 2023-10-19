@@ -19,7 +19,7 @@ const AuthScreen = () => {
     const [isSignUp, setIsSignUp] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
-      <PageContainer>
+      <PageContainer style={styles.container}>
         <ScrollView>
           <KeyboardAvoidingView
             style={styles.keyboardAvoidingView}
@@ -52,6 +52,7 @@ export default AuthScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: COLORS.tungfamDarkBlue
       },
       linkContainer: {
         justifyContent: "center",
@@ -59,8 +60,9 @@ const styles = StyleSheet.create({
         marginVertical: 15,
       },
       link: {
-        color: COLORS.blue,
-        fontFamily: "medium",
+        color: COLORS.tungfamTorquoiseLight,
+        fontFamily: "regular",
+        fontSize: 16,
         letterSpacing: 0.3,
       },
       imageContainer: {
