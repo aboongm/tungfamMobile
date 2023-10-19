@@ -12,19 +12,28 @@ const commonStyles = StyleSheet.create({
 });
 
 const COLORS = {
-  primary: "#2A4D50",
-  secondary: "#DDF0FF",
+  // primary: "#2A4D50",
+  primary: "#32d48e",
+  secondary: "#8acbff",
+  // secondary: "#DDF0FF",
   tertiary: "#FF7754",
 
   gray: "#83829A",
   gray2: "#C1C0C8",
+  grey: "#718c6d",
+  lightGrey: "#bdc3c7",
 
-  offwhite: "#F3F4F8",
   white: "#FFFFFF",
+  lightWhite: "#FAFAFC",
+  offwhite: "#F3F4F8",
+  nearlyWhite: "#f4f8f7",
+
   black: "#000000",
   red: "#e81e4d",
-  green: " #00C135",
-  lightWhite: "#FAFAFC",
+  green: "#00C135",
+  blue: "#3498db",
+
+  textColor: '#1c1e21',
 };
 
 

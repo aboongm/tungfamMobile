@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: COLORS.nearlyWhite,
     paddingHorizontal: 10,
-    paddingVertical: 15,
+    paddingVertical: 0,
     borderRadius: 2,
     flexDirection: "row",
     alignItems: "center",
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: "regular",
     letterSpacing: 0.3,
-    paddingTop: 0,
   },
   errorContainer: {
     marginVertical: 5,

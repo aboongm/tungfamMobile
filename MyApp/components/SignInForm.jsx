@@ -89,8 +89,8 @@ const SignInForm = () => {
       {isLoading ? (
         <ActivityIndicator
           style={{ marginTop: 10 }}
-          size={"small"}
-          color={COLORS.primary}
+          size={80}
+          color={COLORS.secondary}
         />
       ) : (
       <SubmitButton

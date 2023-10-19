@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         marginVertical: 15,
       },
       link: {
-        color: COLORS.black,
+        color: COLORS.blue,
         fontFamily: "medium",
         letterSpacing: 0.3,
       },
