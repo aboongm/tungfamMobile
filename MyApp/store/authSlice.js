@@ -24,7 +24,7 @@ const authSlice = createSlice({
     },
     updateLoggedInSignInUserData: (state, action) => {
       state.userData = { ...state.userData, ...action.payload.newData}
-    }
+    },
   },
 });
 
@@ -32,4 +32,5 @@ export const authenticate = authSlice.actions.authenticate;
 export const setDidTryAutoLogin = authSlice.actions.setDidTryAutoLogin;
 export const logOut = authSlice.actions.logOut;
 export const updateLoggedInSignInUserData = authSlice.actions.updateLoggedInSignInUserData;
+export const setUserData = authSlice.actions.setUserData;
 export default authSlice.reducer;

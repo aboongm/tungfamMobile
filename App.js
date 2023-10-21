@@ -16,6 +16,7 @@ import AppNavigator from './MyApp/navigation/AppNavigator';
 import { Provider } from "react-redux";
 import { store } from "./MyApp/store/store";
 
+AsyncStorage.clear()
 
 function App() {
   const [appIsLoaded, setAppIsLoaded] = useState(false);

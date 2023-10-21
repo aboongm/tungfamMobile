@@ -13,7 +13,7 @@ let isTestMode = true
 
 const initialState = {
   inputValues: {
-    email: isTestMode? "aboong@punfam.in" : "",
+    email: isTestMode? "admin2@tungfam.com" : "",
     password: isTestMode? "password" : "",
   },
   inputValidities: {
