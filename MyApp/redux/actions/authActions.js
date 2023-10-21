@@ -12,6 +12,7 @@ import { getUserData } from "./userActions";
 let timer;
 
 export const signUp = (firstName, lastName, email, password) => {
+  console.log("signUp inputs: ", firstName, lastName, email, password);
   // return async (dispatch) => {
   //   const app = getFirebaseApp();
   //   const auth = getAuth(app);

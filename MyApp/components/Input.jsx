@@ -5,7 +5,6 @@ import { COLORS } from "../constants";
 
 const Input = (props) => {
   const [value, setValue] = useState(props.initialValue)
-  console.log(props)
   const onChangeText = (text) => {
     setValue(text)
     props.onInputChanged(props.id, text);

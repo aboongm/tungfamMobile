@@ -5,7 +5,7 @@ import { COLORS, commonStyles } from '../../constants/theme'
 const StartUpScreen = () => {
   return (
     <View style={commonStyles.center}>
-      <ActivityIndicator size={80} color={COLORS.secondary} />
+      <ActivityIndicator size={80} color={COLORS.tungfamLightBlue} />
     </View>
   )
 }

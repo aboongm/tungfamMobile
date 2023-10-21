@@ -38,7 +38,6 @@ function App() {
   }, []);
 
   const onLayout = useCallback(async () => {
-    console.log("Did this function ran?");
     if (appIsLoaded) {
       SplashScreen.hide();
     }
