@@ -1,7 +1,7 @@
 import { ActivityIndicator, Alert } from "react-native";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
-import Feather from 'react-native-vector-icons/Feather'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome6'
 import { useDispatch } from "react-redux";
 import { COLORS } from "../constants";
 import { signUp } from "../redux/actions/authActions";
@@ -10,20 +10,24 @@ import { reducer } from "../redux/reducers/formReducer";
 import SubmitButton from "./SubmitButton";
 import Input from "./Input";
 
+let isTestMode = true
+
 const initialState = {
   inputValues: {
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+    username: isTestMode ? "aboong" : "",
+    aadhar: isTestMode ? "222244448888" : "",
+    mobile: isTestMode ? "1234567890" : "",
+    email: isTestMode ? "aboong@tungfam.com" : "",
+    password: isTestMode ? "password" : "",
   },
   inputValidities: {
-    firstName: false,
-    lastName: false,
+    username: false,
+    aadhar: false,
+    mobile: false,
     email: false,
     password: false,
   },
-  formIsValid: false,
+  formIsValid: isTestMode? true : false
 };
 
 const SignUpForm = () => {
@@ -53,8 +57,9 @@ const SignUpForm = () => {
       setIsLoading(true);
 
       const action = signUp(
-        formState.inputValues.firstName,
-        formState.inputValues.lastName,
+        formState.inputValues.username,
+        formState.inputValues.aadhar,
+        formState.inputValues.mobile,
         formState.inputValues.email,
         formState.inputValues.password
       )
@@ -69,31 +74,45 @@ const SignUpForm = () => {
   return (
     <>
     <Input
-      id="firstName"
-      label="First Name"
-      iconPack={FontAwesome}
-      icon={"user-o"}
+      id="username"
+      label="Username"
+      iconPack={Ionicons}
+      icon={"person"}
       iconSize={24}
+      initialValue={formState.inputValues.username}
       onInputChanged={inputChangeHandler}
       autoCapitalize="none"
-      errorText={formState.inputValidities["firstName"]}
+      errorText={formState.inputValidities["username"]}
     />
     <Input
-      id="lastName"
-      label="Last Name"
-      iconPack={FontAwesome}
-      icon={"user-o"}
+      id="aadhar"
+      label="Aadhar"
+      iconPack={Ionicons}
+      icon={"document"}
       iconSize={24}
+      initialValue={formState.inputValues.aadhar}
       onInputChanged={inputChangeHandler}
       autoCapitalize="none"
-      errorText={formState.inputValidities["lastName"]}
+      errorText={formState.inputValidities["aadhar"]}
+    />
+    <Input
+      id="mobile"
+      label="Mobile"
+      iconPack={FontAwesome}
+      icon={"mobile-screen"}
+      iconSize={24}
+      initialValue={formState.inputValues.mobile}
+      onInputChanged={inputChangeHandler}
+      autoCapitalize="none"
+      errorText={formState.inputValidities["mobile"]}
     />
     <Input
       id="email"
       label="Email"
-      iconPack={Feather}
+      iconPack={Ionicons}
       icon={"mail"}
       iconSize={24}
+      initialValue={formState.inputValues.email}
       onInputChanged={inputChangeHandler}
       keyboardType="email-address"
       autoCapitalize="none"
@@ -102,9 +121,10 @@ const SignUpForm = () => {
     <Input
       id="password"
       label="Password"
-      iconPack={Feather}
-      icon={"lock"}
+      iconPack={Ionicons}
+      icon={"lock-closed"}
       iconSize={24}
+      initialValue={formState.inputValues.password}
       onInputChanged={inputChangeHandler}
       autoCapitalize="none"
       secureTextEntry

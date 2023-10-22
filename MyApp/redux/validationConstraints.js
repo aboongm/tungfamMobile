@@ -17,6 +17,60 @@ export const validateString = (id, value) => {
   return validationResult && validationResult[id];
 };
 
+export const validateUsername = (id, value) => {
+  const constraints = {
+    presence: { allowEmpty: false, message: "can't be empty!" },
+    format: {
+      pattern: /^[A-Za-z0-9_-]+$/, // This pattern allows letters, numbers, underscores, and dashes
+      message: "can only contain letters, numbers, underscores, and dashes",
+    },
+  };
+
+  const validationResult = validate({ [id]: value }, { [id]: constraints });
+
+  return validationResult && validationResult[id];
+};
+
+
+export const validateMobile = (id, value) => {
+  const constraints = {
+    presence: { allowEmpty: false, message: "can't be empty!" },
+    length: {
+      is: 10,
+      message: "must have exactly 10 digits",
+    },
+    format: {
+      pattern: "^[0-9]*$",
+      flags: "i",
+      message: "can only contain digits",
+    },
+  };
+
+  const validationResult = validate({ [id]: value }, { [id]: constraints });
+
+  return validationResult && validationResult[id];
+};
+
+export const validateAadhar = (id, value) => {
+  const constraints = {
+    presence: { allowEmpty: false, message: "can't be empty!" },
+    length: {
+      is: 12,
+      message: "must have exactly 12 digits",
+    },
+    format: {
+      pattern: "^[2-9][0-9]*$",
+      flags: "i",
+      message: "should not start with 0 or 1 and can only contain digits",
+    },
+  };
+
+  const validationResult = validate({ [id]: value }, { [id]: constraints });
+
+  return validationResult && validationResult[id];
+};
+
+
 export const validateEmail = (id, value) => {
   const constraints = {
     presence: { allowEmpty: false },

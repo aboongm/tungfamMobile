@@ -1,13 +1,20 @@
 import {
+    validateAadhar,
     validateEmail,
+    validateLength,
+    validateMobile,
     validatePassword,
     validateString,
-    validateLength
+    validateUsername
   } from "../validationConstraints";
   
   export const validateInput = (inputId, inputValue) => {
-    if (inputId === "firstName" || inputId === "lastName") {
-      return validateString(inputId, inputValue);
+    if (inputId === "username") {
+      return validateUsername(inputId, inputValue);
+    } else if (inputId === "aadhar") {
+      return validateAadhar(inputId, inputValue);
+    } else if (inputId === "mobile") {
+      return validateMobile(inputId, inputValue);
     } else if (inputId === "email") {
       return validateEmail(inputId, inputValue);
     } else if (inputId === "password") {

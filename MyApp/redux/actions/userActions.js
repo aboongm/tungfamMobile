@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authenticate, logOut } from '../../store/authSlice';
 
 export const getUserData = userId => {
+  console.log("getUserData: ", userId);
   return async dispatch => {
     try {
       // Retrieve the token from AsyncStorage

@@ -46,13 +46,17 @@ const SignInForm = () => {
   const authHandler = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+      setError(null);
+
       const action = signIn(
         formState.inputValues.email,
         formState.inputValues.password
       )
       setError(null);
       await dispatch(action);
+
+      // Clear loading state on success
+      setIsLoading(false);
     } catch (error) {
       setError(error.message);
       setIsLoading(false);

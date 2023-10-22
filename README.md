@@ -6,3 +6,6 @@
 
 2. Install APKs on a Device:
 	java -jar bundletool.jar install-apks --apks=app-release.apks
+
+3. react native vector icons selector
+	https://oblador.github.io/react-native-vector-icons/
