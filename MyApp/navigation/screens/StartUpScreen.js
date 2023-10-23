@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 15,
     color: COLORS.tungfamLightBlue,
-    fontFamily: "bold",
     fontSize: 16
   }
 })

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet } from "react-native";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import Feather from 'react-native-vector-icons/Feather'
 import { useDispatch } from "react-redux";

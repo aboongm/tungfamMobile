@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet } from "react-native";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome6'

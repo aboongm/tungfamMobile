@@ -1,30 +1,39 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome"
-import Feather from "react-native-vector-icons/Feather"
-import React, { useCallback, useState, useReducer } from 'react'
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native'
-import PageTitle from '../../components/PageTitle'
-import PageContainer from '../../components/PageContainer'
-import Input from '../../components/Input'
-import { validateInput } from '../../redux/actions/formAction'
-import { useDispatch, useSelector } from 'react-redux'
-import SubmitButton from '../../components/SubmitButton'
-import { COLORS } from '../../constants'
-import { updateSignInUserData, userLogout } from '../../redux/actions/authActions'
-import { updateLoggedInSignInUserData } from '../../store/authSlice'
-import { reducer } from '../../redux/reducers/formReducer'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
+import React, {useCallback, useState, useReducer} from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import PageTitle from '../../components/PageTitle';
+import PageContainer from '../../components/PageContainer';
+import Input from '../../components/Input';
+import {validateInput} from '../../redux/actions/formAction';
+import {useDispatch, useSelector} from 'react-redux';
+import SubmitButton from '../../components/SubmitButton';
+import {COLORS} from '../../constants';
+import {
+  updateSignInUserData,
+  userLogout,
+} from '../../redux/actions/authActions';
+import {updateLoggedInSignInUserData} from '../../store/authSlice';
+import {reducer} from '../../redux/reducers/formReducer';
+import ProfileImage from '../../components/ProfileImage';
 
-const ProfileScreen = (props) => {
-
+const ProfileScreen = props => {
   const dispatch = useDispatch();
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const userData = useSelector((state) => state.auth.userData);
+  const userData = useSelector(state => state.auth.userData);
 
-  const firstName = userData.firstName || "";
-  const lastName = userData.lastName || "";
-  const email = userData.email || "";
-  const about = userData.about || "";
+  const firstName = userData.firstName || '';
+  const lastName = userData.lastName || '';
+  const email = userData.email || '';
+  const about = userData.about || '';
   const initialState = {
     inputValues: {
       firstName,
@@ -45,9 +54,9 @@ const ProfileScreen = (props) => {
   const inputChangeHandler = useCallback(
     (inputId, inputValue) => {
       const result = validateInput(inputId, inputValue);
-      dispatchFormState({ inputId, validationResult: result, inputValue });
+      dispatchFormState({inputId, validationResult: result, inputValue});
     },
-    [dispatchFormState]
+    [dispatchFormState],
   );
 
   const saveHandler = useCallback(async () => {
@@ -55,7 +64,7 @@ const ProfileScreen = (props) => {
     try {
       setIsLoading(true);
       await updateSignInUserData(userData.userId, updateValues);
-      dispatch(updateLoggedInSignInUserData({ newData: updateValues }));
+      dispatch(updateLoggedInSignInUserData({newData: updateValues}));
 
       setShowSuccessMessage(true);
       setTimeout(() => {
@@ -80,111 +89,69 @@ const ProfileScreen = (props) => {
 
   return (
     <PageContainer style={styles.container}>
-      <PageTitle text="Settings" />
+      <PageTitle text="Personal" />
       <ScrollView contentContainerStyle={styles.formContainer}>
-        {/* <ProfileImage 
-          size={80} 
-          userId={userData.userId}
-          uri={userData.profilePicture}
-        /> */}
-        <Input
-          id="firstName"
-          label="First Name"
-          iconPack={FontAwesome}
-          icon={"user-o"}
-          iconSize={24}
-          onInputChanged={inputChangeHandler}
-          autoCapitalize="none"
-          errorText={formState.inputValidities["firstName"]}
-          initialValue={userData.firstName}
-        />
-        <Input
-          id="lastName"
-          label="Last Name"
-          iconPack={FontAwesome}
-          icon={"user-o"}
-          iconSize={24}
-          onInputChanged={inputChangeHandler}
-          autoCapitalize="none"
-          errorText={formState.inputValidities["lastName"]}
-          initialValue={userData.lastName}
-        />
+        <View style={styles.profileContainer}>
+          <ProfileImage
+            size={100}
+            userId={userData.userId}
+            uri={userData.profilePicture}
+          />
 
-        <Input
-          id="email"
-          label="Email"
-          iconPack={Feather}
-          icon={"mail"}
-          iconSize={24}
-          onInputChanged={inputChangeHandler}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          errorText={formState.inputValidities["email"]}
-          initialValue={userData.email}
-        />
+          <View style={{marginTop: 20}}>
+            {showSuccessMessage && <Text>Saved</Text>}
 
-        <Input
-          id="about"
-          label="About"
-          iconPack={FontAwesome}
-          icon={"user-o"}
-          iconSize={24}
-          onInputChanged={inputChangeHandler}
-          autoCapitalize="none"
-          errorText={formState.inputValidities["about"]}
-          initialValue={userData.about}
-        />
-
-        <View style={{ marginTop: 20 }}>
-          {showSuccessMessage && <Text>Saved</Text>}
-
-          {isLoading ? (
-            <ActivityIndicator
-              style={{ marginTop: 10 }}
-              size={"small"}
-              color={COLORS.tungfamLightBlue}
-            />
-          ) : (
-            hasChanges() && (
-              <SubmitButton
-                title="Save"
-                onPress={saveHandler}
-                disabled={!formState.formIsValid}
-                style={{ marginTop: 20 }}
+            {isLoading ? (
+              <ActivityIndicator
+                style={{marginTop: 10}}
+                size={'small'}
+                color={COLORS.tungfamLightBlue}
               />
-            )
-          )}
+            ) : (
+              hasChanges() && (
+                <SubmitButton
+                  title="Save"
+                  onPress={saveHandler}
+                  disabled={!formState.formIsValid}
+                  style={styles.button}
+                />
+              )
+            )}
+          </View>
         </View>
 
+        <View>
+          <Text>Edit yout personal details</Text>
+        </View>
         <SubmitButton
           title="Logout"
           onPress={() => dispatch(userLogout())}
-          style={{ marginTop: 20 }}
-          color={COLORS.tungfamBeige}
+          style={styles.button}
+          color={COLORS.TungfamBgColor}
         />
       </ScrollView>
     </PageContainer>
-  )
-}
+  );
+};
 
-export default ProfileScreen
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  image: {
-    borderRadius: 50,
-    borderColor: COLORS.tungfamGrey,
+  container: {
+    flex: 1,
     borderWidth: 1,
+    borderColor: COLORS.tungfamGrey,
+    margin: 4,
   },
-  editIconContainer: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: COLORS.tungfamLightBlue,
-    borderRadius: 20,
-    padding: 8,
+  formContainer: {
+    alignItems: 'center',
   },
-  loadingContainer: {
-    justifyContent: 'center',
-    alignItems: "center"
+  profileContainer: {
+    flex: 1,
+    // alignItems: "center",
+    marginBottom: 12,
+  },
+  button: {
+    marginTop: 80,
   }
-})
+});

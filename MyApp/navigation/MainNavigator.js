@@ -25,6 +25,9 @@ const TabNavigator = () => {
       elevation: 0,
       height: 70,
       borderRadius: 10,
+      // borderWidth: 1,
+      // borderColor: COLORS.tungfamGrey,
+      // backgroundColor: COLORS.tungfamGrey
     },
   };
   return (
@@ -38,7 +41,7 @@ const TabNavigator = () => {
               <Ionicons
                 name={focused ? "home" : "home-outline"}
                 size={24}
-                color={focused ? COLORS.primary : COLORS.gray2}
+                color={focused ? COLORS.TungfamBgColor : COLORS.gray2}
               />
             );
           },
@@ -53,7 +56,7 @@ const TabNavigator = () => {
               <Ionicons
                 name={focused ? "person" : "person-outline"}
                 size={24}
-                color={focused ? COLORS.primary : COLORS.gray2}
+                color={focused ? COLORS.TungfamBgColor : COLORS.gray2}
               />
             );
           },

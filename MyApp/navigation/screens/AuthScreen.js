@@ -14,11 +14,12 @@ import logo from "../../../assets/images/logo.png";
 import SignUpForm from '../../components/SignUpForm';
 import SignInForm from '../../components/SignInForm';
 import { COLORS } from '../../constants';
+import { customFonts } from '../../fonts/Fonts';
 
 const AuthScreen = () => {
     const [isSignUp, setIsSignUp] = useState(false);
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{flex: 1,}}>
       <PageContainer style={styles.container}>
         <ScrollView>
           <KeyboardAvoidingView
@@ -52,7 +53,7 @@ export default AuthScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.tungfamDarkBlue
+        backgroundColor: COLORS.TungfamBgColor,
       },
       linkContainer: {
         justifyContent: "center",
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
       },
       link: {
         color: COLORS.tungfamTorquoiseLight,
-        fontFamily: "regular",
+        fontWeight: "500",
         fontSize: 16,
         letterSpacing: 0.3,
       },

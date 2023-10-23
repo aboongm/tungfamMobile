@@ -3,8 +3,8 @@ import React from 'react';
 import {COLORS} from '../constants';
 
 const SubmitButton = props => {
-  const enabledBgColor = props.color || COLORS.tungfamDarkNavyblue;
-  const disabledBgColor = COLORS.tungfamPurple;
+  const enabledBgColor = props.color || COLORS.tungfamWhite;
+  const disabledBgColor = COLORS.tungfamDarkerWhite;
   const bgColor = props.disabled ? disabledBgColor : enabledBgColor;
 
   return (
@@ -17,10 +17,10 @@ const SubmitButton = props => {
       }}>
       <Text
         style={{
+          ...styles.text,
           color: props.disabled
             ? COLORS.tungfamDisabled
             : COLORS.tungfamPurple,
-          ...styles.text,
         }}>
         {props.title}
       </Text>
@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontFamily: "regular",
-    fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "900",
+    fontSize: 16,
+    fontWeight: '900',
   },
 });

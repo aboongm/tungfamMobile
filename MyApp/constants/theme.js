@@ -8,11 +8,14 @@ const commonStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#45718c"
+    backgroundColor: "#3498db"
   },
 });
 
 const COLORS = {
+  TungfamBgColor: "#3498db",
+  tungfamWhite: "#e2e9eb",
+  tungfamDarkerWhite: "#c4ced1",
   tungfamDarkNavyblue: '#193b59',
   tungfamDarkBlue1: '#2f4659',
   tungfamLightBlue: '#c4ddf2',
@@ -40,14 +43,12 @@ const COLORS = {
   lightGrey: "#bdc3c7",
 
   white: "#FFFFFF",
-  lightWhite: "#FAFAFC",
   offwhite: "#F3F4F8",
   nearlyWhite: "#f4f8f7",
 
   black: "#000000",
   red: "#e81e4d",
   green: "#00C135",
-  blue: "#3498db",
 
   textColor: '#1c1e21',
 };

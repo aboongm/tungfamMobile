@@ -1,5 +1,4 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
-
 import { useState } from 'react'
 import { COLORS } from "../constants";
 
@@ -12,7 +11,7 @@ const Input = (props) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{props.label}</Text>
+      <Text style={{...props.style, ...styles.label}}>{props.label}</Text>
 
       <View style={styles.inputContainer}>
         {props.icon && (
@@ -23,8 +22,8 @@ const Input = (props) => {
           />
         )}
         <TextInput
-          {...props}
           style={styles.input}
+          {...props}
           onChangeText={onChangeText}
           value={value}
         />
@@ -47,15 +46,14 @@ const styles = StyleSheet.create({
   },
   label: {
     marginVertical: 8,
-    fontFamily: "bold",
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "400",
     letterSpacing: 0.3,
-    color: COLORS.tungfamBeige,
+    color: COLORS.tungfamWhite,
   },
   inputContainer: {
     width: "100%",
-    backgroundColor: COLORS.tungfamPurple,
+    backgroundColor: COLORS.tungfamWhite,
     paddingHorizontal: 10,
     paddingVertical: 0,
     borderRadius: 2,
@@ -69,9 +67,8 @@ const styles = StyleSheet.create({
   input: {
     color: COLORS.tungfamDarkerBlue,
     flex: 1,
-    fontFamily: "regular",
     fontSize: 15,
-    fontWeight: '800',
+    fontWeight: '600',
     letterSpacing: 0.3,
   },
   errorContainer: {
@@ -81,7 +78,7 @@ const styles = StyleSheet.create({
     color: COLORS.tungfamWarning,
     fontSize: 15,
     fontWeight: '800',
-    fontFamily: "regular",
+    fontStyle: "italic",
     letterSpacing: 0.3,
   },
 })
