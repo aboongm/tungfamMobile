@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { getUserData } from './userActions';
 
 import { API_URL } from "@env"
+import SignInForm from '../../components/SignInForm';
 
 let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -15,26 +16,27 @@ interface UserData {
 }
 
 interface SignUpData {
-  username: string;
+  user_name: string;
   aadhar: string;
   mobile: string;
   email: string;
   password: string;
 }
 
-export const signUp = (username: string, aadhar: string, mobile: string, email: string, password: string) => {
+export const signUp = (user_name: string, aadhar: string, mobile: string, email: string, password: string) => {
   return async (dispatch: Dispatch) => {
     try {
       const requestData: SignUpData = {
-        username,
+        user_name,
         aadhar,
         mobile,
         email,
         password,
       };
-
+      console.log("requestData: ", requestData);
+      
       // Send a POST request to your API's sign-up endpoint
-      axios
+      await axios
         .post<{ user: { user_id: string }; token: string; expiresIn?: number }>(`${API_URL}/signup`, requestData)
         .then(async (response) => {
           if (response.data.user && response.data.token) {
@@ -69,9 +71,9 @@ export const signUp = (username: string, aadhar: string, mobile: string, email: 
             throw new Error('Token not found in response');
           }
         })
-        .catch((error) => {
-          console.error('Sign-Up Error:', error);
-        });
+        // .catch((error) => {
+        //   console.error('Sign-Up Error:', error);
+        // });
     } catch (error) {
       console.error('Sign-Up Error:', error);
     }

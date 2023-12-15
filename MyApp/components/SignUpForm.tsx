@@ -14,10 +14,10 @@ let isTestMode = true
 
 const initialState = {
   inputValues: {
-    username: isTestMode ? "aboong" : "",
-    aadhar: isTestMode ? "222244448888" : "",
-    mobile: isTestMode ? "1234567890" : "",
-    email: isTestMode ? "aboong@tungfam.com" : "",
+    username: isTestMode ? "test1" : "",
+    aadhar: isTestMode ? "222244446661" : "",
+    mobile: isTestMode ? "1234567892" : "",
+    email: isTestMode ? "test1@tungfam.com" : "",
     password: isTestMode ? "password" : "",
   },
   inputValidities: {
@@ -39,7 +39,7 @@ const SignUpForm = () => {
 
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
   const inputChangeHandler = useCallback(
-    (inputId, inputValue) => {
+    (inputId: string, inputValue: string) => {
       const result = validateInput(inputId, inputValue);
       dispatchFormState({ inputId, validationResult: result, inputValue });
     },
@@ -53,8 +53,13 @@ const SignUpForm = () => {
   }, [error]);
 
   const authHandler = useCallback(async () => {
+    console.log("authHandler:");
+    
     try {
       setIsLoading(true);
+
+      console.log("username: ", formState.inputValues.username);
+      
 
       const action = signUp(
         formState.inputValues.username,

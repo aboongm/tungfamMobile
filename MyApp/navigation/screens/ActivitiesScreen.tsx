@@ -11,13 +11,15 @@ const ActivitiesScreen = ({ userRole }) => {
         return (
           <View>
             {/* Action for admin */}
-            <Text>Approve Firm</Text>
+            <Text>Approve/Delete Firm</Text>
+            <Text>Update firmOwner role</Text>
           </View>
         );
       case 'firmOwner':
         return (
           <View>
             {/* Actions for firmOwner */}
+            <Text>Create/Update/Delete LoanOfficer</Text>
             <Text>Create/Update/Delete LoanBook</Text>
             <Text>Create/Update/Delete LoanType</Text>
             <Text>Create/Update/Delete PaymentSchedule</Text>
