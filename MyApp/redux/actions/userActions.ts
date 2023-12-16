@@ -13,7 +13,7 @@ interface UserData {
 }
 
 export const getUserData = (userId: string): ((dispatch: Dispatch) => Promise<UserData | void>) => {
-  console.log("getUserData: ", userId);
+  // console.log("getUserData: ", userId);
   return async (dispatch: Dispatch): Promise<UserData | void> => {
     try {
       // Retrieve the token from AsyncStorage
@@ -32,7 +32,7 @@ export const getUserData = (userId: string): ((dispatch: Dispatch) => Promise<Us
         // Authorization: `Bearer ${token}`,
         Authorization: `${token}`,
       };
-      console.log("headers: ", headers);
+      // console.log("headers: ", headers);
       
 
       const response = await axios.get<UserData>(`${API_URL}/users/${userId}`, { headers });

@@ -5,7 +5,6 @@ import { Dispatch } from 'redux';
 import { getUserData } from './userActions';
 
 import { API_URL } from "@env"
-import SignInForm from '../../components/SignInForm';
 
 let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -92,8 +91,6 @@ export const signIn = (email: string, password: string) => {
       
       // Send a POST request to your API's sign-in endpoint
       const response = await axios.post<{ token: string; id: string }>(`${API_URL}/signin`, requestData);
-      console.log("response: ", response.data.token);
-      
       const token = response.data.token;
 
       // Save the token in AsyncStorage for future requests
@@ -131,8 +128,51 @@ export const userLogout = () => {
   };
 };
 
-export const updateSignInUserData = async (userId: string, newData: any /* Define type */) => {
-  // Implement your logic to update user data
+export const updateSignInUserData = (userId: string, newData: any) => {
+  console.log("newData");
+  return async (dispatch: Dispatch) => {
+    try {
+      const userResponse = await dispatch<any>(getUserData(userId));
+      
+      console.log("userResonpse: ", await userResponse);
+      console.log("newData", newData);
+      
+      
+
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token not found');
+      }
+
+      const headers = {
+        // Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
+      };
+      
+      const updatedUserData = {
+        ...userResponse, 
+        ...newData,     
+      };
+
+      console.log("updatedUserData", updatedUserData);
+      
+
+      const response = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
+
+      // Check the response status or handle success/failure accordingly
+      if (response.status === 200) {
+        // Optionally handle success scenario, if needed
+        console.log('User data updated successfully');
+      } else {
+        // Handle other status codes or errors
+        throw new Error('Failed to update user data');
+      }
+    } catch (error) {
+      // Handle errors
+      console.error('Error updating user data:', error);
+      throw error;
+    }
+  }
 };
 
 // const createUser = async (firstName: string, lastName: string, email: string, userId: string) => {
