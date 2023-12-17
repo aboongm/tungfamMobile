@@ -3,8 +3,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import { COLORS } from '../../constants';
 import PageContainer from '../../components/PageContainer';
+import ApplyToFirm from '../../components/ApplyToFirm';
 
-const ActivitiesScreen = ({ userRole }) => {
+const ActivitiesScreen = ({ userRole, navigation }) => {
+
+  const applyToFirm = async () => {
+    console.log("apply to firm");
+    try {
+      navigation.navigate('CreateFirm');
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const renderActions = () => {
     switch (userRole) {
       case 'admin':
@@ -45,10 +56,10 @@ const ActivitiesScreen = ({ userRole }) => {
         );
       case 'user':
         return (
-          <View>
+          <View style={styles.activitiesContainer}>
             {/* Actions for user */}
             <Text>Apply for a loan</Text>
-            <Text>Apply to open a firm</Text>
+            <ApplyToFirm onPress={applyToFirm} />
           </View>
         );
       default:
@@ -64,7 +75,7 @@ const ActivitiesScreen = ({ userRole }) => {
   return (
     <PageContainer style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Activities Screen</Text>
+        <Text style={styles.title}>Dashboard</Text>
         {renderActions()}
       </View>
     </PageContainer>
@@ -93,4 +104,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 22,
   },
+  activitiesContainer: {
+    // backgroundColor: COLORS.lightGrey,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1
+  }
 });

@@ -135,9 +135,7 @@ export const updateSignInUserData = (userId: string, newData: any) => {
       const userResponse = await dispatch<any>(getUserData(userId));
       
       console.log("userResonpse: ", await userResponse);
-      console.log("newData", newData);
-      
-      
+      console.log("newData", newData);      
 
       const token = await AsyncStorage.getItem('token');
       if (!token) {
@@ -154,7 +152,7 @@ export const updateSignInUserData = (userId: string, newData: any) => {
         ...newData,     
       };
 
-      console.log("updatedUserData", updatedUserData);
+      // console.log("updatedUserData", updatedUserData);
       
 
       const response = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
@@ -175,17 +173,34 @@ export const updateSignInUserData = (userId: string, newData: any) => {
   }
 };
 
-// const createUser = async (firstName: string, lastName: string, email: string, userId: string) => {
-//   // Implement your logic to create a user
-// };
+export const createFirm = (firmData: any) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token not found');
+      }
 
-// const saveDataToStorage = (token: string, userId: string, expiryDate: Date) => {
-//   AsyncStorage.setItem(
-//     'userData',
-//     JSON.stringify({
-//       token,
-//       userId,
-//       expiryDate: expiryDate.toISOString(),
-//     }),
-//   );
-// };
+      const headers = {
+        Authorization: `${token}`,
+      };
+
+      // Make an API call to create a new firm using firmData
+      const response = await axios.post(`${API_URL}/firms`, firmData, { headers });
+
+      // Check the response status or handle success/failure accordingly
+      if (response.status === 201) {
+        // Optionally handle success scenario, if needed
+        console.log('Firm created successfully');
+        // You might dispatch an action or perform any post-creation logic here
+      } else {
+        // Handle other status codes or errors
+        throw new Error('Failed to create firm');
+      }
+    } catch (error) {
+      // Handle errors
+      console.error('Error creating firm:', error);
+      throw error;
+    }
+  };
+};

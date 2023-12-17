@@ -3,10 +3,11 @@ import React from 'react'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { COLORS } from '../constants'
 import ProfileScreen from './screens/ProfileScreen'
+import CreateFirmScreen from './screens/CreateFirmScreen'
 import ActivitiesScreen from './screens/ActivitiesScreen'
 import LoanScreen from './screens/LoanScreen'
-import { COLORS } from '../constants'
 
 
 const Stack = createNativeStackNavigator()
@@ -78,6 +79,14 @@ const MainNavigator = () => {
         <Stack.Screen
           name="LoanScreen"
           component={LoanScreen}
+          options={{
+            headerTitle: "",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
+          name="CreateFirm"
+          component={CreateFirmScreen}
           options={{
             headerTitle: "",
             headerBackTitle: "Back",
