@@ -1,7 +1,8 @@
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import React, { useCallback, useState, useReducer } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View, } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import PageTitle from '../../components/PageTitle';
@@ -24,19 +25,25 @@ const ProfileScreen = props => {
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector(state => state.auth.userData);
 
-  const name = userData.name || '';
+  const [name, setName] = useState(userData.name || '');
+  const [password, setPassword] = useState(userData.password || '');
+  // const [aadharImage, setAadharImage] = useState(userData.aadhar_image || '');
+  const [mobile, setMobile] = useState(userData.mobile || '');
+  const [address, setAddress] = useState(userData.address || '');
+  // const name = userData.name || '';
   // const password = userData.password || '';
-  const aadhar_image = userData.aadhar_image || '';
-  const mobile = userData.mobile || '';
-  const address = userData.address || '';
+  // const aadhar_image = userData.aadhar_image || '';
+  // const mobile = userData.mobile || '';
+  // const address = userData.address || '';
 
   const initialState = {
-    inputValues: { name, aadhar_image, mobile, address },
+    inputValues: { name, aadhar_image:  mobile, address, password },
     inputValidities: { name: undefined, email: undefined },
     formIsValid: false,
   };
 
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
+
   const inputChangeHandler = useCallback(
     (inputId: string, inputValue: string) => {
       const result = validateInput(inputId, inputValue);
@@ -45,51 +52,14 @@ const ProfileScreen = props => {
     [dispatchFormState],
   );
 
-  const handleAadharImageSelection = (selectedImage: { uri: any; }) => {
-    // const selectedURI = selectedImage.uri.toString();
-    // const updatedValues = {
-    //   ...formState.inputValues,
-    //   aadhar_image: selectedURI, // Update the aadhar_image field with the selected image URI
-    // };
-    // // console.log('Updated Values:', updatedValues);
-    // dispatchFormState({
-    //   inputId: 'aadhar_image',
-    //   validationResult: true,
-    //   inputValue: selectedURI,
-    // });
-
-    // dispatchFormState({
-    //   inputId: 'updatedValues',
-    //   validationResult: true,
-    //   inputValue: updatedValues,
-    // });
-    // console.log('Selected Image:', selectedImage);
-    // console.log('Updated Values:', updatedValues);
-    // const updatedUserData = {
-    //   ...userData,
-    //   ...updatedValues, // Update the aadhar field in userData with the updatedValues
-    // };
-    // console.log('Updated UserData:', updatedUserData.aadhar_image);
-  };
-
 
   const hasChanges = () => {
     const currentValues = formState.inputValues;
-    console.log("userData.aadhar_image>>>", currentValues);
-    console.log("aadhar_image", aadhar_image);
-
-    console.log("Type of currentValues.aadhar_image:", typeof currentValues.aadhar_image);
-    console.log("Type of aadhar_image:", typeof aadhar_image);
-
-    // const selectedURI = aadhar_image ? aadhar_image.uri.toString() : '';   
     return (
       currentValues.name !== name ||
       currentValues.mobile !== mobile ||
       currentValues.address !== address ||
-      currentValues.aadhar_image !== aadhar_image
-      // currentValues.password !== password ||
-      // currentValues.care_of !== care_of ||
-      // currentValues.firm_id !== firm_id
+      currentValues.password !== password
     );
   };
 
@@ -117,20 +87,38 @@ const ProfileScreen = props => {
 
 
 
-
   return (
     <PageContainer style={styles.container}>
       <PageTitle text="Personal" />
+      <View style={styles.logOutButtonContainer}>
+          <SubmitButton
+            title="Logout"
+            onPress={() => dispatch<any>(userLogout())}
+            style={styles.logOutButton}
+            color={COLORS.TungfamBgColor}
+          />
+        </View>
       <ScrollView contentContainerStyle={styles.formContainer}>
         <View style={styles.profileContainer}>
-          <ProfileImage
-            size={100}
-            userId={userData.userId}
-            uri={userData.profilePicture}
-          />
+          <ProfileImage size={100} userId={userData.userId} uri={userData.profilePicture} />
 
           <View style={{ marginTop: 20 }}>
             {showSuccessMessage && <Text>Saved</Text>}
+            <View style={styles.infoContainer}>
+              <View style={styles.iconTextContainer}>
+                <FontAwesome name="user-o" size={24} color={COLORS.tungfamDarkBlue} />
+                <Text style={styles.iconText}>Username: {userData.user_name}</Text>
+              </View>
+              <View style={styles.iconTextContainer}>
+                <FontAwesome name="envelope-o" size={24} color={COLORS.tungfamDarkBlue} />
+                <Text style={styles.iconText}>Email: {userData.email}</Text>
+              </View>
+              <View style={styles.iconTextContainer}>
+                <FontAwesome name="id-card-o" size={24} color={COLORS.tungfamDarkBlue} />
+                <Text style={styles.iconText}>Aadhar: {userData.aadhar}</Text>
+              </View>
+            </View>
+
             <Input
               id="name"
               label="Name as on Aadhar"
@@ -141,7 +129,24 @@ const ProfileScreen = props => {
               autoCapitalize="none"
               errorText={formState.inputValidities["name"]}
               initialValue={userData.name}
+              onSave={saveHandler}
+              hasChanges={name}
             />
+            
+            {/* <Input
+              id="password"
+              label="Password"
+              iconPack={Ionicons}
+              icon={"lock-closed"}
+              iconSize={24}
+              onInputChanged={inputChangeHandler}
+              autoCapitalize="none"
+              errorText={formState.inputValidities["password"]}
+              initialValue={userData.password}
+              onSave={saveHandler}
+              hasChanges={password}
+            /> */}
+
             <Input
               id="address"
               label="Address"
@@ -152,7 +157,10 @@ const ProfileScreen = props => {
               autoCapitalize="none"
               errorText={formState.inputValidities["address"]}
               initialValue={userData.address}
+              onSave={saveHandler}
+              hasChanges={address}
             />
+            
             <Input
               id="mobile"
               label="Mobile"
@@ -163,37 +171,21 @@ const ProfileScreen = props => {
               autoCapitalize="none"
               errorText={formState.inputValidities["mobile"]}
               initialValue={userData.mobile}
+              onSave={saveHandler}
+              hasChanges={mobile}
             />
             {/* <AadharImagePicker onImageSelected={handleAadharImageSelection} /> */}
 
-            {isLoading ? (
-              <ActivityIndicator
-                style={{ marginTop: 10 }}
-                size={'small'}
-                color={COLORS.tungfamLightBlue}
-              />
+            {/* {isLoading ? (
+              <ActivityIndicator style={{ marginTop: 10 }} size={'small'} color={COLORS.tungfamLightBlue} />
             ) : (
               hasChanges() && (
-                <SubmitButton
-                  title="Save"
-                  onPress={saveHandler}
-                  disabled={!formState.formIsValid}
-                  style={styles.button}
-                />
+                <SubmitButton title="Save" onPress={saveHandler} disabled={!formState.formIsValid} style={styles.button} />
               )
-            )}
+            )} */}
           </View>
         </View>
 
-        <View>
-          <Text>Edit yout personal details!</Text>
-        </View>
-        <SubmitButton
-          title="Logout"
-          onPress={() => dispatch<any>(userLogout())}
-          style={styles.button}
-          color={COLORS.TungfamBgColor}
-        />
       </ScrollView>
     </PageContainer>
   );
@@ -215,9 +207,35 @@ const styles = StyleSheet.create({
     flex: 1,
     // alignItems: "center",
     marginBottom: 12,
+    width: '100%',
   },
-  button: {
+  logOutButtonContainer: {
+    position: 'absolute',
+    top: 20,
+    right: 10,
+    zIndex: 999, // Ensure the logout button is on top of other content
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Adjust the background color and opacity as needed
+  },
+  logOutButton: {
     marginTop: 80,
-  }
+  },
+  infoContainer: {
+    marginBottom: 20,
+  },
+  infoText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  iconTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    color: COLORS.tungfamDarkBlue
+  },
+  iconText: {
+    fontSize: 16,
+    marginLeft: 10,
+    color: COLORS.tungfamDarkBlue
+  },
 });
 

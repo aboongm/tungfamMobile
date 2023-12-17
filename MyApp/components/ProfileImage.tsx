@@ -130,6 +130,7 @@ export default ProfileImage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center'
   },
   image: {
     borderRadius: 50,

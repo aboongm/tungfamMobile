@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TextStyle, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TextStyle, ViewStyle, TouchableOpacity } from 'react-native';
 import { COLORS } from "../constants";
+import IonIcons from 'react-native-vector-icons/Ionicons';
 
 type InputProps = {
   initialValue: string;
@@ -12,6 +13,8 @@ type InputProps = {
   iconPack?: FC<{ name: string; size?: number; style?: ViewStyle }>;
   errorText?: string[];
   onInputChanged: (id: string, value: string) => void;
+  onSave: () => void;
+  hasChanges: boolean;
 };
 
 const Input: FC<InputProps> = (props) => {
@@ -20,6 +23,12 @@ const Input: FC<InputProps> = (props) => {
   const onChangeText = (text: string) => {
     setValue(text);
     props.onInputChanged(props.id, text);
+  };
+
+  const onSavePress = () => {
+    if (props.hasChanges) {
+      props.onSave();
+    }
   };
 
   return (
@@ -39,6 +48,11 @@ const Input: FC<InputProps> = (props) => {
           onChangeText={onChangeText}
           value={value}
         />
+        {props.hasChanges && (
+          <TouchableOpacity onPress={props.onSave}>
+            <IonIcons name="save-sharp" size={24} color={COLORS.tungfamDarkBlue} />
+          </TouchableOpacity>
+        )}
       </View>
 
       {props.errorText && (
@@ -61,7 +75,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "400",
     letterSpacing: 0.3,
-    color: COLORS.tungfamWhite,
+    color: COLORS.tungfamDarkBlue,
   },
   inputContainer: {
     width: "100%",
