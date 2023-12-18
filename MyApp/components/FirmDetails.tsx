@@ -9,7 +9,7 @@ const FirmDetails = ({ firmDetails }) => {
   };
 
   if (!firmDetails) {
-    return <Text style={styles.noDetailsText}>No firm details available</Text>;
+    return <Text style={styles.text}>No firm details available</Text>;
   }
 
   const renderAdditionalDetails = () => {
@@ -22,6 +22,7 @@ const FirmDetails = ({ firmDetails }) => {
           <Text style={styles.text}>Registration: {firmDetails.registration}</Text>
           <Text style={styles.text}>Email: {firmDetails.email}</Text>
           <Text style={styles.text}>Website: {firmDetails.website}</Text>
+          <Text style={styles.text}>Status: {firmDetails.status}</Text>
         </View>
       );
     }
@@ -32,7 +33,9 @@ const FirmDetails = ({ firmDetails }) => {
     <TouchableOpacity onPress={toggleDetails} style={styles.container}>
       <View>
         <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
-        <Text style={styles.status}>Status: {firmDetails.status}</Text>
+        {firmDetails.status !== 'approved' && (
+          <Text style={styles.status}>Status: {firmDetails.status}</Text>
+        )}
         {renderAdditionalDetails()}
       </View>
     </TouchableOpacity>
