@@ -16,7 +16,6 @@ const FirmDetails = ({ firmDetails }) => {
     if (showDetails) {
       return (
         <View style={styles.additionalDetails}>
-          {/* <Text>Firm Name: {firmDetails.firm_name}</Text> */}
           <Text style={styles.text}>Address: {firmDetails.address}</Text>
           <Text style={styles.text}>Contact Person: {firmDetails.contact_person}</Text>
           <Text style={styles.text}>Mobile: {firmDetails.mobile}</Text>

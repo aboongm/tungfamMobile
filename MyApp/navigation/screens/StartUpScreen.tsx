@@ -7,8 +7,6 @@ import { authenticate, setDidTryAutoLogin } from '../../store/authSlice'
 import { getUserData } from '../../redux/actions/userActions'
 
 const StartUpScreen = () => {
-
-  
   const dispatch = useDispatch()
  
   useEffect(() => {

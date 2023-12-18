@@ -48,7 +48,6 @@ export const signUp = (
         password,
       };
 
-      // Send a POST request to your API's sign-up endpoint
       await axios
         .post<{user: {user_id: string}; token: string; expiresIn?: number}>(
           `${API_URL}/signup`,
@@ -58,19 +57,16 @@ export const signUp = (
           if (response.data.user && response.data.token) {
             const token = response.data.token;
             const user_id = response.data.user.user_id;
-            // Save the token in AsyncStorage for future requests
             await AsyncStorage.setItem('token', token);
             await AsyncStorage.setItem('user_id', JSON.stringify(user_id));
 
-            // Fetch user data and dispatch an action to store it
             const userResponse = await dispatch<any>(
               getUserData(response.data.user.user_id),
             );
 
             if (userResponse) {
-              const userData: UserData = userResponse; // Adapt this to match your API response structure
+              const userData: UserData = userResponse; 
 
-              // Calculate token expiration time and set a timer to auto-logout
               const expiresIn = response.data.expiresIn || 3600; // Expiration time in seconds
               const expirationTime = new Date().getTime() + expiresIn * 1000; // Convert to milliseconds
 
@@ -78,10 +74,7 @@ export const signUp = (
                 dispatch<any>(userLogout());
               }, expiresIn * 1000);
 
-              // Dispatch an action to authenticate the user
               dispatch(authenticate({token, userData, expirationTime}));
-
-              // Save user data to AsyncStorage
               await AsyncStorage.setItem('userData', JSON.stringify(userData));
             } else {
               throw new Error('Error fetching user data');
@@ -152,21 +145,13 @@ export const userLogout = () => {
 };
 
 export const updateSignInUserData = (userId: string, newData: any) => {
-  console.log('newData!!!');
   return async (dispatch: Dispatch) => {
     try {
       const userResponse = await dispatch<any>(getUserData(userId));
-
-      console.log('userResonpse: ', await userResponse);
-      console.log('newData', newData);
-
       const updatedUserData = {
         ...userResponse,
         ...newData,
       };
-
-      console.log('updatedUserData', updatedUserData);
-
       const token = await AsyncStorage.getItem('token');
       if (!token) {
         throw new Error('Token not found');
