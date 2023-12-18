@@ -4,8 +4,12 @@ import { connect } from 'react-redux';
 import { COLORS } from '../../constants';
 import PageContainer from '../../components/PageContainer';
 import ApplyToFirm from '../../components/ApplyToFirm';
+import AdminApprovalScreen from './AdminApprovalScreen';
+import { useNavigation } from '@react-navigation/native';
 
-const ActivitiesScreen = ({ userRole, navigation }) => {
+const ActivitiesScreen = ({ userRole }) => {
+
+  const navigation = useNavigation();
 
   const applyToFirm = async () => {
     console.log("apply to firm");
@@ -21,9 +25,7 @@ const ActivitiesScreen = ({ userRole, navigation }) => {
       case 'admin':
         return (
           <View>
-            {/* Action for admin */}
-            <Text>Approve/Delete Firm</Text>
-            <Text>Update firmOwner role</Text>
+            <AdminApprovalScreen />
           </View>
         );
       case 'firmOwner':

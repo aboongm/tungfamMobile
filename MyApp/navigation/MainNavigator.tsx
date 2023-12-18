@@ -8,6 +8,7 @@ import ProfileScreen from './screens/ProfileScreen'
 import CreateFirmScreen from './screens/CreateFirmScreen'
 import ActivitiesScreen from './screens/ActivitiesScreen'
 import LoanScreen from './screens/LoanScreen'
+import AdminApprovalScreen from './screens/AdminApprovalScreen'
 
 
 const Stack = createNativeStackNavigator()
@@ -77,16 +78,16 @@ const MainNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="LoanScreen"
-          component={LoanScreen}
+          name="CreateFirm"
+          component={CreateFirmScreen}
           options={{
             headerTitle: "",
             headerBackTitle: "Back",
           }}
         />
         <Stack.Screen
-          name="CreateFirm"
-          component={CreateFirmScreen}
+          name="AdminApproval"
+          component={AdminApprovalScreen}
           options={{
             headerTitle: "",
             headerBackTitle: "Back",
