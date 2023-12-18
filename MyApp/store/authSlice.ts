@@ -1,10 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
-    id: string;
-    name: string;
-    // Add other properties as per your user data structure
+    id: number;
+    user_name: string;
+    email: string;
+    password: string;
+    role: string;
+    name?: string;
+    aadhar: number;
+    aadhar_image?: Buffer;
+    care_of?: string;
+    address?: string;
+    mobile: number;
+    firm_id?: number;
 }
+
 
 interface AuthState {
     token: string | null;
@@ -41,6 +51,9 @@ const authSlice = createSlice({
         setUserData: (state, action: PayloadAction<User>) => {
             state.userData = action.payload;
         },
+        updateUserRole: (state, action: PayloadAction<User>) => {
+            state.userData = action.payload;
+        },
     },
 });
 
@@ -50,6 +63,7 @@ export const {
     logOut,
     updateLoggedInSignInUserData,
     setUserData,
+    updateUserRole
 } = authSlice.actions;
 
 export default authSlice.reducer;
