@@ -3,13 +3,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import PageTitle from '../../components/PageTitle';
 import PageContainer from '../../components/PageContainer';
 import { COLORS } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
+import { updateUserRole } from '../../store/authSlice';
 
 const CreateFirmScreen = () => {
+    const disptach = useDispatch();
     const [firmName, setFirmName] = useState('');
     const [address, setAddress] = useState('');
     const [mobile, setMobile] = useState('');
@@ -21,7 +24,6 @@ const CreateFirmScreen = () => {
     const navigation = useNavigation();
 
     const handleSubmit = async () => {
-        // Logic to handle form submission, for example, sending data to an API or storing it locally
         const formData = {
             firm_name: firmName,
             address,
@@ -31,8 +33,7 @@ const CreateFirmScreen = () => {
             email,
             website,
         };
-        console.log('Form Data:', formData);
-        // Implement logic to send form data to your backend API or perform actions with the form data
+
         const token = await AsyncStorage.getItem('token');
         if (!token) {
             throw new Error('Token not found');
@@ -44,15 +45,35 @@ const CreateFirmScreen = () => {
         };
 
         const response = await axios.post(`${API_URL}/firms`, formData, { headers });
-        console.log(headers, response);
-        
-        // Check the response status or handle success/failure accordingly
+
         if (response.status === 200) {
-            // Optionally handle success scenario, if needed
+            try {
+                const userId = await AsyncStorage.getItem('user_id');
+
+                if (!userId) {
+                    throw new Error('userId not found');
+                }
+
+                const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
+                const updatedUserData = {
+                    ...userResponse.data,
+                    role: 'firmOwner',
+                };
+
+                const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
+
+                if (updateRoleResponse.status === 200) {
+                    disptach(updateUserRole(updatedUserData));
+                } else {
+                    throw new Error('Failed to update user role');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
             navigation.navigate('Home');
             console.log('Firm was created successfully');
         } else {
-            // Handle other status codes or errors
             throw new Error('Failed to create firm');
         }
     };
@@ -61,7 +82,7 @@ const CreateFirmScreen = () => {
         <PageContainer style={styles.container}>
             <PageTitle text="Create Firm" />
             <ScrollView contentContainerStyle={styles.formContainer}>
-                <View style={{ width: '100%'}}>
+                <View style={{ width: '100%' }}>
                     <TextInput
                         style={styles.input}
                         placeholder="Firm Name"

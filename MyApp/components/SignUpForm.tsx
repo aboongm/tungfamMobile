@@ -14,10 +14,10 @@ let isTestMode = true
 
 const initialState = {
   inputValues: {
-    username: isTestMode ? "test1" : "",
-    aadhar: isTestMode ? "222244446661" : "",
-    mobile: isTestMode ? "1234567892" : "",
-    email: isTestMode ? "test1@tungfam.com" : "",
+    username: isTestMode ? "tungfam" : "",
+    aadhar: isTestMode ? "222244446660" : "",
+    mobile: isTestMode ? "1234567890" : "",
+    email: isTestMode ? "support@tungfam.com" : "",
     password: isTestMode ? "password" : "",
   },
   inputValidities: {
