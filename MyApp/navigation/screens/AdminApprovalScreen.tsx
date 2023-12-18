@@ -23,12 +23,10 @@ const AdminApprovalScreen = () => {
                 Authorization: `${token}`,
             };
 
-            // const response = await axios.get(`${API_URL}/firms?status=pending`, { headers });
             const response = await axios.get(`${API_URL}/firms`, { headers });
-            // console.log('response: ', response.data);
 
             if (response.status === 200) {
-                setPendingFirms(response.data); // Update state with pending firms
+                setPendingFirms(response.data);
             } else {
                 throw new Error('Failed to fetch pending firms');
             }
@@ -48,21 +46,12 @@ const AdminApprovalScreen = () => {
             Authorization: `${token}`,
           };
       
-          // Fetch the entire firm object first
           const fetchResponse = await axios.get(`${API_URL}/firms/${firmId}`, { headers });
           const firmData = fetchResponse.data;
-      
-          // Modify the status in the retrieved object
           firmData.status = 'approved';
-          console.log("firmData: ", firmData);
-          
+          const responseFirm = await axios.put(`${API_URL}/firms/${firmId}`, firmData, { headers });
       
-          // Update the entire firm object
-          const response = await axios.put(`${API_URL}/firms/${firmId}`, firmData, { headers });
-          console.log("responseFirmData: ", response.data);
-          
-          if (response.status === 200) {
-            // If approved successfully, fetch updated pending firms list
+          if (responseFirm.status === 200) {
             fetchFirms();
           } else {
             throw new Error('Failed to approve firm');
@@ -72,12 +61,10 @@ const AdminApprovalScreen = () => {
         }
       };
       
-
     return (
         <View style={styles.content}>
             <Text style={styles.title}>Admin Firm Approval</Text>
             <View>
-                {/* Display the list of pending firms */}
                 {pendingFirms.map((firm) => (
 
                     <View key={firm.firm_id} style={styles.firmItem}>
@@ -101,10 +88,7 @@ const AdminApprovalScreen = () => {
 };
 
 
-// Styles and Redux connection setup
-
 export default AdminApprovalScreen;
-
 
 const styles = StyleSheet.create({
     container: {
