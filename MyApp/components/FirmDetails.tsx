@@ -16,14 +16,13 @@ const FirmDetails = ({ firmDetails }) => {
     if (showDetails) {
       return (
         <View style={styles.additionalDetails}>
-          <Text>Firm Name: {firmDetails.firm_name}</Text>
-          <Text>Address: {firmDetails.address}</Text>
-          <Text>Contact Person: {firmDetails.contact_person}</Text>
-          <Text>Mobile: {firmDetails.mobile}</Text>
-          <Text>Registration: {firmDetails.registration}</Text>
-          <Text>Email: {firmDetails.email}</Text>
-          <Text>Website: {firmDetails.website}</Text>
-          {/* Add other details as needed */}
+          {/* <Text>Firm Name: {firmDetails.firm_name}</Text> */}
+          <Text style={styles.text}>Address: {firmDetails.address}</Text>
+          <Text style={styles.text}>Contact Person: {firmDetails.contact_person}</Text>
+          <Text style={styles.text}>Mobile: {firmDetails.mobile}</Text>
+          <Text style={styles.text}>Registration: {firmDetails.registration}</Text>
+          <Text style={styles.text}>Email: {firmDetails.email}</Text>
+          <Text style={styles.text}>Website: {firmDetails.website}</Text>
         </View>
       );
     }
@@ -33,9 +32,8 @@ const FirmDetails = ({ firmDetails }) => {
   return (
     <TouchableOpacity onPress={toggleDetails} style={styles.container}>
       <View>
+        <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
         <Text style={styles.status}>Status: {firmDetails.status}</Text>
-        <Text style={styles.firmName}>Firm Name: {firmDetails.firm_name}</Text>
-        {/* Render only firm name and status by default */}
         {renderAdditionalDetails()}
       </View>
     </TouchableOpacity>
@@ -48,20 +46,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 8,
-  },
-  status: {
-    fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 10
   },
   firmName: {
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 6,
+    textAlign: "center"
+  },
+  status: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: "center"
   },
   additionalDetails: {
-    marginTop: 10,
+    padding: 10
   },
-  noDetailsText: {
-    fontStyle: 'italic',
+  text: {
+    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: '500'
   },
 });
 
