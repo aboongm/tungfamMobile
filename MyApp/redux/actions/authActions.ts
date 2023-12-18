@@ -1,17 +1,26 @@
 import axios from 'axios';
-import { authenticate, logOut } from '../../store/authSlice';
+import {authenticate, logOut} from '../../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dispatch } from 'redux';
-import { getUserData } from './userActions';
+import {Dispatch} from 'redux';
+import {getUserData} from './userActions';
 
-import { API_URL } from "@env"
+import {API_URL} from '@env';
 
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 interface UserData {
-  id: string;
-  name: string;
-  // Add other properties as per your user data structure
+  user_id: number;
+  user_name: string;
+  email: string;
+  password: string;
+  role: string;
+  name?: string;
+  aadhar: number;
+  aadhar_image?: Buffer;
+  care_of?: string;
+  address?: string;
+  mobile: number;
+  firm_id?: number;
 }
 
 interface SignUpData {
@@ -22,7 +31,13 @@ interface SignUpData {
   password: string;
 }
 
-export const signUp = (user_name: string, aadhar: string, mobile: string, email: string, password: string) => {
+export const signUp = (
+  user_name: string,
+  aadhar: string,
+  mobile: string,
+  email: string,
+  password: string,
+) => {
   return async (dispatch: Dispatch) => {
     try {
       const requestData: SignUpData = {
@@ -32,20 +47,25 @@ export const signUp = (user_name: string, aadhar: string, mobile: string, email:
         email,
         password,
       };
-      console.log("requestData: ", requestData);
-      
+
       // Send a POST request to your API's sign-up endpoint
       await axios
-        .post<{ user: { user_id: string }; token: string; expiresIn?: number }>(`${API_URL}/signup`, requestData)
-        .then(async (response) => {
+        .post<{user: {user_id: string}; token: string; expiresIn?: number}>(
+          `${API_URL}/signup`,
+          requestData,
+        )
+        .then(async response => {
           if (response.data.user && response.data.token) {
             const token = response.data.token;
-
+            const user_id = response.data.user.user_id;
             // Save the token in AsyncStorage for future requests
             await AsyncStorage.setItem('token', token);
+            await AsyncStorage.setItem('user_id', JSON.stringify(user_id));
 
             // Fetch user data and dispatch an action to store it
-            const userResponse = await dispatch<any>(getUserData(response.data.user.user_id));
+            const userResponse = await dispatch<any>(
+              getUserData(response.data.user.user_id),
+            );
 
             if (userResponse) {
               const userData: UserData = userResponse; // Adapt this to match your API response structure
@@ -59,7 +79,7 @@ export const signUp = (user_name: string, aadhar: string, mobile: string, email:
               }, expiresIn * 1000);
 
               // Dispatch an action to authenticate the user
-              dispatch(authenticate({ token, userData, expirationTime }));
+              dispatch(authenticate({token, userData, expirationTime}));
 
               // Save user data to AsyncStorage
               await AsyncStorage.setItem('userData', JSON.stringify(userData));
@@ -69,10 +89,10 @@ export const signUp = (user_name: string, aadhar: string, mobile: string, email:
           } else {
             throw new Error('Token not found in response');
           }
-        })
-        // .catch((error) => {
-        //   console.error('Sign-Up Error:', error);
-        // });
+        });
+      // .catch((error) => {
+      //   console.error('Sign-Up Error:', error);
+      // });
     } catch (error) {
       console.error('Sign-Up Error:', error);
     }
@@ -86,36 +106,39 @@ export const signIn = (email: string, password: string) => {
         email,
         password,
       };
-      console.log("requestData: ", requestData);
-      console.log("API_URL: ", API_URL);
-      
+
       // Send a POST request to your API's sign-in endpoint
-      const response = await axios.post<{ token: string; id: string }>(`${API_URL}/signin`, requestData);
+      const response = await axios.post<{token: string; id: string}>(
+        `${API_URL}/signin`,
+        requestData,
+      );
       const token = response.data.token;
+      const user_id = response.data.id;
 
       // Save the token in AsyncStorage for future requests
       await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('user_id', JSON.stringify(user_id));
 
       // Fetch user data and dispatch an action to store it
       const userResponse = await dispatch<any>(getUserData(response.data.id));
 
       return userResponse;
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Sign-In Error:', error);
-            // Log the response data if available
-            if (error.response) {
-                console.error('Error Response:', error.response);
-            }
-            // Log the error message if available
-            if (error.message) {
-                console.error('Error Message:', error.message);
-            }
-            throw error;
-        } else {
-            console.error('Unknown error occurred:', error);
-            throw new Error('Unknown error occurred');
+      if (axios.isAxiosError(error)) {
+        console.error('Sign-In Error:', error);
+        // Log the response data if available
+        if (error.response) {
+          console.error('Error Response:', error.response);
         }
+        // Log the error message if available
+        if (error.message) {
+          console.error('Error Message:', error.message);
+        }
+        throw error;
+      } else {
+        console.error('Unknown error occurred:', error);
+        throw new Error('Unknown error occurred');
+      }
     }
   };
 };
@@ -129,13 +152,20 @@ export const userLogout = () => {
 };
 
 export const updateSignInUserData = (userId: string, newData: any) => {
-  console.log("newData");
+  console.log('newData!!!');
   return async (dispatch: Dispatch) => {
     try {
       const userResponse = await dispatch<any>(getUserData(userId));
-      
-      console.log("userResonpse: ", await userResponse);
-      console.log("newData", newData);      
+
+      console.log('userResonpse: ', await userResponse);
+      console.log('newData', newData);
+
+      const updatedUserData = {
+        ...userResponse,
+        ...newData,
+      };
+
+      console.log('updatedUserData', updatedUserData);
 
       const token = await AsyncStorage.getItem('token');
       if (!token) {
@@ -146,16 +176,12 @@ export const updateSignInUserData = (userId: string, newData: any) => {
         // Authorization: `Bearer ${token}`,
         Authorization: `${token}`,
       };
-      
-      const updatedUserData = {
-        ...userResponse, 
-        ...newData,     
-      };
 
-      // console.log("updatedUserData", updatedUserData);
-      
-
-      const response = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
+      const response = await axios.put(
+        `${API_URL}/users/${userId}`,
+        updatedUserData,
+        {headers},
+      );
 
       // Check the response status or handle success/failure accordingly
       if (response.status === 200) {
@@ -170,7 +196,7 @@ export const updateSignInUserData = (userId: string, newData: any) => {
       console.error('Error updating user data:', error);
       throw error;
     }
-  }
+  };
 };
 
 export const createFirm = (firmData: any) => {
@@ -186,7 +212,9 @@ export const createFirm = (firmData: any) => {
       };
 
       // Make an API call to create a new firm using firmData
-      const response = await axios.post(`${API_URL}/firms`, firmData, { headers });
+      const response = await axios.post(`${API_URL}/firms`, firmData, {
+        headers,
+      });
 
       // Check the response status or handle success/failure accordingly
       if (response.status === 201) {
