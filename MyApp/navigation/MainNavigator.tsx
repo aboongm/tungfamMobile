@@ -7,8 +7,8 @@ import { COLORS } from '../constants'
 import ProfileScreen from './screens/ProfileScreen'
 import CreateFirmScreen from './screens/CreateFirmScreen'
 import ActivitiesScreen from './screens/ActivitiesScreen'
-import LoanScreen from './screens/LoanScreen'
 import AdminApprovalScreen from './screens/AdminApprovalScreen'
+import AddLoanTypeScreen from './screens/AddLoanTypeScreen'
 
 
 const Stack = createNativeStackNavigator()
@@ -88,6 +88,14 @@ const MainNavigator = () => {
         <Stack.Screen
           name="AdminApproval"
           component={AdminApprovalScreen}
+          options={{
+            headerTitle: "",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
+          name="AddLoanType"
+          component={AddLoanTypeScreen}
           options={{
             headerTitle: "",
             headerBackTitle: "Back",
