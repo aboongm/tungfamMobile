@@ -9,7 +9,11 @@ const FirmDetails = ({ firmDetails }) => {
   };
 
   if (!firmDetails) {
-    return <Text style={styles.text}>No firm details available</Text>;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.status}>No firm details available</Text>
+      </View>
+    )
   }
 
   const renderAdditionalDetails = () => {
