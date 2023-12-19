@@ -29,7 +29,6 @@ const LoanType = ({ firmDetails }) => {
             const headers = {
                 Authorization: `${token}`,
             };
-            console.log("FirmDetails: ", firmDetails);
 
             if (firmDetails && firmDetails.firm_id) {
                 const response = await axios.get(`${API_URL}/firms/${firmDetails.firm_id}/loantypes`, { headers });
