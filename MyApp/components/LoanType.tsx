@@ -16,7 +16,7 @@ const LoanType = ({ firmDetails }) => {
     };
 
     const addLoanType = () => {
-        navigation.navigate('AddLoanType', { firmId: firmDetails.firm_id });
+        navigation.navigate('AddLoanType', { firm_id: firmDetails.firm_id });
     };
 
     const fetchLoanTypes = async () => {
@@ -29,10 +29,13 @@ const LoanType = ({ firmDetails }) => {
             const headers = {
                 Authorization: `${token}`,
             };
+            console.log("FirmDetails: ", firmDetails);
 
-            const response = await axios.get(`${API_URL}/firms/${firmDetails.firm_id}/loantypes`, { headers });
-            if (response.status === 200) {
-                setLoanTypes(response.data);
+            if (firmDetails && firmDetails.firm_id) {
+                const response = await axios.get(`${API_URL}/firms/${firmDetails.firm_id}/loantypes`, { headers });
+                if (response.status === 200) {
+                    setLoanTypes(response.data);
+                }
             }
         } catch (error) {
             console.error('Error fetching loan types:', error);
@@ -41,7 +44,7 @@ const LoanType = ({ firmDetails }) => {
 
     useEffect(() => {
         fetchLoanTypes();
-    }, []);
+    }, [firmDetails]);
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
