@@ -12,6 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Firm from '../../components/Firm';
 import LoanType from '../../components/LoanType';
 import Employee from '../../components/Employee';
+import LoanBook from '../../components/LoanBook';
+import ApplyLoan from '../../components/ApplyLoan';
 
 const ActivitiesScreen = ({ userRole, userId  }) => {
 
@@ -21,7 +23,7 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
   const [userFirm, setUserFirm] = useState(null);
   const [firmDetails, setFirmDetails] = useState(null);
   const [employeeFirm, setEmployeeFirm] = useState(null);
-
+  
   useEffect(() => {
     const fetchUserFirm = async () => {
       try {
@@ -43,7 +45,6 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
             setUserFirm(userFirmForId);
             const firmId = userFirmForId.firm_id;
             const firmDetailsResponse = await axios.get(`${API_URL}/firms/${firmId}`, { headers });
-            console.log("firmDetailsResponse: ", firmDetailsResponse.data);
             
             if (firmDetailsResponse.status === 200) {
               setFirmDetails(firmDetailsResponse.data);
@@ -67,16 +68,15 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
         };
 
         const employeeFirmResponse = await axios.get(`${API_URL}/employeefirm`, { headers });
-
-        if (employeeFirmResponse.status === 200 && employeeFirmResponse.data.length > 0) {
-          const userEmployeeFirm = employeeFirmResponse.data.find((empFirm) => empFirm.user_id === userId);
+        
+        if (employeeFirmResponse.status === 200 && employeeFirmResponse.data.length > 0 && firmDetails) {
+          const userEmployeeFirm = employeeFirmResponse.data.find((empFirm) => empFirm.firm_id === firmDetails.firm_id);
+          
           if (userEmployeeFirm) {
             const employeeFirmId = userEmployeeFirm.firm_id;
             const employeeFirmDetailsResponse = await axios.get(`${API_URL}/firms/${employeeFirmId}`, { headers });
-            console.log("employeeFirmDetails: ", employeeFirmDetailsResponse.data);
             
             if (employeeFirmDetailsResponse.status === 200) {
-              // This will set the employee's firm details in state
               setEmployeeFirm(employeeFirmDetailsResponse.data);
             }
           }
@@ -89,6 +89,14 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
     fetchUserFirm();
     fetchEmployeeFirm();
   }, []);
+
+  const applyLoan = async () => {
+    try {
+      navigation.navigate('LoanApplication');
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const applyToFirm = async () => {
     try {
@@ -113,6 +121,7 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
             <Firm firmDetails={firmDetails} />
             <LoanType firmDetails={firmDetails} />
             <Employee firmDetails={firmDetails} />
+            <LoanBook firmDetails={firmDetails} />
             <Text>Create/Update/Delete LoanBook</Text>
             <Text>Create/Update/Delete PaymentSchedule</Text>
           </View>
@@ -137,7 +146,7 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
       case 'user':
         return (
           <View style={styles.activitiesContainer}>
-            <Text>Apply for a loan</Text>
+            <ApplyLoan onPress={applyLoan} />
             <ApplyToFirm onPress={applyToFirm} />
           </View>
         );

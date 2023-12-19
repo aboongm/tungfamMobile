@@ -19,7 +19,7 @@ const Employee = ({ firmDetails }) => {
     const toggleDetails = () => {
         setShowDetails(!showDetails);
     };
-
+    
     const fetchUsers = async () => {
         try {
             const token = await AsyncStorage.getItem('token');

@@ -17,7 +17,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = props => {
       onPress={props.disabled ? () => {} : props.onPress}
       style={{
         ...styles.button,
-        // ...props.style,
+        ...props.style,
         ...{backgroundColor: bgColor},
       }}>
       <Text

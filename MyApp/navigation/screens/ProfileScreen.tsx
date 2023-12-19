@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
   logOutButtonContainer: {
     position: 'absolute',
-    top: 20,
+    top: -60,
     right: 10,
     zIndex: 999, // Ensure the logout button is on top of other content
     backgroundColor: 'rgba(255, 255, 255, 0.8)', // Adjust the background color and opacity as needed

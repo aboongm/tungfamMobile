@@ -25,12 +25,14 @@ const EmployeeList = ({ firmDetails }) => {
                 const updatedEmployeesData = [];
 
                 for (const employee of employeesData) {
-                    const userDetails = await fetchUserDetails(employee.user_id, headers);
-                    if (userDetails) {
-                        updatedEmployeesData.push({ 
-                            ...employee, 
-                            userDetails: userDetails ? userDetails : {}
-                        });
+                    if (firmDetails && employee.firm_id === firmDetails.firm_id) {
+                        const userDetails = await fetchUserDetails(employee.user_id, headers);
+                        if (userDetails) {
+                            updatedEmployeesData.push({
+                                ...employee,
+                                userDetails: userDetails ? userDetails : {}
+                            });
+                        }
                     }
                 }
 
@@ -59,19 +61,23 @@ const EmployeeList = ({ firmDetails }) => {
     }, [firmDetails]);
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.headerText}>Employees</Text>
-            <FlatList
-                data={employees}
-                keyExtractor={(item) => item.employee_firm_id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.employeeItem}>
-                        <Text style={styles.text}>{item.userDetails.name}</Text>
-                        <Text style={styles.text}>{item.position}</Text>
-                    </View>
-                )}
-            />
-        </View>
+        <>
+            {employees.length > 0 && (
+                <View style={styles.container}>
+                    <Text style={styles.headerText}>Employees</Text>
+                    <FlatList
+                        data={employees}
+                        keyExtractor={(item) => item.employee_firm_id.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.employeeItem}>
+                                <Text style={styles.text}>{item.userDetails.name}</Text>
+                                <Text style={styles.text}>{item.position}</Text>
+                            </View>
+                        )}
+                    />
+                </View>
+            )}
+        </>
     );
 };
 
