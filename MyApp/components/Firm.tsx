@@ -34,15 +34,17 @@ const FirmDetails = ({ firmDetails }) => {
   };
 
   return (
-    <TouchableOpacity onPress={toggleDetails} style={styles.container}>
-      <View>
-        <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
-        {firmDetails.status !== 'approved' && (
-          <Text style={styles.status}>Status: {firmDetails.status}</Text>
-        )}
-        {renderAdditionalDetails()}
-      </View>
-    </TouchableOpacity>
+    <>
+      <TouchableOpacity onPress={toggleDetails} style={styles.container}>
+        <View>
+          <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
+          {firmDetails.status !== 'approved' && (
+            <Text style={styles.status}>Status: {firmDetails.status}</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+      {renderAdditionalDetails()}
+    </>
   );
 };
 

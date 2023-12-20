@@ -4,9 +4,12 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEmployees } from '../redux/reducers/employeesSlice';
 
 const EmployeeList = ({ firmDetails }) => {
-    const [employees, setEmployees] = useState([]);
+    const dispatch = useDispatch();
+    const employees = useSelector((state) => state.employees.employees);
 
     const fetchEmployees = async () => {
         try {
@@ -36,8 +39,7 @@ const EmployeeList = ({ firmDetails }) => {
                     }
                 }
 
-                // setEmployees(response.data);
-                setEmployees(updatedEmployeesData);
+                dispatch(setEmployees(updatedEmployeesData));
             }
         } catch (error) {
             console.error('Error fetching employees:', error);

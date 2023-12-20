@@ -57,8 +57,10 @@ const LoanType = ({ firmDetails }) => {
     );
 
     return (
-        <TouchableOpacity onPress={toggleDetails}>
-            <Text style={styles.headerText}>LoanType</Text>
+        <>
+            <TouchableOpacity onPress={toggleDetails}>
+                <Text style={styles.headerText}>LoanType</Text>
+            </TouchableOpacity>
             {showDetails && (
                 <View style={styles.container}>
                     <TouchableOpacity style={styles.addButton}>
@@ -71,7 +73,7 @@ const LoanType = ({ firmDetails }) => {
                     />
                 </View>
             )}
-        </TouchableOpacity>
+        </>
     );
 };
 

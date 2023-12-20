@@ -19,7 +19,7 @@ const Employee = ({ firmDetails }) => {
     const toggleDetails = () => {
         setShowDetails(!showDetails);
     };
-    
+
     const fetchUsers = async () => {
         try {
             const token = await AsyncStorage.getItem('token');
@@ -55,25 +55,25 @@ const Employee = ({ firmDetails }) => {
 
             setSelectedUser(foundUser);
             console.log("foundUser: ", foundUser);
-            
+
         } catch (error) {
             console.error(error);
         }
     };
 
-    const designations = ['HeadProducts', 'SeniorLoanOfficer', 'LoanOfficer']; 
-    
+    const designations = ['HeadProducts', 'SeniorLoanOfficer', 'LoanOfficer'];
+
     const addEmployee = async () => {
         try {
             const token = await AsyncStorage.getItem('token');
             if (!token || !selectedUser || !firmDetails || !selectedDesignation) {
                 throw new Error('Invalid data for adding employee');
             }
-    
+
             const headers = {
                 Authorization: `${token}`,
             };
-           
+
             const response = await axios.post(
                 `${API_URL}/employeefirm`,
                 {
@@ -83,15 +83,15 @@ const Employee = ({ firmDetails }) => {
                 },
                 { headers }
             );
-    
+
             if (response.status === 200) {
                 const userResponse = await axios.get(`${API_URL}/users/${selectedUser.user_id}`, { headers });
                 const updatedUserData = {
                     ...userResponse.data,
-                    role: 'employee', 
+                    role: 'employee',
                     firm_id: firmDetails.firm_id,
                 };
-    
+
                 const updateUserResponse = await axios.put(`${API_URL}/users/${selectedUser.user_id}`, updatedUserData, { headers });
                 // Logic for handling successful addition of employee
                 console.log('Employee added successfully');
@@ -116,8 +116,10 @@ const Employee = ({ firmDetails }) => {
     }, []);
 
     return (
-        <TouchableOpacity onPress={toggleDetails}>
-            <Text style={styles.headerText}>Employee</Text>
+        <>
+            <TouchableOpacity onPress={toggleDetails}>
+                <Text style={styles.headerText}>Employee</Text>
+            </TouchableOpacity>
             {showDetails && (
                 <View style={styles.container}>
                     <TextInput
@@ -157,7 +159,7 @@ const Employee = ({ firmDetails }) => {
                     <EmployeeList firmDetails={firmDetails} />
                 </View>
             )}
-        </TouchableOpacity>
+        </>
     );
 };
 
