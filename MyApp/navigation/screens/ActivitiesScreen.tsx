@@ -132,8 +132,6 @@ const ActivitiesScreen = ({ userRole, userId }) => {
             <LoanType firmDetails={firmDetails} />
             <Employee firmDetails={firmDetails} />
             <LoanBook firmDetails={firmDetails} />
-            <Text>Create/Update/Delete LoanBook</Text>
-            <Text>Create/Update/Delete PaymentSchedule</Text>
           </View>
         );
       case 'employee':

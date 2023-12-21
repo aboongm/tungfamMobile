@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import PageTitle from '../../components/PageTitle';
@@ -11,6 +11,7 @@ import { COLORS } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { updateUserRole } from '../../redux/slices/auth/authSlice';
 import { Picker } from '@react-native-picker/picker';
+import DatePicker from 'react-native-date-picker'
 
 const PaymentScheduleScreen = () => {
 
@@ -19,148 +20,129 @@ const PaymentScheduleScreen = () => {
     const [selectedFirm, setSelectedFirm] = useState(null);
     const [loanTypes, setLoanTypes] = useState([]);
     const [selectedLoanType, setSelectedLoanType] = useState('');
+    const [date, setDate] = useState(new Date())
+    const [open, setOpen] = useState(false)
 
-    const navigation = useNavigation();
+    const [payments, setPayments] = useState([
+        // Dummy data for payments (replace this with your actual data structure)
+        {
+            date: '21 Dec 2023',
+            payment: 'Rs 1700',
+            description: 'On time',
+        },
+        {
+            date: '21 Dec 2023',
+            payment: 'Rs 1700',
+            description: 'Late',
+        },
+    ]);
+
+    const [newPaymentDate, setNewPaymentDate] = useState(new Date());
+    const [selectedPayment, setSelectedPayment] = useState('');
+    const [remark, setRemark] = useState('');
+
+    const addPayment = () => {
+        console.log("payments: ", payments);
+        
+        const newPayment = {
+            date: newPaymentDate.toLocaleDateString(), 
+            payment: selectedPayment, 
+            description: remark || 'No remarks provided', 
+        };
+
+        setPayments([...payments, newPayment]);
+        console.log("payments: ", payments);
+        console.log("newPayment: ", newPayment);
+
+        setNewPaymentDate(new Date());
+        setSelectedPayment('');
+        setRemark('');
+    };
+
 
     useEffect(() => {
-        const fetchFirms = async () => {
-            // try {
-            //     const token = await AsyncStorage.getItem('token');
-            //     if (!token) {
-            //         throw new Error('Token not found');
-            //     }
-
-            //     const headers = {
-            //         Authorization: `${token}`,
-            //     };
-
-            //     const firmsResponse = await axios.get(`${API_URL}/firms`, { headers });
-
-            //     if (firmsResponse.status === 200) {
-            //         setFirms(firmsResponse.data);
-            //     }
-            // } catch (error) {
-            //     console.error('Error fetching firms:', error);
-            // }
-        };
-
-        const fetchLoanTypes = async () => {
-            console.log("selectedFirm: ", selectedFirm);
-            
-            // if (selectedFirm !== null) {
-            //     try {
-            //         const token = await AsyncStorage.getItem('token');
-            //         if (!token) {
-            //             throw new Error('Token not found');
-            //         }
-
-            //         const headers = {
-            //             Authorization: `${token}`,
-            //         };
-
-            //         const loanTypesResponse = await axios.get(`${API_URL}/firms/${selectedFirm}/loantypes`, { headers });
-
-            //         if (loanTypesResponse.status === 200) {
-            //             setLoanTypes(loanTypesResponse.data);
-            //         }
-
-            //     } catch (error) {
-            //         console.error('Error fetching loan types:', error);
-            //     }
-            // }
-        };
-
-        fetchFirms();
-        fetchLoanTypes();
     }, [selectedFirm]);
-
-    const handleSubmit = async () => {
-        // const formData = {
-        //     loan_officer_id: null, // Will be set when loan is approved
-        //     lender_firm_id: selectedFirm,
-        //     borrower_id: await AsyncStorage.getItem('user_id'), // Get borrower ID from storage
-        //     loan_type: selectedLoanType,
-        //     start_date: new Date().toISOString().slice(0, 10), // Today's date
-        // };
-
-        // const token = await AsyncStorage.getItem('token');
-        // if (!token) {
-        //     throw new Error('Token not found');
-        // }
-
-        // const headers = {
-        //     Authorization: `${token}`,
-        // };
-
-        // const response = await axios.post(`${API_URL}/loans`, formData, { headers });
-        // console.log("responseLoan: ", response.data);
-        
-        // if (response.status === 200) {
-        //     try {
-        //         const userId = await AsyncStorage.getItem('user_id');
-
-        //         if (!userId) {
-        //             throw new Error('userId not found');
-        //         }
-
-        //         const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
-        //         const updatedUserData = {
-        //             ...userResponse.data,
-        //             role: 'borrower',
-        //         };
-
-        //         const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-        //         console.log("roleUpdate: ", updateRoleResponse.data);
-                
-        //         if (updateRoleResponse.status === 200) {
-        //             disptach(updateUserRole(updatedUserData));
-        //         } else {
-        //             throw new Error('Failed to update user role');
-        //         }
-        //     } catch (error) {
-        //         console.error(error);
-        //     }
-
-        //     navigation.navigate('Home');
-        //     console.log('Firm was created successfully');
-        // } else {
-        //     throw new Error('Failed to create firm');
-        // }
-    };
 
     return (
         <PageContainer style={styles.container}>
             <PageTitle text="Payment Schedule" />
-            <View>
-                <Text>Borrower</Text>
-                <Text>LoanType</Text>
+            <View style={styles.infoContainer}>
+                <View style={styles.infoBlock}>
+                    <Text style={styles.infoText}>John Doe</Text>
+                    <Text style={styles.infoText}>L50000W48P1700</Text>
+                </View>
+                <View style={styles.infoBlock}>
+                    <View style={styles.blockContainer}>
+                        <Text style={styles.infoText}>NoOfPayments</Text>
+                        <Text style={styles.infoText}>12</Text>
+                    </View>
+                    <View style={styles.blockContainer}>
+                        <Text style={styles.infoText}>TotalPayment</Text>
+                        <Text style={styles.infoText}>$12000</Text>
+                    </View>
+                    <View style={styles.blockContainer}>
+                        <Text style={styles.infoText}>OutPayment</Text>
+                        <Text style={styles.infoText}>Rs 6000</Text>
+                    </View>
+                </View>
+            </View>
+
+            <View style={styles.tableRow}>
+                <Text style={styles.columnHeader}>Date</Text>
+                <Text style={styles.columnHeader}>Payment</Text>
+                <Text style={styles.columnHeader}>Description</Text>
             </View>
             <ScrollView contentContainerStyle={styles.formContainer}>
                 <View style={{ width: '100%' }}>
-                    <Text>Select Firm:</Text>
-                    {/* <Picker
-                        selectedValue={selectedFirm}
-                        onValueChange={(itemValue) => setSelectedFirm(itemValue)}
-                        mode="dropdown"
-                    >
-                        {firms.map((firm) => (
-                            <Picker.Item key={firm.firm_id} label={firm.firm_name} value={firm.firm_id} />
-                        ))}
-                    </Picker>
+                    <View style={styles.tableContainer}>
+                        <View>
+                            {payments.map((payment, index) => (
+                                <View style={styles.tableRow} key={index}>
+                                    <Text style={styles.columnItem}>{payment.date}</Text>
+                                    <Text style={styles.columnItem}>{payment.payment}</Text>
+                                    <Text style={styles.columnItem}>{payment.description}</Text>
+                                </View>
+                            ))}
+                        </View>
 
-                    <Text>Select Loan Amount (in Rs):</Text>
-                    <Picker
-                        selectedValue={selectedLoanType}
-                        onValueChange={(itemValue) => setSelectedLoanType(itemValue)}
-                    >
-                        {loanTypes.map((type) => (
-                            <Picker.Item key={type.loan_type_id} label={type.amount} value={type.loan_type_id} />
-                        ))}
-                    </Picker> */}
+                        <View style={styles.tableInput}>
+                            <View style={styles.DatePayment}>
+                                <View style={styles.dateButton}>
+                                    <Button color="green" title="Pick Date" onPress={() => setOpen(true)} />
+                                </View>
+                                <DatePicker
+                                    modal
+                                    open={open}
+                                    date={newPaymentDate}
+                                    onConfirm={(date) => {
+                                        setOpen(false);
+                                        setNewPaymentDate(date);
+                                    }}
+                                    onCancel={() => {
+                                        setOpen(false);
+                                    }}
+                                />
+                                <Picker
+                                    style={styles.paymentPicker}
+                                    selectedValue={selectedPayment}
+                                    onValueChange={(itemValue) => setSelectedPayment(itemValue)}
+                                >
+                                    <Picker.Item label="Rs 1700" value="1700" />
+                                    <Picker.Item label="Rs 1400" value="1400" />
+                                </Picker>
+                            </View>
 
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Apply for Loan</Text>
-                    </TouchableOpacity>
+                            <TextInput
+                                style={styles.descriptionInput}
+                                placeholder="Enter remarks"
+                                value={remark}
+                                onChangeText={(text) => setRemark(text)}
+                            />
+                        </View>
+                        <TouchableOpacity onPress={addPayment}>
+                            <Text style={styles.addPaymentButton}>Add Payment</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </PageContainer>
@@ -173,33 +155,118 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
         margin: 4,
+        padding: 10
+    },
+    infoContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        margin: 0,
+        padding: 0
+    },
+    infoBlock: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+        borderRadius: 5,
+        marginBottom: 6,
+        paddingHorizontal: 6,
+        paddingVertical: 4,
+        margin: 0,
+    },
+    blockContainer: {
+        flexDirection: 'column',
+        // borderWidth: 1,
+        // borderColor: COLORS.tungfamGrey,
+        margin: 0,
+        padding: 0
+    },
+    infoText: {
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: "center",
+        margin: 0,
+        padding: 0
     },
     formContainer: {
         alignItems: 'center',
+        marginTop: 10,
+        margin: 0,
+        padding: 0,
     },
-    heading: {
-        fontSize: 24,
+    tableContainer: {
+        margin: 0,
+        padding: 0,
+    },
+    tableRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+    },
+    columnHeader: {
+        flex: 1,
         fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
+        fontSize: 18,
     },
-    input: {
+    columnItem: {
+        flex: 1,
+        fontWeight: '500',
+        fontSize: 16,
+    },
+    tableInput: {
+        flexDirection: "column",
+        marginTop: 10,
+        justifyContent: 'space-between',
+        width: '100%',
+        // backgroundColor: 'green'
+    },
+    DatePayment: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+    dateButton: {
+        backgroundColor: "green",
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'grey',
+        borderRadius: 5,
+        margin: 0,
+        padding: 0,
+    },
+    paymentPicker: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: 'grey',
+        borderRadius: 5,
+        // paddingHorizontal: 10,
+
+        // backgroundColor: 'red'
+    },
+    descriptionInput: {
+        flex: 2,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
-        marginBottom: 15,
+        height: 60,
+        marginVertical: 10,
     },
-    button: {
-        backgroundColor: 'blue',
-        borderRadius: 5,
-        padding: 15,
-        alignItems: 'center',
-    },
-    buttonText: {
+    addPaymentButton: {
+        backgroundColor: 'green',
         color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        borderRadius: 5,
+        padding: 10,
+        textAlign: 'center',
+        flex: 1,
+        marginBottom: 40,
     },
 });
 
