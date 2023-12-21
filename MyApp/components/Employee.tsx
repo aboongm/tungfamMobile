@@ -22,19 +22,21 @@ const Employee = ({ firmDetails }) => {
 
     const fetchUsers = async () => {
         try {
-            const token = await AsyncStorage.getItem('token');
-            if (!token) {
-                throw new Error('Token not found');
-            }
+            if (firmDetails) {
+                const token = await AsyncStorage.getItem('token');
+                if (!token) {
+                    throw new Error('Token not found');
+                }
 
-            const headers = {
-                Authorization: `${token}`,
-            };
+                const headers = {
+                    Authorization: `${token}`,
+                };
 
-            const response = await axios.get(`${API_URL}/users`, { headers });
+                const response = await axios.get(`${API_URL}/users`, { headers });
 
-            if (response.status === 200) {
-                setUsers(response.data);
+                if (response.status === 200) {
+                    setUsers(response.data);
+                }
             }
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -113,7 +115,7 @@ const Employee = ({ firmDetails }) => {
     useEffect(() => {
         fetchUsers();
         fetchDesignation();
-    }, []);
+    }, [firmDetails]);
 
     return (
         <>

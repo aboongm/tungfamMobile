@@ -37,7 +37,7 @@ export const getUserData = (userId: string): ((dispatch: Dispatch) => Promise<Us
 
       const response = await axios.get<UserData>(`${API_URL}/users/${userId}`, { headers });
       const userData: UserData = response.data;
-      console.log("userData: ", userData);
+      // console.log("userData: ", userData);
       dispatch(authenticate({
         token, 
         userData,

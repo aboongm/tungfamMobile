@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import axios from 'axios';
 import { API_URL } from '@env';
@@ -46,7 +46,7 @@ const EmployeeList = ({ firmDetails }) => {
         }
     };
 
-    const fetchUserDetails = async (userId, headers) => {
+    const fetchUserDetails = async (userId: any, headers: { Authorization: string; }) => {
         try {
             const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
             if (userResponse.status === 200) {
@@ -68,6 +68,7 @@ const EmployeeList = ({ firmDetails }) => {
                 <View style={styles.container}>
                     <Text style={styles.headerText}>Employees</Text>
                     <FlatList
+                        scrollEnabled={false} 
                         data={employees}
                         keyExtractor={(item) => item.employee_firm_id.toString()}
                         renderItem={({ item }) => (

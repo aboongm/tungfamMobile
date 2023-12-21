@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 import { COLORS } from '../../constants';
 import PageContainer from '../../components/PageContainer';
@@ -15,7 +15,7 @@ import Employee from '../../components/Employee';
 import LoanBook from '../../components/LoanBook';
 import ApplyLoan from '../../components/ApplyLoan';
 
-const ActivitiesScreen = ({ userRole, userId  }) => {
+const ActivitiesScreen = ({ userRole, userId }) => {
 
   const navigation = useNavigation();
   const userData = useSelector(state => state.auth.userData);
@@ -23,9 +23,10 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
   const [userFirm, setUserFirm] = useState(null);
   const [firmDetails, setFirmDetails] = useState(null);
   const [employeeFirm, setEmployeeFirm] = useState(null);
-  
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchUserFirm = async () => {
+    const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
@@ -41,18 +42,27 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
         if (userFirmResponse.status === 200 && userFirmResponse.data.length > 0) {
           const userFirms = userFirmResponse.data;
           const userFirmForId = userFirms.find((userFirm) => userFirm.user_id === userId);
+
           if (userFirmForId) {
             setUserFirm(userFirmForId);
             const firmId = userFirmForId.firm_id;
             const firmDetailsResponse = await axios.get(`${API_URL}/firms/${firmId}`, { headers });
-            
+
             if (firmDetailsResponse.status === 200) {
               setFirmDetails(firmDetailsResponse.data);
+
+              const employeeFirmResponse = await axios.get(`${API_URL}/firms/${firmId}`, { headers });
+
+              if (employeeFirmResponse.status === 200) {
+                setEmployeeFirm(employeeFirmResponse.data);
+                setLoading(false); // Data fetching complete
+              }
             }
           }
         }
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
 
@@ -68,14 +78,14 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
         };
 
         const employeeFirmResponse = await axios.get(`${API_URL}/employeefirm`, { headers });
-        
+
         if (employeeFirmResponse.status === 200 && employeeFirmResponse.data.length > 0 && firmDetails) {
           const userEmployeeFirm = employeeFirmResponse.data.find((empFirm) => empFirm.firm_id === firmDetails.firm_id);
-          
+
           if (userEmployeeFirm) {
             const employeeFirmId = userEmployeeFirm.firm_id;
             const employeeFirmDetailsResponse = await axios.get(`${API_URL}/firms/${employeeFirmId}`, { headers });
-            
+
             if (employeeFirmDetailsResponse.status === 200) {
               setEmployeeFirm(employeeFirmDetailsResponse.data);
             }
@@ -86,9 +96,9 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
       }
     };
 
-    fetchUserFirm();
+    fetchData();
     fetchEmployeeFirm();
-  }, []);
+  }, [userId]);
 
   const applyLoan = async () => {
     try {
@@ -162,17 +172,23 @@ const ActivitiesScreen = ({ userRole, userId  }) => {
 
   return (
     <PageContainer style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.userInfo}>
-          <Text style={styles.userInfoText}>
-            Signed in as: {userData.user_name} {/* Display the user's name or relevant field */}
-          </Text>
-        </View>
-        {/* <Text style={styles.title}>Dashboard</Text> */}
-        {renderActions()}
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      ) :
+        (
+          <ScrollView>
+            <View style={styles.content}>
+              <View style={styles.userInfo}>
+                <Text style={styles.userInfoText}>
+                  Signed in as: {userData.user_name} {/* Display the user's name or relevant field */}
+                </Text>
+              </View>
+              {/* <Text style={styles.title}>Dashboard</Text> */}
+              {renderActions()}
+            </View>
+          </ScrollView>
+        )}
 
-      
     </PageContainer>
   );
 };

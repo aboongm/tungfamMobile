@@ -67,6 +67,7 @@ const LoanType = ({ firmDetails }) => {
                         <Button title="Add LoanType" onPress={addLoanType} />
                     </TouchableOpacity>
                     <FlatList
+                        scrollEnabled={false} 
                         data={loanTypes}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.loan_type_id.toString()}
