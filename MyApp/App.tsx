@@ -9,7 +9,7 @@ import SplashScreen from 'react-native-splash-screen'
 import { StyleSheet } from 'react-native';
 import { Provider } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { store } from './store/store';
+import { store } from './redux/store';
 import AppNavigator from './navigation/AppNavigator';
 
 

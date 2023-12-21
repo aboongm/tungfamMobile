@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import userImage from "../../assets/images/userImage.jpeg"
 import { useDispatch } from 'react-redux';
 import { updateSignInUserData } from '../redux/actions/authActions';
-import { updateLoggedInSignInUserData } from '../store/authSlice';
+import { updateLoggedInSignInUserData } from '../redux/slices/auth/authSlice';
 import ImagePicker from 'react-native-image-picker'; // Import the image picker library
 import { COLORS } from '../constants';
 

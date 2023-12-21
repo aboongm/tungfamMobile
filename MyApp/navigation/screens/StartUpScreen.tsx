@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { COLORS, commonStyles } from '../../constants/theme'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useDispatch } from 'react-redux'
-import { authenticate, setDidTryAutoLogin } from '../../store/authSlice'
+import { authenticate, setDidTryAutoLogin } from '../../redux/slices/auth/authSlice'
 import { getUserData } from '../../redux/actions/userActions'
 
 const StartUpScreen = () => {

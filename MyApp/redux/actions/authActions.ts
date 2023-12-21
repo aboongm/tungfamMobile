@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {authenticate, logOut} from '../../store/authSlice';
+import {authenticate, logOut} from '../slices/auth/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Dispatch} from 'redux';
 import {getUserData} from './userActions';

@@ -12,7 +12,7 @@ import { validateInput } from '../../redux/actions/formAction';
 import SubmitButton from '../../components/SubmitButton';
 import { COLORS } from '../../constants';
 import { updateSignInUserData, userLogout } from '../../redux/actions/authActions';
-import { updateLoggedInSignInUserData } from '../../store/authSlice';
+import { updateLoggedInSignInUserData } from '../../redux/slices/auth/authSlice';
 import { reducer } from '../../redux/reducers/formReducer';
 import ProfileImage from '../../components/ProfileImage';
 import AadharImagePicker from '../../components/AadharImagePicker';

@@ -9,7 +9,7 @@ import PageTitle from '../../components/PageTitle';
 import PageContainer from '../../components/PageContainer';
 import { COLORS } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
-import { updateUserRole } from '../../store/authSlice';
+import { updateUserRole } from '../../redux/slices/auth/authSlice';
 import { Picker } from '@react-native-picker/picker';
 
 const LoanApplicationScreen = () => {

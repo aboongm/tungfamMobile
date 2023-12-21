@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 
-interface User {
+export interface User {
     user_id: number;
     user_name: string;
     email: string;
@@ -16,7 +17,7 @@ interface User {
 }
 
 
-interface AuthState {
+export interface AuthState {
     token: string | null;
     userData: User | {};
     didTryAutoLogin: boolean;
@@ -67,3 +68,4 @@ export const {
 } = authSlice.actions;
 
 export default authSlice.reducer;
+

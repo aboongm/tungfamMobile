@@ -5,7 +5,7 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEmployees } from '../redux/reducers/employeesSlice';
+import { setEmployees } from '../redux/slices/employees/employeesSlice';
 
 const EmployeeList = ({ firmDetails }) => {
     const dispatch = useDispatch();
