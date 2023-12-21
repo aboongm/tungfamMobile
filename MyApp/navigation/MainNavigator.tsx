@@ -10,6 +10,7 @@ import ActivitiesScreen from './screens/ActivitiesScreen'
 import AdminApprovalScreen from './screens/AdminApprovalScreen'
 import AddLoanTypeScreen from './screens/AddLoanTypeScreen'
 import LoanApplicationScreen from './screens/LoanApplicationScreen'
+import PaymentScheduleScreen from './screens/PaymentScheduleScreen'
 
 
 const Stack = createNativeStackNavigator()
@@ -105,6 +106,14 @@ const MainNavigator = () => {
         <Stack.Screen
           name="LoanApplication"
           component={LoanApplicationScreen}
+          options={{
+            headerTitle: "",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
+          name="PaymentSchedule"
+          component={PaymentScheduleScreen}
           options={{
             headerTitle: "",
             headerBackTitle: "Back",

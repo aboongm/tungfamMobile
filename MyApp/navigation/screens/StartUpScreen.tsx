@@ -44,7 +44,7 @@ export default StartUpScreen
 const styles = StyleSheet.create({
   text: {
     marginTop: 15,
-    color: COLORS.tungfamLightBlue,
+    // color: COLORS.tungfamLightBlue,
     fontSize: 16
   }
 })

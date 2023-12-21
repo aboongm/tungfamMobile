@@ -52,7 +52,7 @@ export default AuthScreen
 const styles = StyleSheet.create({
   container: {
       flex: 1,
-      backgroundColor: COLORS.TungfamBgColor,
+      // backgroundColor: COLORS.TungfamBgColor,
     },
     linkContainer: {
       justifyContent: "center",
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
       marginVertical: 15,
     },
     link: {
-      color: COLORS.tungfamTorquoiseLight,
+      color: COLORS.TungfamBgColor,
       fontWeight: "500",
       fontSize: 16,
       letterSpacing: 0.3,
