@@ -35,6 +35,16 @@ const PaymentScheduleScreen = () => {
             payment: 'Rs 1700',
             description: 'Late',
         },
+        {
+            date: '21 Dec 2023',
+            payment: 'Rs 1700',
+            description: 'Late',
+        },
+        {
+            date: '21 Dec 2023',
+            payment: 'Rs 1700',
+            description: 'Late',
+        },
     ]);
 
     const [newPaymentDate, setNewPaymentDate] = useState(new Date());
@@ -68,8 +78,8 @@ const PaymentScheduleScreen = () => {
             <PageTitle text="Payment Schedule" />
             <View style={styles.infoContainer}>
                 <View style={styles.infoBlock}>
-                    <Text style={styles.infoText}>John Doe</Text>
-                    <Text style={styles.infoText}>L50000W48P1700</Text>
+                    <Text style={styles.infoHeader}>John Doe</Text>
+                    <Text style={styles.infoHeader}>L50000W48P1700</Text>
                 </View>
                 <View style={styles.infoBlock}>
                     <View style={styles.blockContainer}>
@@ -97,7 +107,10 @@ const PaymentScheduleScreen = () => {
                     <View style={styles.tableContainer}>
                         <View>
                             {payments.map((payment, index) => (
-                                <View style={styles.tableRow} key={index}>
+                                <View style={[
+                                        styles.tableBody,
+                                        index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                                    ]} key={index}>
                                     <Text style={styles.columnItem}>{payment.date}</Text>
                                     <Text style={styles.columnItem}>{payment.payment}</Text>
                                     <Text style={styles.columnItem}>{payment.description}</Text>
@@ -105,6 +118,7 @@ const PaymentScheduleScreen = () => {
                             ))}
                         </View>
 
+                        <Text style={styles.paymentHeader}>Add A Payment</Text>
                         <View style={styles.tableInput}>
                             <View style={styles.DatePayment}>
                                 <View style={styles.dateButton}>
@@ -138,10 +152,10 @@ const PaymentScheduleScreen = () => {
                                 value={remark}
                                 onChangeText={(text) => setRemark(text)}
                             />
+                            <TouchableOpacity onPress={addPayment}>
+                                <Text style={styles.addPaymentButton}>Add Payment</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={addPayment}>
-                            <Text style={styles.addPaymentButton}>Add Payment</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
@@ -174,6 +188,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 6,
         paddingVertical: 4,
         margin: 0,
+        backgroundColor: 'lightgrey'
     },
     blockContainer: {
         flexDirection: 'column',
@@ -181,6 +196,13 @@ const styles = StyleSheet.create({
         // borderColor: COLORS.tungfamGrey,
         margin: 0,
         padding: 0
+    },
+    infoHeader: {
+        fontSize: 18,
+        fontWeight: '600',
+        textAlign: "center",
+        margin: 0,
+        padding: 0,
     },
     infoText: {
         fontSize: 16,
@@ -191,7 +213,6 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         alignItems: 'center',
-        marginTop: 10,
         margin: 0,
         padding: 0,
     },
@@ -200,6 +221,16 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     tableRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+        backgroundColor: 'lightblue'
+    },
+    tableBody: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -218,12 +249,23 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 16,
     },
+    paymentHeader: {
+        flex: 1,
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginTop: 16,
+    },
     tableInput: {
         flexDirection: "column",
         marginTop: 10,
         justifyContent: 'space-between',
         width: '100%',
+        borderWidth: 1,
+        borderColor: 'grey',
+        borderRadius: 5,
+        padding: 10,
         // backgroundColor: 'green'
+        marginBottom: 40,
     },
     DatePayment: {
         flexDirection: 'row',
@@ -246,6 +288,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'grey',
         borderRadius: 5,
+        backgroundColor: "lightgrey"
         // paddingHorizontal: 10,
 
         // backgroundColor: 'red'
@@ -260,13 +303,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     addPaymentButton: {
+        fontSize: 16,
         backgroundColor: 'green',
         color: 'white',
         borderRadius: 5,
-        padding: 10,
+        padding: 14,
         textAlign: 'center',
         flex: 1,
-        marginBottom: 40,
+    },
+    evenRow: {
+        backgroundColor: COLORS.tungfamPurple,
+    },
+    oddRow: {
+        backgroundColor: 'lightgrey',
     },
 });
 

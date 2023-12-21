@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     text: {
-        fontFamily: 'bold',
+        fontFamily: '900',
         fontSize: 28,
-        color: COLORS.tungfamLightBlue,
+        color: COLORS.TungfamBgColor,
         letterSpacing: 0.3
     }
 })
