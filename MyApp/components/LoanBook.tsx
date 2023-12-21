@@ -14,7 +14,7 @@ const LoanBook = ({ firmDetails }) => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [loan, setLoan] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const [openItems, setOpenItems] = useState({});
 
     const toggleLoanBook = () => {
@@ -38,7 +38,7 @@ const LoanBook = ({ firmDetails }) => {
                     if (response.status === 200) {
                         const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
                         setLoan(response.data);
-                        setLoading(false);
+                        setIsLoading(false);
                     }
                 }
             }
@@ -101,9 +101,9 @@ const LoanBook = ({ firmDetails }) => {
         }));
     };
 
-    const goPaymentSchedule = (loanId: string | number) => {
-        console.log("loanItem: ", loanId);
-        navigation.navigate("PaymentSchedule")
+    const goPaymentSchedule = (loan: any) => {
+        console.log("loanItem in loanBook: ", loan);
+        navigation.navigate("PaymentSchedule", { loan });
         
     };
 
@@ -176,7 +176,7 @@ const LoanBook = ({ firmDetails }) => {
                 {isApproved && (
                     <Button
                         title="Go To PaymentSchedule"
-                        onPress={() => goPaymentSchedule(item.loan_id)}
+                        onPress={() => goPaymentSchedule(item)}
                     // disabled={!item.loanOfficer}
                     />
                 )}
@@ -189,7 +189,7 @@ const LoanBook = ({ firmDetails }) => {
             <TouchableOpacity onPress={toggleLoanBook}>
                 <Text style={styles.headerText}>LoanBook</Text>
             </TouchableOpacity>
-            {loading ? (
+            {isLoading ? (
                 <ActivityIndicator size="large" color={COLORS.primary} />
             ) : (
                 showDetails && (

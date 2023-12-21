@@ -23,7 +23,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
   const [userFirm, setUserFirm] = useState(null);
   const [firmDetails, setFirmDetails] = useState(null);
   const [employeeFirm, setEmployeeFirm] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,14 +55,14 @@ const ActivitiesScreen = ({ userRole, userId }) => {
 
               if (employeeFirmResponse.status === 200) {
                 setEmployeeFirm(employeeFirmResponse.data);
-                setLoading(false); // Data fetching complete
+                setIsLoading(false); // Data fetching complete
               }
             }
           }
         }
       } catch (error) {
         console.error(error);
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -170,7 +170,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
 
   return (
     <PageContainer style={styles.container}>
-      {loading ? (
+      {isLoading ? (
         <ActivityIndicator size="large" color={COLORS.primary} />
       ) :
         (

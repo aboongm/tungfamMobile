@@ -59,7 +59,8 @@ const LoanApplicationScreen = () => {
                     };
 
                     const loanTypesResponse = await axios.get(`${API_URL}/firms/${selectedFirm}/loantypes`, { headers });
-
+                    console.log("loanTypesResponse data: ", loanTypesResponse.data);
+                    
                     if (loanTypesResponse.status === 200) {
                         setLoanTypes(loanTypesResponse.data);
                     }
@@ -75,52 +76,46 @@ const LoanApplicationScreen = () => {
     }, [selectedFirm]);
 
     const handleSubmit = async () => {
-        const formData = {
-            loan_officer_id: null, // Will be set when loan is approved
-            lender_firm_id: selectedFirm,
-            borrower_id: await AsyncStorage.getItem('user_id'), // Get borrower ID from storage
-            loan_type: selectedLoanType,
-            start_date: new Date().toISOString().slice(0, 10), // Today's date
-        };
 
         const token = await AsyncStorage.getItem('token');
-        if (!token) {
-            throw new Error('Token not found');
+        const userId = await AsyncStorage.getItem('user_id');
+        if (!token && !userId) {
+            throw new Error('Token or userId not found');
         }
 
         const headers = {
             Authorization: `${token}`,
         };
 
+        const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
+        const updatedUserData = {
+            ...userResponse.data,
+            role: 'borrower',
+        };
+        
+        const formData = {
+            loan_officer_id: null, // Will be set when loan is approved
+            lender_firm_id: selectedFirm,
+            borrower_id: await AsyncStorage.getItem('user_id'), 
+            borrower_name: updatedUserData.name,
+            loan_type: selectedLoanType,
+            start_date: new Date().toISOString().slice(0, 10), // Today's date
+        };
+
         const response = await axios.post(`${API_URL}/loans`, formData, { headers });
         console.log("responseLoan: ", response.data);
+
+        const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
+        console.log("roleUpdate: ", updateRoleResponse.data);
         
-        if (response.status === 200) {
-            try {
-                const userId = await AsyncStorage.getItem('user_id');
+        if (updateRoleResponse.status === 200) {
+            disptach(updateUserRole(updatedUserData));
+        } else {
+            throw new Error('Failed to update user role');
+        }
 
-                if (!userId) {
-                    throw new Error('userId not found');
-                }
-
-                const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
-                const updatedUserData = {
-                    ...userResponse.data,
-                    role: 'borrower',
-                };
-
-                const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-                console.log("roleUpdate: ", updateRoleResponse.data);
-                
-                if (updateRoleResponse.status === 200) {
-                    disptach(updateUserRole(updatedUserData));
-                } else {
-                    throw new Error('Failed to update user role');
-                }
-            } catch (error) {
-                console.error(error);
-            }
-
+        
+        if (response.status === 200 && updateRoleResponse.status === 200) {
             navigation.navigate('Home');
             console.log('Firm was created successfully');
         } else {
@@ -130,7 +125,7 @@ const LoanApplicationScreen = () => {
 
     return (
         <PageContainer style={styles.container}>
-            <PageTitle text="Add LoanType" />
+            <PageTitle text="Apply For A Loan" />
             <ScrollView contentContainerStyle={styles.formContainer}>
                 <View style={{ width: '100%' }}>
                     <Text>Select Firm:</Text>

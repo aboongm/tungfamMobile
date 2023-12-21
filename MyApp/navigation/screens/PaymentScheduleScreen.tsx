@@ -13,43 +13,31 @@ import { updateUserRole } from '../../redux/slices/auth/authSlice';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
 
-const PaymentScheduleScreen = () => {
-
+const PaymentScheduleScreen = ({ route}) => {
+    
+    const { loan } = route.params;
+    console.log("loan: ", loan);
+    
     const disptach = useDispatch();
-    const [firms, setFirms] = useState([]);
     const [selectedFirm, setSelectedFirm] = useState(null);
     const [loanTypes, setLoanTypes] = useState([]);
     const [selectedLoanType, setSelectedLoanType] = useState('');
     const [date, setDate] = useState(new Date())
     const [open, setOpen] = useState(false)
 
-    const [payments, setPayments] = useState([
-        // Dummy data for payments (replace this with your actual data structure)
-        {
-            date: '21 Dec 2023',
-            payment: 'Rs 1700',
-            description: 'On time',
-        },
-        {
-            date: '21 Dec 2023',
-            payment: 'Rs 1700',
-            description: 'Late',
-        },
-        {
-            date: '21 Dec 2023',
-            payment: 'Rs 1700',
-            description: 'Late',
-        },
-        {
-            date: '21 Dec 2023',
-            payment: 'Rs 1700',
-            description: 'Late',
-        },
-    ]);
-
     const [newPaymentDate, setNewPaymentDate] = useState(new Date());
     const [selectedPayment, setSelectedPayment] = useState('');
     const [remark, setRemark] = useState('');
+    const [payments, setPayments] = useState([]);
+
+    const fetchPayments = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/loans/:loanId/paymentschedules`); // Replace :loanId with the actual loan ID
+            setPayments(response.data); // Set payments state with data fetched from the API
+        } catch (error) {
+            console.error('Error fetching payments:', error);
+        }
+    };
 
     const addPayment = () => {
         console.log("payments: ", payments);
@@ -78,8 +66,8 @@ const PaymentScheduleScreen = () => {
             <PageTitle text="Payment Schedule" />
             <View style={styles.infoContainer}>
                 <View style={styles.infoBlock}>
-                    <Text style={styles.infoHeader}>John Doe</Text>
-                    <Text style={styles.infoHeader}>L50000W48P1700</Text>
+                    <Text style={styles.infoHeader}>Wanhengbam Tomba</Text>
+                    <Text style={styles.infoHeader}>LN50000WK48PY1700</Text>
                 </View>
                 <View style={styles.infoBlock}>
                     <View style={styles.blockContainer}>
@@ -100,7 +88,7 @@ const PaymentScheduleScreen = () => {
             <View style={styles.tableRow}>
                 <Text style={styles.columnHeader}>Date</Text>
                 <Text style={styles.columnHeader}>Payment</Text>
-                <Text style={styles.columnHeader}>Description</Text>
+                <Text style={styles.columnHeader}>Remarks</Text>
             </View>
             <ScrollView contentContainerStyle={styles.formContainer}>
                 <View style={{ width: '100%' }}>
@@ -198,7 +186,7 @@ const styles = StyleSheet.create({
         padding: 0
     },
     infoHeader: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '600',
         textAlign: "center",
         margin: 0,

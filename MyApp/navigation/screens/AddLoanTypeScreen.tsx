@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import PageTitle from '../../components/PageTitle';
@@ -16,19 +16,23 @@ const AddLoanType = ({ route }) => {
     console.log("firmId: ", firmId);
     
     const disptach = useDispatch();
-    const [amount, setAmount] = useState(50000);
+    const [loantype, setLoantype] = useState("LN10000WK17PY700");
+    const [amount, setAmount] = useState(10000);
     const [paymentType, setPaymentType] = useState('week');
-    const [payInstallment, setPayInstallment] = useState(1700);
-    const [totalPayment, setTotalPayment] = useState(48);
+    const [payInstallment, setPayInstallment] = useState(700);
+    const [totalPayment, setTotalPayment] = useState(11900);
+    const [noOfPayment, setNoOfPayment] = useState(17);
 
     const navigation = useNavigation();
 
     const handleSubmit = async () => {
         const formData = {
+            loan_type: loantype,
             amount,
             payment_type: paymentType,
-            pay_installment: payInstallment,
-            total_payment: totalPayment,
+            installment: payInstallment,
+            total_payable: totalPayment,
+            no_of_payments: totalPayment,
         };
         console.log("formData: ", formData);
         
@@ -43,45 +47,28 @@ const AddLoanType = ({ route }) => {
         };
 
         const response = await axios.post(`${API_URL}/firms/${firmId}/loantypes`, formData, { headers });
-        console.log('response', response);
         
         if (response.status === 200) {
-            try {
-                const userId = await AsyncStorage.getItem('user_id');
-
-                if (!userId) {
-                    throw new Error('userId not found');
-                }
-
-                const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
-                const updatedUserData = {
-                    ...userResponse.data,
-                    role: 'firmOwner',
-                };
-
-                const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-
-                if (updateRoleResponse.status === 200) {
-                    disptach(updateUserRole(updatedUserData));
-                } else {
-                    throw new Error('Failed to update user role');
-                }
-            } catch (error) {
-                console.error(error);
-            }
 
             navigation.navigate('Home');
-            console.log('Firm was created successfully');
+            Alert.alert("LoanType was created successfully")
+            console.log('LoanType was created successfully');
         } else {
-            throw new Error('Failed to create firm');
+            throw new Error('Failed to create LoanType');
         }
     };
 
     return (
         <PageContainer style={styles.container}>
-            <PageTitle text="Add LoanType" />
+            <PageTitle text="Add A LoanType" />
             <ScrollView contentContainerStyle={styles.formContainer}>
             <View style={{ width: '100%' }}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="LN20000WK17PY1400"
+                    value={loantype}
+                    onChangeText={setLoantype}
+                />
                 <TextInput
                     style={styles.input}
                     placeholder="Amount"
@@ -109,8 +96,15 @@ const AddLoanType = ({ route }) => {
                     onChangeText={setTotalPayment}
                     keyboardType="numeric"
                 />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Number of Payments"
+                    value={noOfPayment.toString()}
+                    onChangeText={setNoOfPayment}
+                    keyboardType="numeric"
+                />
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Add LoanType</Text>
+                    <Text style={styles.buttonText}>Add A LoanType</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>

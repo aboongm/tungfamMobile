@@ -63,7 +63,8 @@ export const signUp = (
             const userResponse = await dispatch<any>(
               getUserData(response.data.user.user_id),
             );
-
+              console.log("userResponse: ", userResponse);
+              
             if (userResponse) {
               const userData: UserData = userResponse; 
 

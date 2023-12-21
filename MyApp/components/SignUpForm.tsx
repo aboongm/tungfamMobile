@@ -70,6 +70,7 @@ const SignUpForm = () => {
       )
       setError(null);
       await dispatch(action);
+      setIsLoading(false);
     } catch (error) {
       setError(error.message);
       setIsLoading(false);
