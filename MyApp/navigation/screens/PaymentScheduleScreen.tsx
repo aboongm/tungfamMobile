@@ -20,9 +20,6 @@ const PaymentScheduleScreen = ({ route }) => {
     // console.log(loanList);
 
 
-    const [selectedFirm, setSelectedFirm] = useState(null);
-    const [loanTypes, setLoanTypes] = useState([]);
-    const [selectedLoanType, setSelectedLoanType] = useState('');
     const [date, setDate] = useState(new Date())
     const [open, setOpen] = useState(false)
 
@@ -39,16 +36,17 @@ const PaymentScheduleScreen = ({ route }) => {
             }
 
             const response = await axios.get(`${API_URL}/loans/:loanId/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
-            console.log("fetchPayments: ", response.data)
+            // console.log("fetchPayments: ", response.data)
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
         }
     };
 
-    const paidAmount = payments.length * loan.installment;
+    
+    const filteredPayments = payments.filter(item => item.loan_id === loan.loan_id)
+    const paidAmount = (filteredPayments.length + 1) * loan.installment;
     const outStandingPayable = loan.total_payable - paidAmount;
-    console.log(paidAmount, outStandingPayable);
     
     const addPayment = async () => {
         try {
@@ -69,6 +67,7 @@ const PaymentScheduleScreen = ({ route }) => {
                 installment: loan.installment,
                 remarks: remark || 'No remarks provided'
             }
+
             const response = await axios.post(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, formData, { headers })
             if (response.status === 200) {
                 const updatedPayments = [...payments, response.data];
@@ -90,8 +89,24 @@ const PaymentScheduleScreen = ({ route }) => {
     useEffect(() => {
         fetchPayments()
     }, []);
-    // console.log("payments: ", payments[payments.length -1].paid_amount);
     
+    const takePermission = () => {
+        Alert.alert(
+            'Confirm Payment',
+            `Are you sure you want to add this payment for ${date}?`,
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel'
+                },
+                {
+                    text: 'OK',
+                    onPress: addPayment 
+                }
+            ]
+        );
+    }
+
     return (
         <PageContainer style={styles.container}>
             <PageTitle text="Payment Schedule" />
@@ -107,11 +122,11 @@ const PaymentScheduleScreen = ({ route }) => {
                     </View>
                     <View style={styles.blockContainer}>
                         <Text style={styles.infoText}>PaidAmount</Text>
-                        <Text style={styles.infoText}>Rs {payments[payments.length - 1]?.paid_amount || 0}</Text>
+                        <Text style={styles.infoText}>Rs {filteredPayments[filteredPayments.length - 1]?.paid_amount || 0}</Text>
                     </View>
                     <View style={styles.blockContainer}>
                         <Text style={styles.infoText}>OutsPayable</Text>
-                        <Text style={styles.infoText}>Rs {payments[payments.length - 1]?.outstanding_payable}</Text>
+                        <Text style={styles.infoText}>Rs {filteredPayments[filteredPayments.length - 1]?.outstanding_payable || loan.total_payable} </Text>
                     </View>
                 </View>
             </View>
@@ -125,7 +140,7 @@ const PaymentScheduleScreen = ({ route }) => {
                 <View style={{ width: '100%' }}>
                     <View style={styles.tableContainer}>
                         <View>
-                            {payments.map((payment, index) => (
+                            {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
                                 <View style={[
                                     styles.tableBody,
                                     index % 2 === 0 ? styles.evenRow : styles.oddRow,
@@ -179,7 +194,7 @@ const PaymentScheduleScreen = ({ route }) => {
                                 value={remark}
                                 onChangeText={(text) => setRemark(text)}
                             />
-                            <TouchableOpacity onPress={addPayment}>
+                            <TouchableOpacity onPress={takePermission}>
                                 <Text style={styles.addPaymentButton}>Add Payment</Text>
                             </TouchableOpacity>
                         </View>

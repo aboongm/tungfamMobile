@@ -117,7 +117,10 @@ const LoanBook = ({ firmDetails }) => {
         return (
             <View style={styles.container}>
                 <TouchableOpacity onPress={() => toggleLoanItem(item.loan_id)}>
-                    <Text style={styles.loanItem}>{`${item.start_date}`} | {`${item.loan_type}`} | {`${item.status}`}</Text>
+                    <View style={styles.loanItemContainer}>
+                        <Text style={styles.loanItem}>{`${item.borrower_name}`}</Text>
+                        <Text style={styles.loanItem}>{`${item.loan_type}`}</Text>
+                    </View>
                 </TouchableOpacity>
 
                 {isOpen && (
@@ -226,12 +229,16 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         paddingHorizontal: 10,
     },
+    loanItemContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        // backgroundColor: 'red',
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+    },
     loanItem: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginVertical: 5,
-        borderWidth: 1,
-        borderColor: COLORS.tungfamGrey,
         paddingVertical: 6,
         paddingHorizontal: 10,
     },
