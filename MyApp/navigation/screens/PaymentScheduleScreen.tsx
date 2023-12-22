@@ -2,23 +2,24 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert } from 'react-native';
 
 import PageTitle from '../../components/PageTitle';
 import PageContainer from '../../components/PageContainer';
 import { COLORS } from '../../constants';
-import { useNavigation } from '@react-navigation/native';
-import { updateUserRole } from '../../redux/slices/auth/authSlice';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
 
-const PaymentScheduleScreen = ({ route}) => {
-    
+const PaymentScheduleScreen = ({ route }) => {
+
     const { loan } = route.params;
-    console.log("loan: ", loan);
-    
-    const disptach = useDispatch();
+    const loanList = [{
+        installment: 'Choose',
+    }];
+    loanList.push(loan)
+    // console.log(loanList);
+
+
     const [selectedFirm, setSelectedFirm] = useState(null);
     const [loanTypes, setLoanTypes] = useState([]);
     const [selectedLoanType, setSelectedLoanType] = useState('');
@@ -29,58 +30,88 @@ const PaymentScheduleScreen = ({ route}) => {
     const [selectedPayment, setSelectedPayment] = useState('');
     const [remark, setRemark] = useState('');
     const [payments, setPayments] = useState([]);
-
+   
     const fetchPayments = async () => {
         try {
-            const response = await axios.get(`${API_URL}/loans/:loanId/paymentschedules`); // Replace :loanId with the actual loan ID
-            setPayments(response.data); // Set payments state with data fetched from the API
+            const token = await AsyncStorage.getItem("token")
+            const headers = {
+                Authorization: `${token}`
+            }
+
+            const response = await axios.get(`${API_URL}/loans/:loanId/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
+            console.log("fetchPayments: ", response.data)
+            setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
         }
     };
 
-    const addPayment = () => {
-        console.log("payments: ", payments);
-        
-        const newPayment = {
-            date: newPaymentDate.toLocaleDateString(), 
-            payment: selectedPayment, 
-            description: remark || 'No remarks provided', 
-        };
+    const paidAmount = payments.length * loan.installment;
+    const outStandingPayable = loan.total_payable - paidAmount;
+    console.log(paidAmount, outStandingPayable);
+    
+    const addPayment = async () => {
+        try {
+            const token = await AsyncStorage.getItem("token")
+            const headers = {
+                Authorization: `${token}`
+            }
 
-        setPayments([...payments, newPayment]);
-        console.log("payments: ", payments);
-        console.log("newPayment: ", newPayment);
+            const formData = {
+                loan_id: loan.loan_id,
+                loan_type: loan.loan_type,
+                borrower_name: loan.borrower_name,
+                no_of_payments: loan.no_of_payments,
+                total_payable: loan.total_payable,
+                paid_amount: paidAmount || 0,
+                outstanding_payable: outStandingPayable || loan.total_payable,
+                date: newPaymentDate.toLocaleDateString(),
+                installment: loan.installment,
+                remarks: remark || 'No remarks provided'
+            }
+            const response = await axios.post(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, formData, { headers })
+            if (response.status === 200) {
+                const updatedPayments = [...payments, response.data];
+                setPayments(updatedPayments);
 
-        setNewPaymentDate(new Date());
-        setSelectedPayment('');
-        setRemark('');
+                setNewPaymentDate(new Date());
+                setSelectedPayment('');
+                setRemark('');
+                Alert.alert("Successfully created payment!")
+                console.log("Successfully created payment!")
+            }
+
+        } catch (error) {
+            Alert.alert("Failed to create payment!")
+        }
     };
 
 
     useEffect(() => {
-    }, [selectedFirm]);
-
+        fetchPayments()
+    }, []);
+    // console.log("payments: ", payments[payments.length -1].paid_amount);
+    
     return (
         <PageContainer style={styles.container}>
             <PageTitle text="Payment Schedule" />
             <View style={styles.infoContainer}>
                 <View style={styles.infoBlock}>
-                    <Text style={styles.infoHeader}>Wanhengbam Tomba</Text>
-                    <Text style={styles.infoHeader}>LN50000WK48PY1700</Text>
+                    <Text style={styles.infoHeader}>{loan.borrower_name}</Text>
+                    <Text style={styles.infoHeader}>{loan.loan_type}</Text>
                 </View>
                 <View style={styles.infoBlock}>
                     <View style={styles.blockContainer}>
-                        <Text style={styles.infoText}>NoOfPayments</Text>
-                        <Text style={styles.infoText}>12</Text>
+                        <Text style={styles.infoText}>TotalPayable</Text>
+                        <Text style={styles.infoText}>{loan.total_payable}</Text>
                     </View>
                     <View style={styles.blockContainer}>
-                        <Text style={styles.infoText}>TotalPayment</Text>
-                        <Text style={styles.infoText}>$12000</Text>
+                        <Text style={styles.infoText}>PaidAmount</Text>
+                        <Text style={styles.infoText}>Rs {payments[payments.length - 1]?.paid_amount || 0}</Text>
                     </View>
                     <View style={styles.blockContainer}>
-                        <Text style={styles.infoText}>OutPayment</Text>
-                        <Text style={styles.infoText}>Rs 6000</Text>
+                        <Text style={styles.infoText}>OutsPayable</Text>
+                        <Text style={styles.infoText}>Rs {payments[payments.length - 1]?.outstanding_payable}</Text>
                     </View>
                 </View>
             </View>
@@ -96,12 +127,18 @@ const PaymentScheduleScreen = ({ route}) => {
                         <View>
                             {payments.map((payment, index) => (
                                 <View style={[
-                                        styles.tableBody,
-                                        index % 2 === 0 ? styles.evenRow : styles.oddRow,
-                                    ]} key={index}>
-                                    <Text style={styles.columnItem}>{payment.date}</Text>
-                                    <Text style={styles.columnItem}>{payment.payment}</Text>
-                                    <Text style={styles.columnItem}>{payment.description}</Text>
+                                    styles.tableBody,
+                                    index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                                ]} key={index}>
+                                    <Text style={styles.columnItem}>
+                                        {new Date(payment.date).toLocaleDateString('en-GB', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric',
+                                        })}
+                                    </Text>
+                                    <Text style={styles.columnItem}>Rs {payment.installment}</Text>
+                                    <Text style={styles.columnItem}>{payment.remarks}</Text>
                                 </View>
                             ))}
                         </View>
@@ -129,8 +166,10 @@ const PaymentScheduleScreen = ({ route}) => {
                                     selectedValue={selectedPayment}
                                     onValueChange={(itemValue) => setSelectedPayment(itemValue)}
                                 >
-                                    <Picker.Item label="Rs 1700" value="1700" />
-                                    <Picker.Item label="Rs 1400" value="1400" />
+                                    {loanList.map((type, index) => (
+                                        <Picker.Item key={index} label={type.installment} value={type.installment} />
+                                    ))}
+                                    {/* <Picker.Item label={loan.installment} value={loan.installment} /> */}
                                 </Picker>
                             </View>
 

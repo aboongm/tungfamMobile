@@ -64,12 +64,14 @@ const LoanBook = ({ firmDetails }) => {
                 loan_officer_id: item.loanOfficer,
                 status: 'approved',
             };
-
+            
             const token = await AsyncStorage.getItem('token');
             const headers = {
                 Authorization: `${token}`,
             };
+            console.log("Approved");
             const response = await axios.put(`${API_URL}/loans/${item.loan_id}`, updatedLoan, { headers });
+            console.log("response: ", response);
             if (response.status === 200) {
                 Alert.alert("Loan approved successfully!")
                 console.log('Loan approved successfully!');

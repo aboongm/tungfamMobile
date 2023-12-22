@@ -43,7 +43,7 @@ const LoanType = ({ firmDetails }) => {
 
     useEffect(() => {
         fetchLoanTypes();
-    }, [firmDetails, addLoanType]);
+    }, [firmDetails]);
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>

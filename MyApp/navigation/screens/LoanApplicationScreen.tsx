@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import PageTitle from '../../components/PageTitle';
@@ -19,7 +19,13 @@ const LoanApplicationScreen = () => {
     const [selectedFirm, setSelectedFirm] = useState(null);
     const [loanTypes, setLoanTypes] = useState([]);
     const [selectedLoanType, setSelectedLoanType] = useState('');
-
+    const [borrowerName, setBorrowerName] = useState('');
+    const [noOfPayments, setNoOfPayments] = useState('');
+    const [paymentType, setPaymentType] = useState('');
+    const [installment, setInstallment] = useState('');
+    const [amount, setAmount] = useState('');
+    const [totalPayable, setTotalPayable] = useState('');
+    
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -45,9 +51,9 @@ const LoanApplicationScreen = () => {
         };
 
         const fetchLoanTypes = async () => {
-            console.log("selectedFirm: ", selectedFirm);
+            // console.log("selectedFirm: ", selectedFirm);
             
-            if (selectedFirm !== null) {
+            if (selectedFirm !== null && loanTypes.length === 0) {
                 try {
                     const token = await AsyncStorage.getItem('token');
                     if (!token) {
@@ -59,7 +65,7 @@ const LoanApplicationScreen = () => {
                     };
 
                     const loanTypesResponse = await axios.get(`${API_URL}/firms/${selectedFirm}/loantypes`, { headers });
-                    console.log("loanTypesResponse data: ", loanTypesResponse.data);
+                    // console.log("loanTypesResponse data: ", loanTypesResponse.data);
                     
                     if (loanTypesResponse.status === 200) {
                         setLoanTypes(loanTypesResponse.data);
@@ -74,6 +80,22 @@ const LoanApplicationScreen = () => {
         fetchFirms();
         fetchLoanTypes();
     }, [selectedFirm]);
+
+    const handleLoanTypeChange = (itemValue) => {
+        setSelectedLoanType(itemValue);
+        
+        // Find the selected loan type object from loanTypes array
+        const selectedType = loanTypes.find((type) => type.loan_type_id === itemValue);
+        
+        // Update the states based on the selected loan type
+        if (selectedType) {
+            setNoOfPayments(selectedType.no_of_payments);
+            setPaymentType(selectedType.payment_type);
+            setInstallment(selectedType.installment);
+            setAmount(selectedType.amount);
+            setTotalPayable(selectedType.total_payable);
+        }
+    };
 
     const handleSubmit = async () => {
 
@@ -92,21 +114,30 @@ const LoanApplicationScreen = () => {
             ...userResponse.data,
             role: 'borrower',
         };
+
+        const selectedType = loanTypes.find((type) => type.loan_type_id === selectedLoanType);
         
         const formData = {
             loan_officer_id: null, // Will be set when loan is approved
             lender_firm_id: selectedFirm,
             borrower_id: await AsyncStorage.getItem('user_id'), 
+            loan_type: selectedType.loan_type,
+            start_date: new Date().toISOString().slice(0, 10), 
             borrower_name: updatedUserData.name,
-            loan_type: selectedLoanType,
-            start_date: new Date().toISOString().slice(0, 10), // Today's date
+            no_of_payments: noOfPayments,
+            payment_type: paymentType,
+            total_payable: totalPayable,
+            amount: amount,
+            installment: installment
         };
-
+        console.log("formData: ", formData);
+        
+        
         const response = await axios.post(`${API_URL}/loans`, formData, { headers });
-        console.log("responseLoan: ", response.data);
+        // console.log("responseLoan: ", response.data);
 
         const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-        console.log("roleUpdate: ", updateRoleResponse.data);
+        // console.log("roleUpdate: ", updateRoleResponse.data);
         
         if (updateRoleResponse.status === 200) {
             disptach(updateUserRole(updatedUserData));
@@ -117,7 +148,8 @@ const LoanApplicationScreen = () => {
         
         if (response.status === 200 && updateRoleResponse.status === 200) {
             navigation.navigate('Home');
-            console.log('Firm was created successfully');
+            Alert.alert("Loan was created successfully")
+            console.log('Loan was created successfully');
         } else {
             throw new Error('Failed to create firm');
         }
@@ -139,15 +171,27 @@ const LoanApplicationScreen = () => {
                         ))}
                     </Picker>
 
-                    <Text>Select Loan Amount (in Rs):</Text>
+                    <Text>Select A LoanType:</Text>
                     <Picker
                         selectedValue={selectedLoanType}
-                        onValueChange={(itemValue) => setSelectedLoanType(itemValue)}
+                        onValueChange={handleLoanTypeChange} // Update the handler to handle loan type change
                     >
                         {loanTypes.map((type) => (
-                            <Picker.Item key={type.loan_type_id} label={type.amount} value={type.loan_type_id} />
+                            <Picker.Item key={type.loan_type_id} label={type.loan_type} value={type.loan_type_id} />
                         ))}
                     </Picker>
+
+                    <Text>Loan Amount</Text>
+                    <Text>{amount}</Text>
+
+                    <Text>Installment</Text>
+                    <Text>{installment}</Text>
+
+                    <Text>Number of Payments</Text>
+                    <Text>{noOfPayments}</Text>
+
+                    <Text>Payment Type</Text>
+                    <Text>{paymentType}</Text>
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Apply for Loan</Text>

@@ -32,7 +32,7 @@ const AddLoanType = ({ route }) => {
             payment_type: paymentType,
             installment: payInstallment,
             total_payable: totalPayment,
-            no_of_payments: totalPayment,
+            no_of_payments: noOfPayment,
         };
         console.log("formData: ", formData);
         

@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     paddingTop: 4,
-    paddingBottom: 20
+    paddingBottom: 120,
   },
   title: {
     fontFamily: 'roboto',
