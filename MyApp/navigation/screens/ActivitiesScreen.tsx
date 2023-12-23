@@ -14,6 +14,7 @@ import LoanType from '../../components/LoanType';
 import Employee from '../../components/Employee';
 import LoanBook from '../../components/LoanBook';
 import ApplyLoan from '../../components/ApplyLoan';
+import MyLoan from '../../components/MyLoan';
 
 const ActivitiesScreen = ({ userRole, userId }) => {
 
@@ -145,10 +146,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
       case 'borrower':
         return (
           <View>
-            {/* Actions for borrower */}
-            <Text>View LoanBook</Text>
-            <Text>View LoanType</Text>
-            <Text>Read PaymentSchedule</Text>
+            <MyLoan userId={userId} />
           </View>
         );
       case 'user':
