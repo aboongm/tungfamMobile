@@ -12,7 +12,7 @@ const ApplyLoan = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.green,
+    backgroundColor: COLORS.TungfamBgColor,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

@@ -216,10 +216,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   activitiesContainer: {
-    // backgroundColor: COLORS.lightGrey,
-    padding: 12,
+    marginTop: 30,
+    padding: 10,
     borderRadius: 8,
-    borderWidth: 1
+    borderWidth: 1,
+
   },
   userInfo: {
     backgroundColor: '#fff',

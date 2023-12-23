@@ -20,8 +20,16 @@ const MyLoan = ({ userId }) => {
         setShowDetails(!showDetails);
     };
 
-    const togglePaymentSchedule = () => {
-        setShowPaymentSchedule(!showPaymentSchedule);
+    const togglePaymentSchedule = (loanId) => {
+        if (selectedLoanId === loanId) {
+            setShowPaymentSchedule(false);
+            setSelectedLoanId(null);
+        } else {
+            setSelectedLoanId(loanId);
+            setShowPaymentSchedule(true);
+        }
+
+        // setShowPaymentSchedule(!showPaymentSchedule);
     };
 
     const fetchLoans = async () => {
@@ -57,25 +65,21 @@ const MyLoan = ({ userId }) => {
                 Authorization: `${token}`
             }
 
-            const response = await axios.get(`${API_URL}/loans/:loanId/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
-            // console.log("fetchPayments: ", response.data)
+            const response = await axios.get(`${API_URL}/loans/${selectedLoanId}/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
+            console.log("fetchPayments: ", response.data)
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
         }
     };
 
-
-    const filteredPayments = payments.filter(item => item.loan_id === loan.loan_id)
-    const paidAmount = (filteredPayments.length + 1) * loan.installment;
-    const outStandingPayable = loan.total_payable - paidAmount;
-
-
+    const filteredLoan = loan.filter(item => item.borrower_id === userId)
+    const filteredPayments = payments.filter(item => item.loan_id === selectedLoanId);
 
     useEffect(() => {
         fetchLoans()
         fetchPayments()
-    }, []);
+    }, [selectedLoanId]);
 
     const toggleLoanItem = (loanId: string | number) => {
         setOpenItems((prevOpenItems) => ({
@@ -84,14 +88,15 @@ const MyLoan = ({ userId }) => {
         }));
     };
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item, index }) => {
         const isOpen = openItems[item.loan_id];
+        const isCurrentLoanSelected = selectedLoanId === item.loan_id;
 
         return (
             <View style={{ marginBottom: 10 }}>
                 <TouchableOpacity onPress={() => toggleLoanItem(item.loan_id)}>
                     <View style={styles.loanItemContainer}>
-                        <Text style={styles.loanItem}>{`${item.status.toUpperCase()}`}</Text>
+                        <Text style={styles.loanItem}>{`${index + 1}.`} {`${item.status.toUpperCase()}`}</Text>
                         <Text style={styles.loanItem}>Rs {`${item.amount}`}</Text>
                         <Text style={styles.loanItem}>{new Date(item.created_at).toLocaleDateString('en-US', {
                             year: 'numeric',
@@ -117,16 +122,16 @@ const MyLoan = ({ userId }) => {
                     </View>
                 )}
 
-                <TouchableOpacity onPress={togglePaymentSchedule}>
-                    <Text style={styles.payScheduleText}>PaymentSchedule</Text>
+                <TouchableOpacity onPress={() => togglePaymentSchedule(item.loan_id)}>
+                    <Text style={styles.payScheduleText}>PAYMENT SCHEDULE</Text>
                 </TouchableOpacity>
-                {showPaymentSchedule && (
-                    <View>
+                {isCurrentLoanSelected && showPaymentSchedule && (
+                    <View style={styles.container}>
                         <View style={styles.infoContainer}>
                             <View style={styles.infoBlock}>
                                 <View style={styles.blockContainer}>
                                     <Text style={styles.infoText}>TotalPayable</Text>
-                                    <Text style={styles.infoText}>{loan.total_payable}</Text>
+                                    <Text style={styles.infoText}>{item.total_payable}</Text>
                                 </View>
                                 <View style={styles.blockContainer}>
                                     <Text style={styles.infoText}>PaidAmount</Text>
@@ -148,7 +153,9 @@ const MyLoan = ({ userId }) => {
                             <View style={{ width: '100%' }}>
                                 <View style={styles.tableContainer}>
                                     <View>
-                                        {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
+                                        {payments
+                                            .filter(item => item.loan_id === selectedLoanId)
+                                            .map((payment, index) => (
                                             <View style={[
                                                 styles.tableBody,
                                                 index % 2 === 0 ? styles.evenRow : styles.oddRow,
@@ -187,7 +194,7 @@ const MyLoan = ({ userId }) => {
 
                     <FlatList
                         scrollEnabled={false}
-                        data={loan}
+                        data={filteredLoan}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.loan_id.toString()}
                     />
@@ -201,10 +208,7 @@ const MyLoan = ({ userId }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: COLORS.tungfamGrey,
-        margin: 4,
-        padding: 10
+        padding: 0
     },
     headerText: {
         fontSize: 20,
