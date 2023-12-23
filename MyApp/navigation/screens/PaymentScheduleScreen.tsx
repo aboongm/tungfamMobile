@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable } from 'react-native';
 
 import PageTitle from '../../components/PageTitle';
 import PageContainer from '../../components/PageContainer';
@@ -91,9 +91,12 @@ const PaymentScheduleScreen = ({ route }) => {
     }, []);
     
     const takePermission = () => {
+        const date = new Date();
+        const localizedDate = date.toLocaleString(); 
+
         Alert.alert(
             'Confirm Payment',
-            `Are you sure you want to add this payment for ${date}?`,
+            `Are you sure you want to add this payment for ${localizedDate}?`,
             [
                 {
                     text: 'Cancel',
@@ -161,9 +164,12 @@ const PaymentScheduleScreen = ({ route }) => {
                         <Text style={styles.paymentHeader}>Add A Payment</Text>
                         <View style={styles.tableInput}>
                             <View style={styles.DatePayment}>
-                                <View style={styles.dateButton}>
-                                    <Button color="green" title="Pick Date" onPress={() => setOpen(true)} />
-                                </View>
+                                {/* <View style={styles.dateButton}>
+                                    <Button color={COLORS.TungfamBgColor} title="Pick Date" onPress={() => setOpen(true)} />
+                                </View> */}
+                                <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
+                                    <Text style={styles.button}>Pick Date</Text>
+                                </Pressable>
                                 <DatePicker
                                     modal
                                     open={open}
@@ -230,7 +236,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 6,
         paddingVertical: 4,
         margin: 0,
-        backgroundColor: 'lightgrey'
+        backgroundColor: 'lightgrey',
+        elevation: 5
     },
     blockContainer: {
         flexDirection: 'column',
@@ -270,7 +277,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
-        backgroundColor: 'lightblue'
+        backgroundColor: COLORS.TungfamBgColor,
+        elevation: 5
     },
     tableBody: {
         flexDirection: 'row',
@@ -280,11 +288,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
+        elevation: 5
     },
     columnHeader: {
         flex: 1,
         fontWeight: 'bold',
         fontSize: 18,
+        color: 'white'
     },
     columnItem: {
         flex: 1,
@@ -315,7 +325,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     dateButton: {
-        backgroundColor: "green",
+        backgroundColor: COLORS.TungfamBgColor,
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -324,16 +334,19 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         margin: 0,
         padding: 0,
+        elevation: 5
+    },
+    button: {
+        color: 'white',
+        fontSize: 16,
     },
     paymentPicker: {
         flex: 1,
         borderWidth: 1,
         borderColor: 'grey',
         borderRadius: 5,
-        backgroundColor: "lightgrey"
-        // paddingHorizontal: 10,
-
-        // backgroundColor: 'red'
+        backgroundColor: "lightgrey",
+        elevation: 5
     },
     descriptionInput: {
         flex: 2,
@@ -346,18 +359,19 @@ const styles = StyleSheet.create({
     },
     addPaymentButton: {
         fontSize: 16,
-        backgroundColor: 'green',
+        backgroundColor: COLORS.TungfamBgColor,
         color: 'white',
         borderRadius: 5,
         padding: 14,
         textAlign: 'center',
         flex: 1,
+        elevation: 5
     },
     evenRow: {
         backgroundColor: COLORS.tungfamPurple,
     },
     oddRow: {
-        backgroundColor: 'lightgrey',
+        backgroundColor: 'lightblue',
     },
 });
 

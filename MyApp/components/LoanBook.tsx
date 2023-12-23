@@ -182,7 +182,6 @@ const LoanBook = ({ firmDetails }) => {
                     <Button
                         title="Go To PaymentSchedule"
                         onPress={() => goPaymentSchedule(item)}
-                    // disabled={!item.loanOfficer}
                     />
                 )}
             </View>
