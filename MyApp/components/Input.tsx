@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "100%",
-    backgroundColor: COLORS.tungfamWhite,
+    backgroundColor: 'rgba(52, 152, 219, 0.20)',
     paddingHorizontal: 10,
     paddingVertical: 0,
     borderRadius: 2,

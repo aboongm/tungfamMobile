@@ -16,7 +16,7 @@ import { updateLoggedInSignInUserData } from '../../redux/slices/auth/authSlice'
 import { reducer } from '../../redux/reducers/formReducer';
 import ProfileImage from '../../components/ProfileImage';
 import AadharImagePicker from '../../components/AadharImagePicker';
-
+import LinearGradient from 'react-native-linear-gradient';
 
 const ProfileScreen = props => {
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ const ProfileScreen = props => {
   // const address = userData.address || '';
 
   const initialState = {
-    inputValues: { name, aadhar_image:  mobile, address, password },
+    inputValues: { name, aadhar_image: mobile, address, password },
     inputValidities: { name: undefined, email: undefined },
     formIsValid: false,
   };
@@ -88,9 +88,15 @@ const ProfileScreen = props => {
 
 
   return (
-    <PageContainer style={styles.container}>
-      <PageTitle text="Personal" />
-      <View style={styles.logOutButtonContainer}>
+    <LinearGradient
+    colors={['rgba(255, 255, 255, 0.8)', 'rgba(52, 152, 219, 0.65)']} 
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <PageContainer style={styles.container}>
+        <PageTitle text="Personal" />
+        <View style={styles.logOutButtonContainer}>
           <SubmitButton
             title="Logout"
             onPress={() => dispatch<any>(userLogout())}
@@ -98,42 +104,42 @@ const ProfileScreen = props => {
             color={COLORS.TungfamBgColor}
           />
         </View>
-      <ScrollView contentContainerStyle={styles.formContainer}>
-        <View style={styles.profileContainer}>
-          <ProfileImage size={100} userId={userData.userId} uri={userData.profilePicture} />
+        <ScrollView contentContainerStyle={styles.formContainer}>
+          <View style={styles.profileContainer}>
+            <ProfileImage size={100} userId={userData.userId} uri={userData.profilePicture} />
 
-          <View style={{ marginTop: 20 }}>
-            {showSuccessMessage && <Text>Saved</Text>}
-            <View style={styles.infoContainer}>
-              <View style={styles.iconTextContainer}>
-                <FontAwesome name="user-o" size={24} color={COLORS.tungfamDarkBlue} />
-                <Text style={styles.iconText}>Username: {userData.user_name}</Text>
+            <View style={{ marginTop: 20 }}>
+              {showSuccessMessage && <Text>Saved</Text>}
+              <View style={styles.infoContainer}>
+                <View style={styles.iconTextContainer}>
+                  <FontAwesome name="user-o" size={24} color={COLORS.tungfamDarkBlue} />
+                  <Text style={styles.iconText}>Username: {userData.user_name}</Text>
+                </View>
+                <View style={styles.iconTextContainer}>
+                  <FontAwesome name="envelope-o" size={24} color={COLORS.tungfamDarkBlue} />
+                  <Text style={styles.iconText}>Email: {userData.email}</Text>
+                </View>
+                <View style={styles.iconTextContainer}>
+                  <FontAwesome name="id-card-o" size={24} color={COLORS.tungfamDarkBlue} />
+                  <Text style={styles.iconText}>Aadhar: {userData.aadhar}</Text>
+                </View>
               </View>
-              <View style={styles.iconTextContainer}>
-                <FontAwesome name="envelope-o" size={24} color={COLORS.tungfamDarkBlue} />
-                <Text style={styles.iconText}>Email: {userData.email}</Text>
-              </View>
-              <View style={styles.iconTextContainer}>
-                <FontAwesome name="id-card-o" size={24} color={COLORS.tungfamDarkBlue} />
-                <Text style={styles.iconText}>Aadhar: {userData.aadhar}</Text>
-              </View>
-            </View>
 
-            <Input
-              id="name"
-              label="Name as on Aadhar"
-              iconPack={FontAwesome}
-              icon={"user-o"}
-              iconSize={24}
-              onInputChanged={inputChangeHandler}
-              autoCapitalize="none"
-              errorText={formState.inputValidities["name"]}
-              initialValue={userData.name}
-              onSave={saveHandler}
-              hasChanges={name}
-            />
-            
-            {/* <Input
+              <Input
+                id="name"
+                label="Name as on Aadhar"
+                iconPack={FontAwesome}
+                icon={"user-o"}
+                iconSize={24}
+                onInputChanged={inputChangeHandler}
+                autoCapitalize="none"
+                errorText={formState.inputValidities["name"]}
+                initialValue={userData.name}
+                onSave={saveHandler}
+                hasChanges={name}
+              />
+
+              {/* <Input
               id="password"
               label="Password"
               iconPack={Ionicons}
@@ -147,47 +153,48 @@ const ProfileScreen = props => {
               hasChanges={password}
             /> */}
 
-            <Input
-              id="address"
-              label="Address"
-              iconPack={FontAwesome}
-              icon={"address-book"}
-              iconSize={24}
-              onInputChanged={inputChangeHandler}
-              autoCapitalize="none"
-              errorText={formState.inputValidities["address"]}
-              initialValue={userData.address}
-              onSave={saveHandler}
-              hasChanges={address}
-            />
-            
-            <Input
-              id="mobile"
-              label="Mobile"
-              iconPack={FontAwesome6}
-              icon={"mobile-screen"}
-              iconSize={24}
-              onInputChanged={inputChangeHandler}
-              autoCapitalize="none"
-              errorText={formState.inputValidities["mobile"]}
-              initialValue={userData.mobile}
-              onSave={saveHandler}
-              hasChanges={mobile}
-            />
-            {/* <AadharImagePicker onImageSelected={handleAadharImageSelection} /> */}
+              <Input
+                id="address"
+                label="Address"
+                iconPack={FontAwesome}
+                icon={"address-book"}
+                iconSize={24}
+                onInputChanged={inputChangeHandler}
+                autoCapitalize="none"
+                errorText={formState.inputValidities["address"]}
+                initialValue={userData.address}
+                onSave={saveHandler}
+                hasChanges={address}
+              />
 
-            {/* {isLoading ? (
+              <Input
+                id="mobile"
+                label="Mobile"
+                iconPack={FontAwesome6}
+                icon={"mobile-screen"}
+                iconSize={24}
+                onInputChanged={inputChangeHandler}
+                autoCapitalize="none"
+                errorText={formState.inputValidities["mobile"]}
+                initialValue={userData.mobile}
+                onSave={saveHandler}
+                hasChanges={mobile}
+              />
+              {/* <AadharImagePicker onImageSelected={handleAadharImageSelection} /> */}
+
+              {/* {isLoading ? (
               <ActivityIndicator style={{ marginTop: 10 }} size={'small'} color={COLORS.tungfamLightBlue} />
             ) : (
               hasChanges() && (
                 <SubmitButton title="Save" onPress={saveHandler} disabled={!formState.formIsValid} style={styles.button} />
               )
             )} */}
+            </View>
           </View>
-        </View>
 
-      </ScrollView>
-    </PageContainer>
+        </ScrollView>
+      </PageContainer>
+    </LinearGradient>
   );
 };
 
@@ -196,9 +203,10 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: COLORS.tungfamGrey,
-    margin: 4,
+    // borderWidth: 1,
+    // borderColor: COLORS.tungfamGrey,
+    // margin: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   formContainer: {
     alignItems: 'center',

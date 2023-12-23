@@ -115,7 +115,7 @@ const LoanBook = ({ firmDetails }) => {
         const isOpen = openItems[item.loan_id];
 
         return (
-            <View style={styles.container}>
+            <View>
                 <TouchableOpacity onPress={() => toggleLoanItem(item.loan_id)}>
                     <View style={styles.loanItemContainer}>
                         <Text style={styles.loanItem}>{`${item.borrower_name}`}</Text>
@@ -179,10 +179,12 @@ const LoanBook = ({ firmDetails }) => {
                 )}
 
                 {isApproved && (
+                    <View style={styles.button}>
                     <Button
-                        title="Go To PaymentSchedule"
+                        title="PaymentSchedule"
                         onPress={() => goPaymentSchedule(item)}
                     />
+                    </View>
                 )}
             </View>
         )
@@ -197,12 +199,12 @@ const LoanBook = ({ firmDetails }) => {
                 <ActivityIndicator size="large" color={COLORS.primary} />
             ) : (
                 showDetails && (
-
                     <FlatList
                         scrollEnabled={false}
                         data={loan}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.loan_id.toString()}
+                        contentContainerStyle={styles.list}
                     />
                 )
             )}
@@ -213,27 +215,41 @@ const LoanBook = ({ firmDetails }) => {
 export default LoanBook;
 
 const styles = StyleSheet.create({
+    list: {
+        // flexGrow: 1,
+        // backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        // borderWidth: 1,
+        // borderColor: COLORS.tungfamGrey,
+        // borderRadius: 6,
+    },
     container: {
-        borderWidth: 1,
-        borderColor: COLORS.tungfamGrey,
-        paddingVertical: 6,
-        paddingHorizontal: 10,
+        // borderWidth: 1,
+        // borderColor: COLORS.tungfamGrey,
+        // paddingVertical: 6,
+        // paddingHorizontal: 10,
+        // backgroundColor: "red"
     },
     headerText: {
         fontSize: 20,
         fontWeight: 'bold',
         marginVertical: 5,
         borderWidth: 1,
+        borderRadius: 50,
         borderColor: COLORS.tungfamGrey,
-        paddingVertical: 6,
+        paddingVertical: 8,
         paddingHorizontal: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        textAlign: 'center',
+        elevation: 5,
     },
     loanItemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        // backgroundColor: 'red',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
+        borderRadius: 6,
+        paddingVertical: 4
     },
     loanItem: {
         fontSize: 16,
@@ -242,11 +258,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     item: {
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
+        borderRadius: 6,
         padding: 8,
         marginVertical: 5,
-        borderRadius: 5,
     },
     title: {
         fontWeight: 'bold',
@@ -256,9 +273,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginBottom: 5,
     },
-    addButton: {
-        // margin: 10,
-        flex: 1
+    button: {
+        flex: 1,
+        marginBottom: 4,
     },
     buttonContainer: {
         flexDirection: 'row', // Arrange items horizontally

@@ -19,13 +19,12 @@ const LoanApplicationScreen = () => {
     const [selectedFirm, setSelectedFirm] = useState(null);
     const [loanTypes, setLoanTypes] = useState([]);
     const [selectedLoanType, setSelectedLoanType] = useState('');
-    const [borrowerName, setBorrowerName] = useState('');
     const [noOfPayments, setNoOfPayments] = useState('');
     const [paymentType, setPaymentType] = useState('');
     const [installment, setInstallment] = useState('');
     const [amount, setAmount] = useState('');
     const [totalPayable, setTotalPayable] = useState('');
-    
+
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -52,7 +51,7 @@ const LoanApplicationScreen = () => {
 
         const fetchLoanTypes = async () => {
             // console.log("selectedFirm: ", selectedFirm);
-            
+
             if (selectedFirm !== null && loanTypes.length === 0) {
                 try {
                     const token = await AsyncStorage.getItem('token');
@@ -66,7 +65,7 @@ const LoanApplicationScreen = () => {
 
                     const loanTypesResponse = await axios.get(`${API_URL}/firms/${selectedFirm}/loantypes`, { headers });
                     // console.log("loanTypesResponse data: ", loanTypesResponse.data);
-                    
+
                     if (loanTypesResponse.status === 200) {
                         setLoanTypes(loanTypesResponse.data);
                     }
@@ -83,10 +82,10 @@ const LoanApplicationScreen = () => {
 
     const handleLoanTypeChange = (itemValue) => {
         setSelectedLoanType(itemValue);
-        
+
         // Find the selected loan type object from loanTypes array
         const selectedType = loanTypes.find((type) => type.loan_type_id === itemValue);
-        
+
         // Update the states based on the selected loan type
         if (selectedType) {
             setNoOfPayments(selectedType.no_of_payments);
@@ -116,13 +115,13 @@ const LoanApplicationScreen = () => {
         };
 
         const selectedType = loanTypes.find((type) => type.loan_type_id === selectedLoanType);
-        
+
         const formData = {
             loan_officer_id: null, // Will be set when loan is approved
             lender_firm_id: selectedFirm,
-            borrower_id: await AsyncStorage.getItem('user_id'), 
+            borrower_id: await AsyncStorage.getItem('user_id'),
             loan_type: selectedType.loan_type,
-            start_date: new Date().toISOString().slice(0, 10), 
+            start_date: new Date().toISOString().slice(0, 10),
             borrower_name: updatedUserData.name,
             no_of_payments: noOfPayments,
             payment_type: paymentType,
@@ -131,21 +130,21 @@ const LoanApplicationScreen = () => {
             installment: installment
         };
         console.log("formData: ", formData);
-        
-        
+
+
         const response = await axios.post(`${API_URL}/loans`, formData, { headers });
         // console.log("responseLoan: ", response.data);
 
         const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
         // console.log("roleUpdate: ", updateRoleResponse.data);
-        
+
         if (updateRoleResponse.status === 200) {
             disptach(updateUserRole(updatedUserData));
         } else {
             throw new Error('Failed to update user role');
         }
 
-        
+
         if (response.status === 200 && updateRoleResponse.status === 200) {
             navigation.navigate('Home');
             Alert.alert("Loan was created successfully")
@@ -159,45 +158,63 @@ const LoanApplicationScreen = () => {
         <PageContainer style={styles.container}>
             <PageTitle text="Apply For A Loan" />
             <ScrollView contentContainerStyle={styles.formContainer}>
-                <View style={{ width: '100%' }}>
-                    <Text>Select Firm:</Text>
-                    <Picker
-                        selectedValue={selectedFirm}
-                        onValueChange={(itemValue) => setSelectedFirm(itemValue)}
-                        mode="dropdown"
-                    >
-                        {firms.map((firm) => (
-                            <Picker.Item key={firm.firm_id} label={firm.firm_name} value={firm.firm_id} />
-                        ))}
-                    </Picker>
-
-                    <Text>Select A LoanType:</Text>
-                    <Picker
-                        selectedValue={selectedLoanType}
-                        onValueChange={handleLoanTypeChange} // Update the handler to handle loan type change
-                    >
-                        {loanTypes.map((type) => (
-                            <Picker.Item key={type.loan_type_id} label={type.loan_type} value={type.loan_type_id} />
-                        ))}
-                    </Picker>
-
-                    <Text>Loan Amount</Text>
-                    <Text>{amount}</Text>
-
-                    <Text>Installment</Text>
-                    <Text>{installment}</Text>
-
-                    <Text>Number of Payments</Text>
-                    <Text>{noOfPayments}</Text>
-
-                    <Text>Payment Type</Text>
-                    <Text>{paymentType}</Text>
-
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Apply for Loan</Text>
-                    </TouchableOpacity>
+                <View style={styles.formSection}>
+                    <View style={styles.pickerContainer}>
+                        <Text style={styles.heading}>Select A Lending Firm:</Text>
+                        <Picker
+                            selectedValue={selectedFirm}
+                            onValueChange={(itemValue) => setSelectedFirm(itemValue)}
+                            mode="dropdown"
+                            style={styles.picker}
+                        >
+                            {firms.map((firm) => (
+                                <Picker.Item key={firm.firm_id} label={firm.firm_name} value={firm.firm_id} />
+                            ))}
+                        </Picker>
+                    </View>
+                    <View style={styles.pickerContainer}>
+                        <Text style={styles.heading}>Select A LoanType:</Text>
+                        <Picker
+                            selectedValue={selectedLoanType}
+                            onValueChange={handleLoanTypeChange}
+                            mode="dropdown"
+                            style={styles.picker}
+                            itemStyle={styles.pickerItem}
+                        >
+                            {loanTypes.map((type) => (
+                                <Picker.Item key={type.loan_type_id} label={type.loan_type} value={type.loan_type_id} />
+                            ))}
+                        </Picker>
+                    </View>
                 </View>
+                <View style={styles.formSection}>
+                    <View style={styles.pickerContainer}>
+                        <Text style={styles.heading}>Loan Details:</Text>
+                        <View style={styles.detailContainer}>
+                            <Text style={styles.label}>Loan Amount:</Text>
+                            <Text style={styles.value}>{amount}</Text>
+                        </View>
+                   
+                        <View style={styles.detailContainer}>
+                            <Text style={styles.label}>Installment:</Text>
+                            <Text style={styles.value}>{installment}</Text>
+                        </View>
+                        <View style={styles.detailContainer}>
+                            <Text style={styles.label}>Number of Payments:</Text>
+                            <Text style={styles.value}>{noOfPayments}</Text>
+                        </View>
+                        <View style={styles.detailContainer}>
+                            <Text style={styles.label}>Payment Type:</Text>
+                            <Text style={styles.value}>{paymentType}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Apply for Loan</Text>
+                </TouchableOpacity>
             </ScrollView>
+
         </PageContainer>
     );
 };
@@ -208,25 +225,58 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
         margin: 4,
+        paddingVertical: 0,
+        paddingHorizontal: 10,
     },
     formContainer: {
-        alignItems: 'center',
+        padding: 0,
+    },
+    formSection: {
+        width: '100%',
+    },
+    pickerContainer: {
+        borderWidth: 1,
+        borderRadius: 4,
+        marginBottom: 10,
     },
     heading: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
+        // borderWidth: 1,
+        // borderRadius: 4,
+        paddingVertical: 6,
+        paddingHorizontal: 10
     },
-    input: {
+    picker: {
         borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
+        borderColor: COLORS.lightGrey,
+        borderRadius: 4,
+        padding: 0,
+        // marginBottom: 6,
+        backgroundColor: COLORS.tungfamLightBlue,
+        // height: 20,
+        width: '100%',
+        paddingHorizontal: 10,
+    },
+    pickerItem: {
+        backgroundColor: 'red'
+    },
+    detailContainer: {
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: "flex-start",
         padding: 10,
-        marginBottom: 15,
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    value: {
+        fontSize: 16,
+        paddingHorizontal: 10
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: COLORS.TungfamBgColor,
         borderRadius: 5,
         padding: 15,
         alignItems: 'center',

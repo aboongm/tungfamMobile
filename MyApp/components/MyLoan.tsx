@@ -208,7 +208,7 @@ const MyLoan = ({ userId }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 0
+        padding: 0,
     },
     headerText: {
         fontSize: 20,
@@ -412,6 +412,7 @@ const styles = StyleSheet.create({
     },
     payScheduleText: {
         fontSize: 16,
+        fontWeight: "bold",
         backgroundColor: COLORS.TungfamBgColor,
         color: 'white',
         borderRadius: 5,

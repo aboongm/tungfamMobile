@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, StyleSheet } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import Feather from 'react-native-vector-icons/Feather'
 import { useDispatch } from "react-redux";
@@ -26,7 +26,7 @@ type FormState = {
 const initialState: FormState = {
   inputValues: {
     // email: isTestMode ? "admin@punfam.com" : "",
-    email: isTestMode ? "random@random.com" : "",
+    email: isTestMode ? "support@tungfam.com" : "",
     password: isTestMode ? "password" : "",
   },
   inputValidities: {
@@ -74,7 +74,7 @@ const SignInForm = () => {
   }, [dispatch, formState]);
 
   return (
-    <>
+    <View style={{ marginTop: 40}}>
       <Input
         id="email"
         label="Email"
@@ -113,7 +113,7 @@ const SignInForm = () => {
           style={{ marginTop: 20 }}
         />
       )}
-    </>
+    </View>
   );
 };
 

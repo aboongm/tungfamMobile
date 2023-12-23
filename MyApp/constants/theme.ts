@@ -8,7 +8,7 @@ const commonStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#3498db"
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
 });
 

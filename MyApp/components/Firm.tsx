@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { COLORS } from '../constants';
 
 const FirmDetails = ({ firmDetails }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -36,7 +37,7 @@ const FirmDetails = ({ firmDetails }) => {
   return (
     <>
       <TouchableOpacity onPress={toggleDetails} style={styles.container}>
-        <View>
+        <View style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)'}}>
           <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
           {firmDetails.status !== 'approved' && (
             <Text style={styles.status}>Status: {firmDetails.status}</Text>
@@ -50,26 +51,36 @@ const FirmDetails = ({ firmDetails }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    borderWidth: 1,
+    borderColor: COLORS.tungfamGrey,
     padding: 10,
     marginVertical: 5,
     borderRadius: 8,
-    marginBottom: 10
+    marginBottom: 10,
+    elevation: 5,
   },
   firmName: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 6,
-    textAlign: "center"
+    textAlign: "center",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    
   },
   status: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-    textAlign: "center"
+    textAlign: "center",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   additionalDetails: {
-    padding: 10
+    padding: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: COLORS.tungfamGrey,
   },
   text: {
     marginBottom: 4,

@@ -15,6 +15,7 @@ import Employee from '../../components/Employee';
 import LoanBook from '../../components/LoanBook';
 import ApplyLoan from '../../components/ApplyLoan';
 import MyLoan from '../../components/MyLoan';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ActivitiesScreen = ({ userRole, userId }) => {
 
@@ -167,25 +168,31 @@ const ActivitiesScreen = ({ userRole, userId }) => {
   };
 
   return (
-    <PageContainer style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      ) :
-        (
-          <ScrollView>
-            <View style={styles.content}>
-              <View style={styles.userInfo}>
-                <Text style={styles.userInfoText}>
-                  Signed in as: {userData.user_name} {/* Display the user's name or relevant field */}
-                </Text>
+    <LinearGradient
+      colors={['rgba(255, 255, 255, 0.8)', 'rgba(52, 152, 219, 0.65)']} 
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <PageContainer style={styles.container}>
+        {isLoading ? (
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        ) :
+          (
+            <ScrollView style={{ marginTop: 20, padding: 0 }}>
+              <View style={styles.content}>
+                <View style={styles.userInfo}>
+                  <Text style={styles.userInfoText}>
+                    Signed in as: {userData.user_name} {/* Display the user's name or relevant field */}
+                  </Text>
+                </View>
+                {renderActions()}
               </View>
-              {/* <Text style={styles.title}>Dashboard</Text> */}
-              {renderActions()}
-            </View>
-          </ScrollView>
-        )}
+            </ScrollView>
+          )}
 
-    </PageContainer>
+      </PageContainer>
+    </LinearGradient>
   );
 };
 
@@ -200,15 +207,17 @@ export default connect(mapStateToProps)(ActivitiesScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: COLORS.tungfamGrey,
-    margin: 4,
-    padding: 0
+    // borderWidth: 1,
+    // borderColor: COLORS.tungfamGrey,
+    // margin: 4,
+    padding: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   content: {
     paddingHorizontal: 20,
     paddingTop: 4,
     paddingBottom: 120,
+    margin: 0
   },
   title: {
     fontFamily: 'roboto',
@@ -226,12 +235,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     // marginBottom: 10,
-    borderRadius: 8,
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: COLORS.tungfamGrey,
   },
   userInfoText: {
     fontWeight: 'bold',
     fontSize: 16,
+    textAlign: 'center'
   },
 });

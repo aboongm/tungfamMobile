@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
         borderColor: COLORS.tungfamGrey,
         padding: 10,
         marginTop: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
     },
     headerText: {
         fontSize: 20,
