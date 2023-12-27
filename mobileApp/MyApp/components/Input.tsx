@@ -15,6 +15,8 @@ type InputProps = {
   onInputChanged: (id: string, value: string) => void;
   onSave: () => void;
   hasChanges: boolean;
+  keyboardType?: 'default' | 'email-address'; 
+  secureTextEntry?: boolean; 
 };
 
 const Input: FC<InputProps> = (props) => {
@@ -47,9 +49,11 @@ const Input: FC<InputProps> = (props) => {
           style={styles.input}
           onChangeText={onChangeText}
           value={value}
+          keyboardType={props.keyboardType || 'default'} 
+          secureTextEntry={props.secureTextEntry || false}
         />
         {props.hasChanges && (
-          <TouchableOpacity onPress={props.onSave}>
+          <TouchableOpacity onPress={onSavePress}>
             <IonIcons name="save-sharp" size={24} color={COLORS.tungfamDarkBlue} />
           </TouchableOpacity>
         )}
