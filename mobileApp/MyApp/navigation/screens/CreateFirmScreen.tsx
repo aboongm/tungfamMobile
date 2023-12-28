@@ -80,7 +80,7 @@ const CreateFirmScreen = () => {
 
     return (
         <PageContainer style={styles.container}>
-            <PageTitle text="Create Firm" />
+            <PageTitle text="Create A Firm Account" />
             <ScrollView contentContainerStyle={styles.formContainer}>
                 <View style={{ width: '100%' }}>
                     <TextInput
@@ -126,7 +126,7 @@ const CreateFirmScreen = () => {
                         onChangeText={setWebsite}
                     />
                     <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Create Firm</Text>
+                        <Text style={styles.buttonText}>Create Account</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -152,13 +152,13 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: COLORS.tungfamGrey,
         borderRadius: 5,
         padding: 10,
         marginBottom: 15,
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: COLORS.TungfamBgColor,
         borderRadius: 5,
         padding: 15,
         alignItems: 'center',

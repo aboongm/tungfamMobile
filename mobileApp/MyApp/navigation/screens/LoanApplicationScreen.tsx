@@ -82,6 +82,8 @@ const LoanApplicationScreen = () => {
 
     const handleLoanTypeChange = (itemValue) => {
         setSelectedLoanType(itemValue);
+        console.log("itemValue: ", itemValue);
+        
 
         // Find the selected loan type object from loanTypes array
         const selectedType = loanTypes.find((type) => type.loan_type_id === itemValue);
@@ -115,7 +117,8 @@ const LoanApplicationScreen = () => {
         };
 
         const selectedType = loanTypes.find((type) => type.loan_type_id === selectedLoanType);
-
+        console.log("selectedFirm & loantypes: ", selectedFirm, loanTypes);
+        
         const formData = {
             loan_officer_id: null, // Will be set when loan is approved
             lender_firm_id: selectedFirm,
@@ -135,14 +138,14 @@ const LoanApplicationScreen = () => {
         const response = await axios.post(`${API_URL}/loans`, formData, { headers });
         // console.log("responseLoan: ", response.data);
 
-        const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-        // console.log("roleUpdate: ", updateRoleResponse.data);
+        // const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
+        // // console.log("roleUpdate: ", updateRoleResponse.data);
 
-        if (updateRoleResponse.status === 200) {
-            disptach(updateUserRole(updatedUserData));
-        } else {
-            throw new Error('Failed to update user role');
-        }
+        // if (updateRoleResponse.status === 200) {
+        //     disptach(updateUserRole(updatedUserData));
+        // } else {
+        //     throw new Error('Failed to update user role');
+        // }
 
 
         if (response.status === 200 && updateRoleResponse.status === 200) {
@@ -156,7 +159,7 @@ const LoanApplicationScreen = () => {
 
     return (
         <PageContainer style={styles.container}>
-            <PageTitle text="Apply For A Loan" />
+            <PageTitle text="Apply For A Business Loan" />
             <ScrollView contentContainerStyle={styles.formContainer}>
                 <View style={styles.formSection}>
                     <View style={styles.pickerContainer}>

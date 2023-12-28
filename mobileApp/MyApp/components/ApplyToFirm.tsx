@@ -5,7 +5,7 @@ import { COLORS } from '../constants';
 const ApplyToFirm = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>Apply to Open a Firm</Text>
+      <Text style={styles.buttonText}>Apply to Create a Firm Account</Text>
     </TouchableOpacity>
   );
 };

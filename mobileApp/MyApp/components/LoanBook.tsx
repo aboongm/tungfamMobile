@@ -37,7 +37,7 @@ const LoanBook = ({ firmDetails }) => {
                     const response = await axios.get(`${API_URL}/loans`, { headers });
                     if (response.status === 200) {
                         const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
-                        setLoan(response.data);
+                        setLoan(loanData);
                         setIsLoading(false);
                     }
                 }
