@@ -27,7 +27,7 @@ const TabNavigator = () => {
       right: 12,
       left: 12,
       elevation: 0,
-      height: 70,
+      height: 60,
       borderRadius: 10,
       // borderWidth: 1,
       // borderColor: COLORS.tungfamGrey,
@@ -44,7 +44,7 @@ const TabNavigator = () => {
             return (
               <Ionicons
                 name={focused ? "home" : "home-outline"}
-                size={24}
+                size={30}
                 color={focused ? COLORS.TungfamBgColor : COLORS.gray2}
               />
             );
@@ -59,7 +59,7 @@ const TabNavigator = () => {
             return (
               <Ionicons
                 name={focused ? "person" : "person-outline"}
-                size={24}
+                size={30}
                 color={focused ? COLORS.TungfamBgColor : COLORS.gray2}
               />
             );
