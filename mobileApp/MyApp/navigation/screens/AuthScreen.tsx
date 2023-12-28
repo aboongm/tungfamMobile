@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     maxHeight: 200, // Set the maximum vertical height of the container
   },
   image: {
-    height: 160, // Set the fixed height of the image
+    height: 140, // Set the fixed height of the image
     width: "50%",
     resizeMode: "contain",
   },
