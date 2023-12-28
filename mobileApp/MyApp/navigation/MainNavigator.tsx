@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { ViewStyle } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -32,7 +32,7 @@ const TabNavigator = () => {
       // borderWidth: 1,
       // borderColor: COLORS.tungfamGrey,
       // backgroundColor: COLORS.tungfamGrey
-    },
+    } as ViewStyle,
   };
   return (
     <Tab.Navigator screenOptions={screenOptions}>
