@@ -63,12 +63,18 @@ const PaymentScheduleScreen = ({ route }) => {
                 total_payable: loan.total_payable,
                 paid_amount: paidAmount || 0,
                 outstanding_payable: outStandingPayable || loan.total_payable,
-                date: newPaymentDate.toLocaleDateString(),
+                // date: newPaymentDate.toLocaleDateString(),
+                date: newPaymentDate.toISOString().split('T')[0],
                 installment: loan.installment,
                 remarks: remark || 'No remarks provided'
             }
 
+            console.log("formData: ", formData);
+            
+
             const response = await axios.post(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, formData, { headers })
+            console.log("response.data: ", response.data);
+            
             if (response.status === 200) {
                 const updatedPayments = [...payments, response.data];
                 setPayments(updatedPayments);
@@ -81,6 +87,8 @@ const PaymentScheduleScreen = ({ route }) => {
             }
 
         } catch (error) {
+            console.log('error: ', error);
+            
             Alert.alert("Failed to create payment!")
         }
     };
