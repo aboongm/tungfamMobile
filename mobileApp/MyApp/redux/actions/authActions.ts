@@ -5,6 +5,7 @@ import {Dispatch} from 'redux';
 import {getUserData} from './userActions';
 
 import {API_URL} from '@env';
+import { Alert } from 'react-native';
 
 let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -63,7 +64,7 @@ export const signUp = (
             const userResponse = await dispatch<any>(
               getUserData(response.data.user.user_id),
             );
-              console.log("userResponse: ", userResponse);
+              // console.log("userResponse: ", userResponse);
               
             if (userResponse) {
               const userData: UserData = userResponse; 
@@ -88,6 +89,7 @@ export const signUp = (
       //   console.error('Sign-Up Error:', error);
       // });
     } catch (error) {
+      // Alert.alert("An error occured", error, [{ text: "Okay" }])
       console.error('Sign-Up Error:', error);
     }
   };
@@ -157,7 +159,7 @@ export const updateSignInUserData = (userId: string, newData: any) => {
       if (!token) {
         throw new Error('Token not found');
       }
-
+      
       const headers = {
         // Authorization: `Bearer ${token}`,
         Authorization: `${token}`,
@@ -172,7 +174,8 @@ export const updateSignInUserData = (userId: string, newData: any) => {
       // Check the response status or handle success/failure accordingly
       if (response.status === 200) {
         // Optionally handle success scenario, if needed
-        console.log('User data updated successfully');
+        Alert.alert("Updated successfully")
+        console.log('Updated successfully');
       } else {
         // Handle other status codes or errors
         throw new Error('Failed to update user data');

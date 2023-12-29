@@ -53,13 +53,8 @@ const SignUpForm = () => {
   }, [error]);
 
   const authHandler = useCallback(async () => {
-    console.log("authHandler:");
-    
     try {
       setIsLoading(true);
-
-      console.log("username: ", formState.inputValues.username);
-      
 
       const action = signUp(
         formState.inputValues.username,

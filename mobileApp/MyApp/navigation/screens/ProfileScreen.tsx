@@ -1,7 +1,7 @@
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import React, { useCallback, useState, useReducer } from 'react';
+import React, { useCallback, useState, useReducer, useEffect } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -17,6 +17,9 @@ import { reducer } from '../../redux/reducers/formReducer';
 import ProfileImage from '../../components/ProfileImage';
 import AadharImagePicker from '../../components/AadharImagePicker';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { API_URL } from '@env';
 
 const ProfileScreen = props => {
   const dispatch = useDispatch();
@@ -24,7 +27,7 @@ const ProfileScreen = props => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector(state => state.auth.userData);
-
+  console.log("userDataBefore: ", userData);
   const [name, setName] = useState(userData.name || '');
   const [password, setPassword] = useState(userData.password || '');
   // const [aadharImage, setAadharImage] = useState(userData.aadhar_image || '');
@@ -43,7 +46,7 @@ const ProfileScreen = props => {
   };
 
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
-
+  
   const inputChangeHandler = useCallback(
     (inputId: string, inputValue: string) => {
       const result = validateInput(inputId, inputValue);
@@ -64,15 +67,15 @@ const ProfileScreen = props => {
   };
 
   const saveHandler = useCallback(async () => {
-    console.log("saveHandler");
-
     const updateValues = formState.inputValues;
     try {
       setIsLoading(true);
       // updateValues.aadhar_image = formState.inputValues.aadhar_image;
       await dispatch<any>(updateSignInUserData(userData.user_id, updateValues));
       dispatch(updateLoggedInSignInUserData({ newData: updateValues }));
-
+      console.log("dispatch updateLoggedInSignInUserdata", updateValues);
+      console.log("userDataupdateLoggedInSignInUserdata", userData);
+      
       setShowSuccessMessage(true);
       setTimeout(() => {
         setShowSuccessMessage(false);
@@ -84,8 +87,13 @@ const ProfileScreen = props => {
     }
   }, [formState, dispatch]);
 
-
-
+  // useEffect(() => {
+  //   setName(userData.name || '');
+  //   setPassword(userData.password || '');
+  //   setMobile(userData.mobile || '');
+  //   setAddress(userData.address || '');
+    
+  // }, [userData]);
 
   return (
     <LinearGradient

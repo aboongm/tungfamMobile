@@ -26,7 +26,7 @@ const LoanApplicationScreen = () => {
     const [totalPayable, setTotalPayable] = useState('');
 
     const navigation = useNavigation();
-
+    
     useEffect(() => {
         const fetchFirms = async () => {
             try {
@@ -39,6 +39,10 @@ const LoanApplicationScreen = () => {
                     Authorization: `${token}`,
                 };
 
+                const users = await axios.get(`${API_URL}/users`, { headers });
+                console.log("usersList: ", users.data);
+                
+
                 const firmsResponse = await axios.get(`${API_URL}/firms`, { headers });
 
                 if (firmsResponse.status === 200) {
@@ -50,9 +54,7 @@ const LoanApplicationScreen = () => {
         };
 
         const fetchLoanTypes = async () => {
-            // console.log("selectedFirm: ", selectedFirm);
-
-            if (selectedFirm !== null && loanTypes.length === 0) {
+            if (selectedFirm !== null) {
                 try {
                     const token = await AsyncStorage.getItem('token');
                     if (!token) {
@@ -64,8 +66,6 @@ const LoanApplicationScreen = () => {
                     };
 
                     const loanTypesResponse = await axios.get(`${API_URL}/firms/${selectedFirm}/loantypes`, { headers });
-                    // console.log("loanTypesResponse data: ", loanTypesResponse.data);
-
                     if (loanTypesResponse.status === 200) {
                         setLoanTypes(loanTypesResponse.data);
                     }
@@ -75,7 +75,8 @@ const LoanApplicationScreen = () => {
                 }
             }
         };
-
+        console.log("loanTypes: ", loanTypes);
+        
         fetchFirms();
         fetchLoanTypes();
     }, [selectedFirm]);
@@ -83,6 +84,7 @@ const LoanApplicationScreen = () => {
     const handleLoanTypeChange = (itemValue) => {
         setSelectedLoanType(itemValue);
         console.log("itemValue: ", itemValue);
+        
         
 
         // Find the selected loan type object from loanTypes array
@@ -136,17 +138,6 @@ const LoanApplicationScreen = () => {
 
 
         const response = await axios.post(`${API_URL}/loans`, formData, { headers });
-        // console.log("responseLoan: ", response.data);
-
-        // const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-        // // console.log("roleUpdate: ", updateRoleResponse.data);
-
-        // if (updateRoleResponse.status === 200) {
-        //     disptach(updateUserRole(updatedUserData));
-        // } else {
-        //     throw new Error('Failed to update user role');
-        // }
-
 
         if (response.status === 200 && updateRoleResponse.status === 200) {
             navigation.navigate('Home');
