@@ -16,12 +16,12 @@ const AddLoanType = ({ route }) => {
     console.log("firmId: ", firmId);
     
     const disptach = useDispatch();
-    const [loantype, setLoantype] = useState("LN10000WK17PY700");
-    const [amount, setAmount] = useState(10000);
-    const [paymentType, setPaymentType] = useState('week');
-    const [payInstallment, setPayInstallment] = useState(700);
-    const [totalPayment, setTotalPayment] = useState(11900);
-    const [noOfPayment, setNoOfPayment] = useState(17);
+    const [loantype, setLoantype] = useState("");
+    const [amount, setAmount] = useState("");
+    const [paymentType, setPaymentType] = useState("");
+    const [payInstallment, setPayInstallment] = useState("");
+    const [totalPayment, setTotalPayment] = useState("");
+    const [noOfPayment, setNoOfPayment] = useState("");
 
     const navigation = useNavigation();
 
@@ -65,7 +65,7 @@ const AddLoanType = ({ route }) => {
             <View style={{ width: '100%' }}>
                 <TextInput
                     style={styles.input}
-                    placeholder="LN20000WK17PY1400"
+                    placeholder="Loan Type e.g LN20000WK17PY1400"
                     value={loantype}
                     onChangeText={setLoantype}
                 />
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: COLORS.TungfamBgColor,
         borderRadius: 5,
         padding: 15,
         alignItems: 'center',

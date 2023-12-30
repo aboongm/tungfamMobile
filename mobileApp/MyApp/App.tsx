@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 
 import SplashScreen from 'react-native-splash-screen'
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 import { Provider } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { store } from './redux/store';
@@ -44,6 +44,11 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
     <SafeAreaProvider style={styles.container} onLayout={onLayout}>
+    <StatusBar
+         backgroundColor="transparent" // Set transparent to merge with LinearGradient
+         barStyle="dark-content"
+         translucent={true} 
+    />
       <AppNavigator />
     </SafeAreaProvider>
   </Provider>

@@ -100,23 +100,25 @@ const ActivitiesScreen = ({ userRole, userId }) => {
     };
 
     const fetchForEmployee = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const headers = { Authorization: `${token}`}
-        const responseEmployeeFirm = await axios.get(`${API_URL}/employeefirm`, { headers })
-        const responseFirm = await axios.get(`${API_URL}/firms`, { headers });
-        
-        if (responseEmployeeFirm.status === 200) {
-          const employeeFirm = responseEmployeeFirm.data.find(firm => firm.user_id === userId)
-          const firmId = employeeFirm.firm_id
-          if (firmId !== null) {
-            const firm = responseFirm.data.find(firm => firm.firm_id === firmId)
-            setFirmForEmployeeDetails(firm)
-            
-          }  
+      if (userRole === "employee") {
+        try {
+          const token = await AsyncStorage.getItem("token");
+          const headers = { Authorization: `${token}`}
+          const responseEmployeeFirm = await axios.get(`${API_URL}/employeefirm`, { headers })
+          const responseFirm = await axios.get(`${API_URL}/firms`, { headers });
+          
+          if (responseEmployeeFirm.status === 200) {
+            const employeeFirm = responseEmployeeFirm.data.find(firm => firm.user_id === userId)
+            const firmId = employeeFirm.firm_id
+            if (firmId !== null) {
+              const firm = responseFirm.data.find(firm => firm.firm_id === firmId)
+              setFirmForEmployeeDetails(firm)
+              
+            }  
+          }
+        } catch (error) {
+          console.error(error)
         }
-      } catch (error) {
-        console.error(error)
       }
     }
 
@@ -229,11 +231,10 @@ export default connect(mapStateToProps)(ActivitiesScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // borderWidth: 1,
-    // borderColor: COLORS.tungfamGrey,
-    // margin: 4,
+    marginTop: 4,
     padding: 0,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
+
   },
   scrollViewContainer: {
     flex: 1,

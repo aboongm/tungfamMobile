@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // borderWidth: 1,
     // borderColor: COLORS.tungfamGrey,
-    // margin: 4,
+    marginTop: 4,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   formContainer: {
