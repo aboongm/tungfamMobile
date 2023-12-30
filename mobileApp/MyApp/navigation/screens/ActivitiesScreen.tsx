@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 import { COLORS } from '../../constants';
 import PageContainer from '../../components/PageContainer';
@@ -24,9 +24,10 @@ const ActivitiesScreen = ({ userRole, userId }) => {
 
   const [userFirm, setUserFirm] = useState(null);
   const [firmDetails, setFirmDetails] = useState(null);
+  const [firmForEmployeeDetails, setFirmForEmployeeDetails] = useState(null);
   const [employeeFirm, setEmployeeFirm] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,7 +41,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
         };
 
         const userFirmResponse = await axios.get(`${API_URL}/userfirm`, { headers });
-
+        
         if (userFirmResponse.status === 200 && userFirmResponse.data.length > 0) {
           const userFirms = userFirmResponse.data;
           const userFirmForId = userFirms.find((userFirm) => userFirm.user_id === userId);
@@ -98,16 +99,38 @@ const ActivitiesScreen = ({ userRole, userId }) => {
       }
     };
 
+    const fetchForEmployee = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const headers = { Authorization: `${token}`}
+        const responseEmployeeFirm = await axios.get(`${API_URL}/employeefirm`, { headers })
+        const responseFirm = await axios.get(`${API_URL}/firms`, { headers });
+        
+        if (responseEmployeeFirm.status === 200) {
+          const employeeFirm = responseEmployeeFirm.data.find(firm => firm.user_id === userId)
+          const firmId = employeeFirm.firm_id
+          if (firmId !== null) {
+            const firm = responseFirm.data.find(firm => firm.firm_id === firmId)
+            setFirmForEmployeeDetails(firm)
+            
+          }  
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
     fetchData();
     fetchEmployeeFirm();
-  }, [userId]);
+    fetchForEmployee();
+  }, [userId, userData]);
 
   const applyLoan = async () => {
     try {
       navigation.navigate('LoanApplication');
     } catch (error) {
       console.error(error)
-    }
+    }    
   }
 
   const applyToFirm = async () => {
@@ -139,7 +162,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
       case 'employee':
         return (
           <View>
-            <Firm firmDetails={employeeFirm} />
+            <Firm firmDetails={firmForEmployeeDetails} />
             <Text>Update LoanBook</Text>
             <Text>Update PaymentSchedule</Text>
           </View>
