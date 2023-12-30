@@ -156,15 +156,14 @@ const ActivitiesScreen = ({ userRole, userId }) => {
             <Firm firmDetails={firmDetails} />
             <LoanType firmDetails={firmDetails} />
             <Employee firmDetails={firmDetails} />
-            <LoanBook firmDetails={firmDetails} />
+            <LoanBook firmDetails={firmDetails} userRole={userRole} userId={userId} />
           </View>
         );
       case 'employee':
         return (
           <View>
             <Firm firmDetails={firmForEmployeeDetails} />
-            <Text>Update LoanBook</Text>
-            <Text>Update PaymentSchedule</Text>
+            <LoanBook firmDetails={firmForEmployeeDetails} userRole={userRole} userId={userId} />
           </View>
         );
       case 'borrower':

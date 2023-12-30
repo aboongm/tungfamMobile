@@ -8,7 +8,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 
-const LoanBook = ({ firmDetails }) => {
+const LoanBook = ({ firmDetails, userRole, userId }) => {
     const navigation = useNavigation();
     const employees = useSelector(state => state.employees.employees)
 
@@ -35,10 +35,20 @@ const LoanBook = ({ firmDetails }) => {
 
                 if (firmDetails && firmDetails.firm_id) {
                     const response = await axios.get(`${API_URL}/loans`, { headers });
+                    console.log("responseLoans: ", response.data);
+                    
                     if (response.status === 200) {
-                        const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
-                        setLoan(loanData);
-                        setIsLoading(false);
+                        if (userRole === 'firmOwner') {
+                            const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
+                            setLoan(loanData);
+                            setIsLoading(false);
+                        } else if (userRole === 'employee') {
+                            const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
+                            const finalLoans = loanData.filter(loan => loan.loan_officer_id = userId)
+                            console.log('finalLoans: ', finalLoans);
+                            setLoan(loanData);
+                            setIsLoading(false);
+                        }
                     }
                 }
             }
@@ -64,7 +74,7 @@ const LoanBook = ({ firmDetails }) => {
                 loan_officer_id: item.loanOfficer,
                 status: 'approved',
             };
-            
+
             const token = await AsyncStorage.getItem('token');
             const headers = {
                 Authorization: `${token}`,
@@ -106,7 +116,7 @@ const LoanBook = ({ firmDetails }) => {
     const goPaymentSchedule = (loan: any) => {
         console.log("loanItem in loanBook: ", loan);
         navigation.navigate("PaymentSchedule", { loan });
-        
+
     };
 
     const renderItem = ({ item }) => {
@@ -180,10 +190,10 @@ const LoanBook = ({ firmDetails }) => {
 
                 {isApproved && (
                     <View style={styles.button}>
-                    <Button
-                        title="PaymentSchedule"
-                        onPress={() => goPaymentSchedule(item)}
-                    />
+                        <Button
+                            title="PaymentSchedule"
+                            onPress={() => goPaymentSchedule(item)}
+                        />
                     </View>
                 )}
             </View>
