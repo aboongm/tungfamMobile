@@ -16,10 +16,25 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     const [loan, setLoan] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [openItems, setOpenItems] = useState({});
+    const [filteredLoan, setFilteredLoan] = useState([]);
+    const [displayOption, setDisplayOption] = useState('all');
 
     const toggleLoanBook = () => {
         setShowDetails(!showDetails);
     };
+
+    useEffect(() => {
+        if (loan.length > 0) {
+            if (displayOption === 'all') {
+                setFilteredLoan(loan);
+            } else {
+                const filtered = loan.filter(
+                    (item) => item.payment_type.toLowerCase() === displayOption
+                );
+                setFilteredLoan(filtered);
+            }
+        }
+    }, [loan, displayOption]);
 
     const fetchLoan = async () => {
         try {
@@ -35,7 +50,6 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
 
                 if (firmDetails && firmDetails.firm_id) {
                     const response = await axios.get(`${API_URL}/loans`, { headers });
-                    console.log("responseLoans: ", response.data);
                     
                     if (response.status === 200) {
                         if (userRole === 'firmOwner') {
@@ -45,7 +59,6 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                         } else if (userRole === 'employee') {
                             const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
                             const finalLoans = loanData.filter(loan => loan.loan_officer_id = userId)
-                            console.log('finalLoans: ', finalLoans);
                             setLoan(loanData);
                             setIsLoading(false);
                         }
@@ -79,9 +92,9 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
             const headers = {
                 Authorization: `${token}`,
             };
-            console.log("Approved");
+            
             const response = await axios.put(`${API_URL}/loans/${item.loan_id}`, updatedLoan, { headers });
-            console.log("response: ", response);
+           
             if (response.status === 200) {
                 Alert.alert("Loan approved successfully!")
                 console.log('Loan approved successfully!');
@@ -114,9 +127,12 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     };
 
     const goPaymentSchedule = (loan: any) => {
-        console.log("loanItem in loanBook: ", loan);
         navigation.navigate("PaymentSchedule", { loan });
 
+    };
+
+    const toggleDisplayOption = (option) => {
+        setDisplayOption(option);
     };
 
     const renderItem = ({ item }) => {
@@ -124,11 +140,20 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
         const isApproved = item.status === 'approved';
         const isOpen = openItems[item.loan_id];
 
+        const formatBorrowerName = (name) => {
+            const nameParts = name.split(' ');
+            if (nameParts.length >= 2) {
+                const formattedName = `${nameParts[0].charAt(0).toUpperCase()} ${nameParts[1]}`;
+                return formattedName;
+            }
+            return name;
+        };
+
         return (
             <View>
                 <TouchableOpacity onPress={() => toggleLoanItem(item.loan_id)}>
                     <View style={styles.loanItemContainer}>
-                        <Text style={styles.loanItem}>{`${item.borrower_name}`}</Text>
+                        <Text style={styles.loanItem}>{formatBorrowerName(item.borrower_name)}</Text>
                         <Text style={styles.loanItem}>{`${item.loan_type}`}</Text>
                     </View>
                 </TouchableOpacity>
@@ -209,13 +234,32 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                 <ActivityIndicator size="large" color={COLORS.primary} />
             ) : (
                 showDetails && (
-                    <FlatList
-                        scrollEnabled={false}
-                        data={loan}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.loan_id.toString()}
-                        contentContainerStyle={styles.list}
-                    />
+                    <>
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                title="All"
+                                onPress={() => toggleDisplayOption('all')}
+                                color={displayOption === 'all' ? COLORS.primary : null}
+                            />
+                            <Button
+                                title="Daily"
+                                onPress={() => toggleDisplayOption('daily')}
+                                color={displayOption === 'daily' ? COLORS.primary : null}
+                            />
+                            <Button
+                                title="Weekly"
+                                onPress={() => toggleDisplayOption('weekly')}
+                                color={displayOption === 'weekly' ? COLORS.primary : null}
+                            />
+                        </View>
+                        <FlatList
+                            scrollEnabled={false}
+                            data={filteredLoan}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.loan_id.toString()}
+                            contentContainerStyle={styles.list}
+                        />
+                    </>
                 )
             )}
         </>
@@ -285,7 +329,7 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
-        marginBottom: 4,
+        marginBottom: 10,
     },
     buttonContainer: {
         flexDirection: 'row', // Arrange items horizontally

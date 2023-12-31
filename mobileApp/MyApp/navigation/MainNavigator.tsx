@@ -23,7 +23,7 @@ const TabNavigator = () => {
     headerShown: false,
     tabBarStyle: {
       position: "absolute",
-      bottom: 12,
+      bottom: 1,
       right: 12,
       left: 12,
       elevation: 0,
@@ -31,7 +31,7 @@ const TabNavigator = () => {
       borderRadius: 10,
       // borderWidth: 1,
       // borderColor: COLORS.tungfamGrey,
-      // backgroundColor: COLORS.tungfamGrey
+      backgroundColor: COLORS.white
     } as ViewStyle,
   };
   return (

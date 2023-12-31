@@ -39,13 +39,13 @@ const AuthScreen = () => {
 
               {isSignUp ? <SignUpForm /> : <SignInForm />}
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => setIsSignUp((prev) => !prev)}
                 style={styles.linkContainer}
               >
                 <Text style={styles.link}>{`Switch to ${!isSignUp ? "sign up" : "sign in"
                   }`}</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </KeyboardAvoidingView>
           </ScrollView>
         </PageContainer>
