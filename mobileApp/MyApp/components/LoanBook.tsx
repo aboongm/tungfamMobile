@@ -50,7 +50,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
 
                 if (firmDetails && firmDetails.firm_id) {
                     const response = await axios.get(`${API_URL}/loans`, { headers });
-                    
+
                     if (response.status === 200) {
                         if (userRole === 'firmOwner') {
                             const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
@@ -92,9 +92,9 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
             const headers = {
                 Authorization: `${token}`,
             };
-            
+
             const response = await axios.put(`${API_URL}/loans/${item.loan_id}`, updatedLoan, { headers });
-           
+
             if (response.status === 200) {
                 Alert.alert("Loan approved successfully!")
                 console.log('Loan approved successfully!');
@@ -237,23 +237,23 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                     <>
                         <View style={styles.buttonContainer}>
                             <Pressable
-                                    style={[styles.buttonOptions, displayOption === 'all' && { backgroundColor: COLORS.TungfamBgColor }]}
-                                    onPress={() => toggleDisplayOption('all')}
-                                >
-                                    <Text style={styles.buttonText}>All</Text>
-                                </Pressable>
-                                <Pressable
-                                    style={[styles.buttonOptions, displayOption === 'daily' && { backgroundColor: COLORS.TungfamBgColor }]}
-                                    onPress={() => toggleDisplayOption('daily')}
-                                >
-                                    <Text style={styles.buttonText}>Daily</Text>
-                                </Pressable>
-                                <Pressable
-                                    style={[styles.buttonOptions, displayOption === 'weekly' && { backgroundColor: COLORS.TungfamBgColor }]}
-                                    onPress={() => toggleDisplayOption('weekly')}
-                                >
-                                    <Text style={styles.buttonText}>Weekly</Text>
-                                </Pressable>
+                                style={[styles.buttonOptions, displayOption === 'all' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                onPress={() => toggleDisplayOption('all')}
+                            >
+                                <Text style={[styles.buttonText, displayOption === 'all' && { color: COLORS.white }]}>All</Text>
+                            </Pressable>
+                            <Pressable
+                                style={[styles.buttonOptions, displayOption === 'daily' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                onPress={() => toggleDisplayOption('daily')}
+                            >
+                                <Text style={[styles.buttonText, displayOption === 'daily' && { color: COLORS.white }]}>Daily</Text>
+                            </Pressable>
+                            <Pressable
+                                style={[styles.buttonOptions, displayOption === 'weekly' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                onPress={() => toggleDisplayOption('weekly')}
+                            >
+                                <Text style={[styles.buttonText, displayOption === 'weekly' && { color: COLORS.white }]}>Weekly</Text>
+                            </Pressable>
                         </View>
                         <FlatList
                             scrollEnabled={false}
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
-        backgroundColor: COLORS.white, 
+        backgroundColor: COLORS.white,
     },
     buttonText: {
         fontSize: 16,

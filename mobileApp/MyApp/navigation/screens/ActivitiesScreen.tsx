@@ -16,6 +16,7 @@ import LoanBook from '../../components/LoanBook';
 import ApplyLoan from '../../components/ApplyLoan';
 import MyLoan from '../../components/MyLoan';
 import LinearGradient from 'react-native-linear-gradient';
+import Analytic from '../../components/Analytic';
 
 const ActivitiesScreen = ({ userRole, userId }) => {
 
@@ -158,6 +159,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
             <Firm firmDetails={firmDetails} />
             <LoanType firmDetails={firmDetails} />
             <Employee firmDetails={firmDetails} />
+            <Analytic firmDetails={firmDetails} userRole={userRole} userId={userId} />
             <LoanBook firmDetails={firmDetails} userRole={userRole} userId={userId} />
           </View>
         );
