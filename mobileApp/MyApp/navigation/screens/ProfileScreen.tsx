@@ -114,9 +114,9 @@ const ProfileScreen = props => {
         </View>
         <ScrollView contentContainerStyle={styles.formContainer}>
           <View style={styles.profileContainer}>
-            <ProfileImage size={100} userId={userData.userId} uri={userData.profilePicture} />
+            {/* <ProfileImage size={100} userId={userData.userId} uri={userData.profilePicture} /> */}
 
-            <View style={{ marginTop: 20 }}>
+            <View style={{ marginTop: 60 }}>
               {showSuccessMessage && <Text>Saved</Text>}
               <View style={styles.infoContainer}>
                 <View style={styles.iconTextContainer}>

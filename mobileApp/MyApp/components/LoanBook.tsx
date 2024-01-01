@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button, FlatList, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button, FlatList, Alert, ActivityIndicator, Pressable } from 'react-native';
 import { COLORS } from '../constants';
 import axios from 'axios';
 import { API_URL } from '@env';
@@ -236,21 +236,24 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                 showDetails && (
                     <>
                         <View style={styles.buttonContainer}>
-                            <Button
-                                title="All"
-                                onPress={() => toggleDisplayOption('all')}
-                                color={displayOption === 'all' ? COLORS.primary : null}
-                            />
-                            <Button
-                                title="Daily"
-                                onPress={() => toggleDisplayOption('daily')}
-                                color={displayOption === 'daily' ? COLORS.primary : null}
-                            />
-                            <Button
-                                title="Weekly"
-                                onPress={() => toggleDisplayOption('weekly')}
-                                color={displayOption === 'weekly' ? COLORS.primary : null}
-                            />
+                            <Pressable
+                                    style={[styles.buttonOptions, displayOption === 'all' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                    onPress={() => toggleDisplayOption('all')}
+                                >
+                                    <Text style={styles.buttonText}>All</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={[styles.buttonOptions, displayOption === 'daily' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                    onPress={() => toggleDisplayOption('daily')}
+                                >
+                                    <Text style={styles.buttonText}>Daily</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={[styles.buttonOptions, displayOption === 'weekly' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                    onPress={() => toggleDisplayOption('weekly')}
+                                >
+                                    <Text style={styles.buttonText}>Weekly</Text>
+                                </Pressable>
                         </View>
                         <FlatList
                             scrollEnabled={false}
@@ -332,8 +335,22 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     buttonContainer: {
-        flexDirection: 'row', // Arrange items horizontally
-        justifyContent: 'space-around', // Space evenly between items
-        marginTop: 10,
-    }
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    buttonOptions: {
+        flex: 1,
+        marginHorizontal: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+        backgroundColor: COLORS.white, 
+    },
+    buttonText: {
+        fontSize: 16,
+    },
 });
