@@ -25,6 +25,8 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const [newCashBalance, setNewCashBalance] = useState('');
     const [weeklyChartData, setWeeklyChartData] = useState([]);
 
+    const [isLoadingChartData, setIsLoadingChartData] = useState(true);
+
     useEffect(() => {
         // Fetch financial data
         // fetchFinancialData();
@@ -197,23 +199,95 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
     useEffect(() => {
         if (displayOption === 'TrendChart') {
-            // Fetch weekly chart data for two months (Placeholder data)
-            const dataForTwoMonths = generateChartData();
-            setWeeklyChartData(dataForTwoMonths);
+            setIsLoadingChartData(true);
+            const fetchChartData = async () => {
+                try {
+                    const data = await fetchDataFromDB();
+                    if (data) {
+                        const labels = data.labels.slice(1); // Exclude the "On Current Date" label
+                        const dataset1 = data.datasets[0].data.slice(1);
+                        const dataset2 = data.datasets[1].data.slice(1);
+                        const dataset3 = data.datasets[2].data.slice(1);
+
+                        const updatedChartData = {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    data: dataset1,
+                                    color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
+                                },
+                                {
+                                    data: dataset2,
+                                    color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+                                },
+                                {
+                                    data: dataset3,
+                                    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+                                },
+                            ],
+                        };
+
+                        setWeeklyChartData(updatedChartData);
+                        setIsLoadingChartData(false);
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    setIsLoadingChartData(false);
+                }
+            };
+
+            fetchChartData();
         }
     }, [displayOption]);
 
-    const generateChartData = () => {
-        // Placeholder data - Replace with actual data from the API or calculations
-        const twoMonthsData = [];
-        // Generate data for 8 weeks (2 months)
-        for (let i = 1; i <= 8; i++) {
-            twoMonthsData.push({
-                week: `Week ${i}`,
-                value: Math.floor(Math.random() * 1000) + 500, // Placeholder random value
-            });
-        }
-        return twoMonthsData;
+    const fetchDataFromDB = () => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const data = {
+                    labels: [
+                        "22 Oct 2023",
+                        "28 Oct 2023",
+                        "5 Nov 2023",
+                        "12 Nov 2023",
+                        "19 Nov 2023",
+                        "26 Nov 2023",
+                        "3 Dec 2023",
+                        "10 Dec 2023",
+                        "17 Dec 2023",
+                        "24 Dec 2023",
+                        "31 Dec 2023"
+                    ],
+                    datasets: [
+                        {
+                            data: [
+                                35000, 35000, 35000, 35000, 34880, 34880,
+                                44880, 0, 44880, 134880, 159880
+                            ],
+                        },
+                        {
+                            data: [
+                                41200, 41200, 41200, 46100, 46100,
+                                59050, 0, 58500, 190050, 222250
+                            ],
+                        },
+                        {
+                            data: [
+                                40400, 37100, 37100, 46100, 46100,
+                                57200, null, 49400, 177050, 216750
+                            ],
+                        },
+                        {
+                            data: [
+                                800, 4100, 4100, 0, null,
+                                1850, null, 9100, 13000, 5500
+                            ],
+                        },
+                    ]
+                };
+
+                resolve(data);
+            }, 1000);
+        });
     };
 
     return (
@@ -350,79 +424,52 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                     {displayOption === 'TrendChart' && (
                         <View style={styles.trendChartContainer}>
                             <Text style={styles.sectionTitle}>FirmValue Trend</Text>
-                            <LineChart
-                                data={{
-                                    labels: ["January", "February", "March", "April", "May", "June"],
-                                    datasets: [
-                                        {
-                                            data: [
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100
-                                            ],
-                                            color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`
+                            {isLoadingChartData ? (
+                                <ActivityIndicator size="large" color={COLORS.TungfamBgColor} />
+                            ) : (
+                                weeklyChartData &&
+                                <LineChart
+                                    data={weeklyChartData}
+                                    width={Dimensions.get("window").width - 60} // from react-native
+                                    height={260}
+                                    yAxisLabel="Rs"
+                                    yAxisSuffix="k"
+                                    yAxisInterval={1} // optional, defaults to 1
+                                    horizontalLabelRotation={0}
+                                    verticalLabelRotation={-45}
+                                    xLabelsOffset={10} // Adjust the offset to your preference
+                                    chartConfig={{
+                                        backgroundColor: "#3498db",
+                                        backgroundGradientFrom: "#0184db",
+                                        backgroundGradientTo: "#4db1f3",
+                                        decimalPlaces: 2,
+                                        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                        style: {
+                                            borderRadius: 16,
                                         },
-                                        {
-                                            data: [
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100
-                                            ],
-                                            color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // Red color
-                                        },
-                                        {
-                                            data: [
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100,
-                                                Math.random() * 100
-                                            ],
-                                            color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
-                                        },
-                                    ],
-                                    // legend: ["firmVal", "totalInvestments", "totalOutstandingAmt"]
-                                }}
-                                width={Dimensions.get("window").width - 60} // from react-native
-                                height={220}
-                                yAxisLabel="$"
-                                yAxisSuffix="k"
-                                yAxisInterval={1} // optional, defaults to 1
-                                chartConfig={{
-                                    backgroundColor: "#3498db",
-                                    backgroundGradientFrom: "#0184db",
-                                    backgroundGradientTo: "#4db1f3",
-                                    decimalPlaces: 2, // optional, defaults to 2dp
-                                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                    style: {
-                                        borderRadius: 16,
-                                    },
-                                    propsForDots: {
-                                        r: "6",
-                                        strokeWidth: "2",
-                                        stroke: "#ffa726"
-                                    }
-                                }}
-                                bezier
-                                style={{
-                                    marginVertical: 4,
-                                    borderRadius: 8
-                                }}
-                            />
+                                        propsForDots: {
+                                            r: "6",
+                                            strokeWidth: "2",
+                                            stroke: "#ffa726"
+                                        }
+                                    }}
+                                    bezier
+                                    style={{
+                                        marginVertical: 4,
+                                        borderRadius: 8
+                                    }}
+                                />
+                            )
+                            }
+
                             <View style={{ flexDirection: 'row', justifyContent: 'center', padding: 4, backgroundColor: "#4db1f3", borderRadius: 6 }}>
                                 <Text style={{ marginRight: 10, color: 'green', fontWeight: 'bold' }}>FirmValue</Text>
                                 <Text style={{ marginRight: 10, color: 'red', fontWeight: 'bold' }}>TotalInvestments</Text>
                                 <Text style={{ marginRight: 10, color: 'blue', fontWeight: 'bold' }}>TotalOutstanding</Text>
                             </View>
                         </View>
+
                     )}
                 </>
             )
