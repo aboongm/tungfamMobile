@@ -354,18 +354,42 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 data={{
                                     labels: ["January", "February", "March", "April", "May", "June"],
                                     datasets: [
-                                      {
-                                        data: [
-                                          Math.random() * 100,
-                                          Math.random() * 100,
-                                          Math.random() * 100,
-                                          Math.random() * 100,
-                                          Math.random() * 100,
-                                          Math.random() * 100
-                                        ]
-                                      }
-                                    ]
-                                  }}
+                                        {
+                                            data: [
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100
+                                            ],
+                                            color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`
+                                        },
+                                        {
+                                            data: [
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100
+                                            ],
+                                            color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // Red color
+                                        },
+                                        {
+                                            data: [
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100,
+                                                Math.random() * 100
+                                            ],
+                                            color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+                                        },
+                                    ],
+                                    // legend: ["firmVal", "totalInvestments", "totalOutstandingAmt"]
+                                }}
                                 width={Dimensions.get("window").width - 60} // from react-native
                                 height={220}
                                 yAxisLabel="$"
@@ -379,7 +403,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                                     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                                     style: {
-                                        borderRadius: 16
+                                        borderRadius: 16,
                                     },
                                     propsForDots: {
                                         r: "6",
@@ -389,10 +413,15 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 }}
                                 bezier
                                 style={{
-                                    marginVertical: 8,
-                                    borderRadius: 16
+                                    marginVertical: 4,
+                                    borderRadius: 8
                                 }}
                             />
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', padding: 4, backgroundColor: "#4db1f3", borderRadius: 6 }}>
+                                <Text style={{ marginRight: 10, color: 'green', fontWeight: 'bold' }}>FirmValue</Text>
+                                <Text style={{ marginRight: 10, color: 'red', fontWeight: 'bold' }}>TotalInvestments</Text>
+                                <Text style={{ marginRight: 10, color: 'blue', fontWeight: 'bold' }}>TotalOutstanding</Text>
+                            </View>
                         </View>
                     )}
                 </>
