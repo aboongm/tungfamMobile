@@ -21,6 +21,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const [showTotalInvestments, setShowTotalInvestments] = useState(false);
     const [showCashBalance, setShowCashBalance] = useState(false);
     const [newCashBalance, setNewCashBalance] = useState('');
+    const [weeklyChartData, setWeeklyChartData] = useState([]);
 
     useEffect(() => {
         // Fetch financial data
@@ -192,6 +193,28 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
     const firmValue = totalOutstandingAmount + cashBalance;
 
+    useEffect(() => {
+        if (displayOption === 'TrendChart') {
+            // Fetch weekly chart data for two months (Placeholder data)
+            const dataForTwoMonths = generateDummyChartData();
+            setWeeklyChartData(dataForTwoMonths);
+        }
+    }, [displayOption]);
+
+    const generateDummyChartData = () => {
+        // Generate dummy data for the weekly chart (for two months)
+        // Placeholder data - Replace with actual data from the API or calculations
+        const twoMonthsData = [];
+        // Generate data for 8 weeks (2 months)
+        for (let i = 1; i <= 8; i++) {
+            twoMonthsData.push({
+                week: `Week ${i}`,
+                value: Math.floor(Math.random() * 1000) + 500, // Placeholder random value
+            });
+        }
+        return twoMonthsData;
+    };
+
     return (
         <>
             <TouchableOpacity onPress={toggleAnalytics}>
@@ -325,9 +348,21 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
                     {displayOption === 'TrendChart' && (
                         <View style={styles.trendChartContainer}>
-                            <Text style={styles.sectionTitle}>TrendChart Section Skeleton</Text>
-                            {/* Add skeleton structure for TrendChart section */}
+                        <Text style={styles.sectionTitle}>TrendChart Section</Text>
+                        <View style={styles.tableContainer}>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableHeader}>Week</Text>
+                                <Text style={styles.tableHeader}>Value</Text>
+                            </View>
+                            {weeklyChartData.map((data, index) => (
+                                <View key={index} style={styles.tableRow}>
+                                    <Text style={styles.tableData}>{data.week}</Text>
+                                    <Text style={styles.tableData}>{data.value}</Text>
+                                </View>
+                            ))}
                         </View>
+                        {/* End of placeholder table */}
+                    </View>
                     )}
                 </>
             )
@@ -463,5 +498,29 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         marginBottom: 4,
         fontSize: 16,
+    },
+    tableContainer: {
+        marginTop: 10,
+        backgroundColor: 'white',
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+    },
+    tableRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.tungfamGrey,
+    },
+    tableHeader: {
+        fontWeight: 'bold',
+        flex: 1,
+        textAlign: 'center',
+    },
+    tableData: {
+        flex: 1,
+        textAlign: 'center',
     },
 });
