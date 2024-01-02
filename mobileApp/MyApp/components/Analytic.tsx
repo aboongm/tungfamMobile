@@ -7,6 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { LineChart } from 'react-native-chart-kit';
+import { Dimensions } from 'react-native';
 
 const Analytic = ({ firmDetails, userRole, userId }) => {
     const navigation = useNavigation();
@@ -183,7 +185,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             // Update the state with the new cash balance value
             setCashBalance(updatedBalance);
             console.log("newCashBalance: ", newCashBalance);
-            
+
             // Clear the input field after successful update
             setNewCashBalance('');
         } catch (error) {
@@ -196,13 +198,12 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     useEffect(() => {
         if (displayOption === 'TrendChart') {
             // Fetch weekly chart data for two months (Placeholder data)
-            const dataForTwoMonths = generateDummyChartData();
+            const dataForTwoMonths = generateChartData();
             setWeeklyChartData(dataForTwoMonths);
         }
     }, [displayOption]);
 
-    const generateDummyChartData = () => {
-        // Generate dummy data for the weekly chart (for two months)
+    const generateChartData = () => {
         // Placeholder data - Replace with actual data from the API or calculations
         const twoMonthsData = [];
         // Generate data for 8 weeks (2 months)
@@ -318,16 +319,16 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                         <Text style={styles.item}>Rs {cashBalance}</Text>
                                     </View>
                                     {showCashBalance && (
-                                         <View style={{ marginBottom: 10 }}>
-                                         <TextInput
-                                             style={styles.input}
-                                             placeholder="Enter new cash balance"
-                                             value={newCashBalance}
-                                             onChangeText={(text) => setNewCashBalance(text)}
-                                             keyboardType="numeric"
-                                         />
-                                         <Button title="Update Cash Balance" onPress={updateCashBalance} />
-                                     </View>
+                                        <View style={{ marginBottom: 10 }}>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder="Enter new cash balance"
+                                                value={newCashBalance}
+                                                onChangeText={(text) => setNewCashBalance(text)}
+                                                keyboardType="numeric"
+                                            />
+                                            <Button title="Update Cash Balance" onPress={updateCashBalance} />
+                                        </View>
                                     )}
                                 </TouchableOpacity>
 
@@ -348,21 +349,51 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
                     {displayOption === 'TrendChart' && (
                         <View style={styles.trendChartContainer}>
-                        <Text style={styles.sectionTitle}>TrendChart Section</Text>
-                        <View style={styles.tableContainer}>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableHeader}>Week</Text>
-                                <Text style={styles.tableHeader}>Value</Text>
-                            </View>
-                            {weeklyChartData.map((data, index) => (
-                                <View key={index} style={styles.tableRow}>
-                                    <Text style={styles.tableData}>{data.week}</Text>
-                                    <Text style={styles.tableData}>{data.value}</Text>
-                                </View>
-                            ))}
+                            <Text style={styles.sectionTitle}>FirmValue Trend</Text>
+                            <LineChart
+                                data={{
+                                    labels: ["January", "February", "March", "April", "May", "June"],
+                                    datasets: [
+                                      {
+                                        data: [
+                                          Math.random() * 100,
+                                          Math.random() * 100,
+                                          Math.random() * 100,
+                                          Math.random() * 100,
+                                          Math.random() * 100,
+                                          Math.random() * 100
+                                        ]
+                                      }
+                                    ]
+                                  }}
+                                width={Dimensions.get("window").width - 60} // from react-native
+                                height={220}
+                                yAxisLabel="$"
+                                yAxisSuffix="k"
+                                yAxisInterval={1} // optional, defaults to 1
+                                chartConfig={{
+                                    backgroundColor: "#3498db",
+                                    backgroundGradientFrom: "#0184db",
+                                    backgroundGradientTo: "#4db1f3",
+                                    decimalPlaces: 2, // optional, defaults to 2dp
+                                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                    style: {
+                                        borderRadius: 16
+                                    },
+                                    propsForDots: {
+                                        r: "6",
+                                        strokeWidth: "2",
+                                        stroke: "#ffa726"
+                                    }
+                                }}
+                                bezier
+                                style={{
+                                    marginVertical: 8,
+                                    borderRadius: 16
+                                }}
+                            />
                         </View>
-                        {/* End of placeholder table */}
-                    </View>
                     )}
                 </>
             )
