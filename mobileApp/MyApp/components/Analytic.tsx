@@ -18,11 +18,14 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const [totalInvestments, setTotalInvestments] = useState([]);
     const [totalOutstandingAmount, setTotalOutstandingAmount] = useState(0);
     const [cashBalance, setCashBalance] = useState(0);
-    const [showTotalInvestments, setShowTotalInvestments] = useState(true);
+    const [showTotalInvestments, setShowTotalInvestments] = useState(false);
 
     useEffect(() => {
         // Fetch financial data
-        fetchFinancialData();
+        // fetchFinancialData();
+        if (firmDetails) {
+            fetchFinancialData();
+        }
     }, [firmDetails]);
 
     const toggleAnalytics = () => {
@@ -65,12 +68,32 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             name: 'Mayengbam Ranjit Luwang',
             investments: [
                 {
-                    date: '10Oct23',
-                    amount: '27000',
+                    date: '11 Sept 2023',
+                    amount: '17500',
                 },
                 {
-                    date: '20Nov23',
-                    amount: '50000',
+                    date: '26 Nov 2023',
+                    amount: '10000',
+                },
+                {
+                    date: '12 Dec 2023',
+                    amount: '35000',
+                },
+                {
+                    date: '14 Dec 2023',
+                    amount: '15000',
+                },
+                {
+                    date: '15 Dec 2023',
+                    amount: '40000',
+                },
+                {
+                    date: '18 Dec 2023',
+                    amount: '15000',
+                },
+                {
+                    date: '23 Dec 2023',
+                    amount: '10000',
                 },
             ],
         },
@@ -78,45 +101,50 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             name: 'Mayengbam Ranjita Chanu',
             investments: [
                 {
-                    date: '10Oct23',
-                    amount: '27000',
-                },
-                {
-                    date: '20Nov23',
-                    amount: '50000',
+                    date: '11Sept 2023',
+                    amount: '17380',
                 },
             ],
         }]
     };
-
-
+    
+    
     const getTotalOutstandingAmount = async () => {
         try {
             const token = await AsyncStorage.getItem("token");
-            const headers = { Authorization: `${token}`}
-
-            
-            const response = await axios.get(`${API_URL}/loans`, { headers })
+            const headers = { Authorization: `${token}` }
+    
+            const response = await axios.get(`${API_URL}/loans`, { headers });
             const filteredLoans = response.data.filter(
                 (loan) => loan.lender_firm_id === firmDetails.firm_id && loan.status === "approved"
             );
-                
-            // console.log("filteredLoans: ", filteredLoans);
-            // const paymentResponse = await axios.get(`${API_URL}/loans/9/paymentschedules`, { headers })
-            // console.log("Payments: ", paymentResponse);
-            
-            const totalOutstanding = filteredLoans.reduce(
-                (total, loan) => total + loan.amount,
-                0
-            );
-                console.log(totalOutstanding);
-                
+    
+            let totalOutstanding = 0;
+    
+            for (const loan of filteredLoans) {
+                const paymentResponse = await axios.get(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, { headers });
+                const filteredPayments = paymentResponse.data.filter((payment) => payment.loan_id === loan.loan_id);
+    
+                // Get the latest payment schedule (last entry)
+                const latestPaymentSchedule = filteredPayments[filteredPayments.length - 1];
+    
+                // Assuming the outstanding amount is present in the latest payment schedule
+                const outstandingPayable = parseFloat(latestPaymentSchedule.outstanding_payable);
+                if (!isNaN(outstandingPayable)) {
+                    totalOutstanding += outstandingPayable;
+                }
+            }
+    
+            setTotalOutstandingAmount(totalOutstanding);
             return totalOutstanding;
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
-
+    
+    
+    
+    
     const getCashBalance = () => {
         return 10000
     }
@@ -213,7 +241,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                         <Text style={styles.item}>Rs {calculateTotalInvestments()}</Text>
                                     </View>
                                 </TouchableOpacity>
-                                
+
                                 {showTotalInvestments && (
                                     <View style={{ marginBottom: 10 }}>
                                         {totalInvestments.map((investor, index) => (
@@ -229,12 +257,12 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                         ))}
                                     </View>
                                 )}
-                               
+
                                 <View style={styles.itemContainer}>
                                     <Text style={styles.item}>Cash Balance:</Text>
                                     <Text style={styles.item}>Rs {cashBalance}</Text>
                                 </View>
-                                <View style={[styles.itemContainer, { paddingVertical: 1}]}>
+                                <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
                                     <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>FIRM VALUE:</Text>
                                     <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {firmValue}</Text>
                                 </View>
