@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button, FlatList, Alert, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button, FlatList, Alert, ActivityIndicator, Pressable, TextInput } from 'react-native';
 import { COLORS } from '../constants';
 import axios from 'axios';
 import { API_URL } from '@env';
@@ -19,6 +19,8 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const [totalOutstandingAmount, setTotalOutstandingAmount] = useState(0);
     const [cashBalance, setCashBalance] = useState(0);
     const [showTotalInvestments, setShowTotalInvestments] = useState(false);
+    const [showCashBalance, setShowCashBalance] = useState(false);
+    const [newCashBalance, setNewCashBalance] = useState('');
 
     useEffect(() => {
         // Fetch financial data
@@ -34,6 +36,10 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
     const toggleTotalInvestment = () => {
         setShowTotalInvestments(!showTotalInvestments);
+    };
+
+    const toggleCashBalance = () => {
+        setShowCashBalance(!showCashBalance);
     };
 
     const toggleDisplayOption = (option) => {
@@ -107,44 +113,44 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             ],
         }]
     };
-    
-    
+
+
     const getTotalOutstandingAmount = async () => {
         try {
             const token = await AsyncStorage.getItem("token");
             const headers = { Authorization: `${token}` }
-    
+
             const response = await axios.get(`${API_URL}/loans`, { headers });
             const filteredLoans = response.data.filter(
                 (loan) => loan.lender_firm_id === firmDetails.firm_id && loan.status === "approved"
             );
-    
+
             let totalOutstanding = 0;
-    
+
             for (const loan of filteredLoans) {
                 const paymentResponse = await axios.get(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, { headers });
                 const filteredPayments = paymentResponse.data.filter((payment) => payment.loan_id === loan.loan_id);
-    
+
                 // Get the latest payment schedule (last entry)
                 const latestPaymentSchedule = filteredPayments[filteredPayments.length - 1];
-    
+
                 // Assuming the outstanding amount is present in the latest payment schedule
                 const outstandingPayable = parseFloat(latestPaymentSchedule.outstanding_payable);
                 if (!isNaN(outstandingPayable)) {
                     totalOutstanding += outstandingPayable;
                 }
             }
-    
+
             setTotalOutstandingAmount(totalOutstanding);
             return totalOutstanding;
         } catch (error) {
             console.error(error);
         }
     }
-    
-    
-    
-    
+
+
+
+
     const getCashBalance = () => {
         return 10000
     }
@@ -157,6 +163,31 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             });
         });
         return total;
+    };
+
+    const updateCashBalance = async () => {
+        try {
+            // Make an API call to update the cash balance here
+            // Use the newCashBalance state value to update the cash balance
+
+            // Example API call using Axios
+            const token = await AsyncStorage.getItem('token');
+            const headers = { Authorization: `${token}` };
+
+            const updatedBalance = parseInt(newCashBalance); // Convert the new cash balance to an integer if necessary
+
+            // Example API call using POST method to update cash balance
+            // await axios.post(`${API_URL}/updateCashBalance`, { cashBalance: updatedBalance }, { headers });
+
+            // Update the state with the new cash balance value
+            setCashBalance(updatedBalance);
+            console.log("newCashBalance: ", newCashBalance);
+            
+            // Clear the input field after successful update
+            setNewCashBalance('');
+        } catch (error) {
+            console.error('Error updating cash balance:', error);
+        }
     };
 
     const firmValue = totalOutstandingAmount + cashBalance;
@@ -236,7 +267,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 </View>
 
                                 <TouchableOpacity onPress={toggleTotalInvestment}>
-                                    <View style={styles.toggelInvestmentItemContainer}>
+                                    <View style={styles.toggelItemContainer}>
                                         <Text style={styles.item}>Total Investments:</Text>
                                         <Text style={styles.item}>Rs {calculateTotalInvestments()}</Text>
                                     </View>
@@ -258,10 +289,25 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                     </View>
                                 )}
 
-                                <View style={styles.itemContainer}>
-                                    <Text style={styles.item}>Cash Balance:</Text>
-                                    <Text style={styles.item}>Rs {cashBalance}</Text>
-                                </View>
+                                <TouchableOpacity onPress={toggleCashBalance}>
+                                    <View style={styles.toggelItemContainer}>
+                                        <Text style={styles.item}>Cash Balance:</Text>
+                                        <Text style={styles.item}>Rs {cashBalance}</Text>
+                                    </View>
+                                    {showCashBalance && (
+                                         <View style={{ marginBottom: 10 }}>
+                                         <TextInput
+                                             style={styles.input}
+                                             placeholder="Enter new cash balance"
+                                             value={newCashBalance}
+                                             onChangeText={(text) => setNewCashBalance(text)}
+                                             keyboardType="numeric"
+                                         />
+                                         <Button title="Update Cash Balance" onPress={updateCashBalance} />
+                                     </View>
+                                    )}
+                                </TouchableOpacity>
+
                                 <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
                                     <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>FIRM VALUE:</Text>
                                     <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {firmValue}</Text>
@@ -348,7 +394,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         paddingVertical: 4
     },
-    toggelInvestmentItemContainer: {
+    toggelItemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -407,5 +453,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+        backgroundColor: COLORS.tungfamLightBlue,
+        borderRadius: 5,
+        paddingHorizontal: 14,
+        paddingVertical: 4,
+        marginBottom: 4,
+        fontSize: 16,
     },
 });
