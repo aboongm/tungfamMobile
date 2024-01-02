@@ -433,7 +433,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                     width={Dimensions.get("window").width - 60} // from react-native
                                     height={260}
                                     yAxisLabel="Rs"
-                                    yAxisSuffix="k"
+                                    // yAxisSuffix="k"
                                     yAxisInterval={1} // optional, defaults to 1
                                     horizontalLabelRotation={0}
                                     verticalLabelRotation={-45}
@@ -442,7 +442,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                         backgroundColor: "#3498db",
                                         backgroundGradientFrom: "#0184db",
                                         backgroundGradientTo: "#4db1f3",
-                                        decimalPlaces: 2,
+                                        // decimalPlaces: 2,
                                         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                                         labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                                         style: {
@@ -454,6 +454,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                             stroke: "#ffa726"
                                         }
                                     }}
+                                    yAxisLabelFormatter={(value) => `${value.toFixed(0)}`}
                                     bezier
                                     style={{
                                         marginVertical: 4,
@@ -463,7 +464,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             )
                             }
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', padding: 4, backgroundColor: "#4db1f3", borderRadius: 6 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', padding: 4, borderRadius: 6 }}>
                                 <Text style={{ marginRight: 10, color: 'green', fontWeight: 'bold' }}>FirmValue</Text>
                                 <Text style={{ marginRight: 10, color: 'red', fontWeight: 'bold' }}>TotalInvestments</Text>
                                 <Text style={{ marginRight: 10, color: 'blue', fontWeight: 'bold' }}>TotalOutstanding</Text>
