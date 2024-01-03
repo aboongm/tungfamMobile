@@ -9,7 +9,7 @@ import { reducer } from "../redux/reducers/formReducer";
 import SubmitButton from "./SubmitButton";
 import Input from "./Input";
 
-let isTestMode = false
+let isTestMode = true
 
 type FormState = {
   inputValues: {
@@ -25,9 +25,10 @@ type FormState = {
 
 const initialState: FormState = {
   inputValues: {
-    // email: isTestMode ? "admin@punfam.com" : "",
-    email: isTestMode ? "support@tungfam.com" : "",
-    password: isTestMode ? "password" : "",
+    // email: isTestMode ? "support@tungfam.com" : "",
+    email: isTestMode ? "ranjitamayengbamchanu@yahoo.com" : "",
+    password: isTestMode ? "neonova" : "",
+    // password: isTestMode ? "password" : "",
   },
   inputValidities: {
     email: false,
