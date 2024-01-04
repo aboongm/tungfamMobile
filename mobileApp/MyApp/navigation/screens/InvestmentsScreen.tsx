@@ -1,0 +1,205 @@
+import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable, ActivityIndicator } from 'react-native';
+
+import PageTitle from '../../components/PageTitle';
+import PageContainer from '../../components/PageContainer';
+import { COLORS } from '../../constants';
+import { Picker } from '@react-native-picker/picker';
+import DatePicker from 'react-native-date-picker'
+
+const InvestmentsScreen = ({ route }) => {
+    const { totalOutstandingAmount, totalInvestments, cashBalance, firmValue } = route.params
+    const [open, setOpen] = useState(false)
+    const [newInvestmentDate, setNewInvestmentDate] = useState(new Date());
+    const [selectedInvestment, setSelectedInvestment] = useState('');
+    const [amount, setAmount] = useState('');
+    const [investments, setInvestments] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+
+    const addInvestmentRecord = async () => {
+        try {
+            const token = await AsyncStorage.getItem("token")
+            const headers = {
+                Authorization: `${token}`
+            }
+
+            const formData = {
+                total_outstanding: totalOutstandingAmount,
+                total_investments: totalInvestments,
+                firm_value: firmValue,
+                date: newInvestmentDate.toISOString().split('T')[0],
+                cash_balance: cashBalance
+            }
+
+            console.log("formData: ", formData);
+
+            // const response = await axios.post(`${API_URL}/loans/${loan.loan_id}/investmentschedules`, formData, { headers })
+            // console.log("response.data: ", response.data);
+
+            // if (response.status === 200) {
+            //     const updatedinvestments = [...payments, response.data];
+            //     setInvestments(updatedinvestments);
+
+            //     setNewInvestmentDate(new Date());
+            //     setSelectedInvestment('');
+            //     setAmount('');
+            //     Alert.alert("Successfully created payment!")
+            //     console.log("Successfully created payment!")
+            // }
+
+        } catch (error) {
+            console.log('error: ', error);
+
+            Alert.alert("Failed to create payment!")
+        }
+    };
+
+
+    // useEffect(() => {
+    //     fetchInvestments()
+    // }, []);
+
+    const takePermission = () => {
+        Alert.alert(
+            'Confirm Payment',
+            `Are you sure you want to add this InvestmentRecord for ${newInvestmentDate.toISOString().split('T')[0]}?`,
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel'
+                },
+                {
+                    text: 'OK',
+                    onPress: addInvestmentRecord
+                }
+            ]
+        );
+    }
+
+    return (
+        <PageContainer style={styles.container}>
+            <PageTitle text="Add An Investment Record" />
+
+            <ScrollView contentContainerStyle={styles.formContainer}>
+                <View style={{ width: '100%' }}>
+                    <View style={styles.tableContainer}>
+
+                        <View style={styles.tableInput}>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.text}>TotalOutstanding: </Text>
+                                <Text style={styles.text}>Rs {totalOutstandingAmount}</Text>
+                            </View>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.text}>TotalInvestments: </Text>
+                                <Text style={styles.text}>Rs {totalInvestments}</Text>
+                            </View>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.text}>CashBalance: </Text>
+                                <Text style={styles.text}>Rs {cashBalance}</Text>
+                            </View>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.text}>FirmValue: </Text>
+                                <Text style={styles.text}>Rs {firmValue}</Text>
+                            </View>
+
+                            <View style={styles.DateInvestment}>
+                                <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
+                                    <Text style={styles.button}>Pick Date</Text>
+                                </Pressable>
+                                <DatePicker
+                                    modal
+                                    open={open}
+                                    date={newInvestmentDate}
+                                    onConfirm={(date) => {
+                                        setOpen(false);
+                                        setNewInvestmentDate(date);
+                                    }}
+                                    onCancel={() => {
+                                        setOpen(false);
+                                    }}
+                                />
+                            </View>
+
+                            <TouchableOpacity onPress={takePermission}>
+                                <Text style={styles.addInvestmentButton}>Add An InvestmentRecord</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+        </PageContainer>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {},
+    formContainer: {},
+    tableContainer: {},
+    tableInput: {
+        flexDirection: "column",
+        marginTop: 10,
+        justifyContent: 'space-between',
+        width: '100%',
+        borderWidth: 1,
+        borderColor: 'grey',
+        borderRadius: 5,
+        padding: 10,
+        // backgroundColor: 'green'
+        marginBottom: 40,
+    },
+    DateInvestment: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+    dateButton: {
+        backgroundColor: COLORS.TungfamBgColor,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'grey',
+        borderRadius: 5,
+        margin: 0,
+        padding: 0,
+        elevation: 5,
+    },
+    button: {
+        color: 'white',
+        fontSize: 16,
+        padding: 14,
+    },
+    addInvestmentButton: {
+        fontSize: 16,
+        backgroundColor: COLORS.TungfamBgColor,
+        color: 'white',
+        borderRadius: 5,
+        padding: 14,
+        textAlign: 'center',
+        flex: 1,
+        elevation: 5,
+        marginTop: 10,
+    },
+    textContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+        borderRadius: 5,
+        marginBottom: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: COLORS.tungfamLightBlue,
+        elevation: 5,
+    },
+    text: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+});
+
+export default InvestmentsScreen;
