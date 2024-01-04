@@ -188,11 +188,11 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
         setDisplayOption(option);
     };
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item, index }) => {
         const isPending = item.status === 'pending';
         const isApproved = item.status === 'approved';
         const isOpen = openItems[item.loan_id];
-
+        
         const formatBorrowerName = (name) => {
             const nameParts = name.split(' ');
             if (nameParts.length >= 2) {
@@ -205,9 +205,21 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
         return (
             <View>
                 <TouchableOpacity onPress={() => toggleLoanItem(item.loan_id)}>
-                    <View style={styles.loanItemContainer}>
-                        <Text style={styles.loanItem}>{formatBorrowerName(item.borrower_name)}</Text>
-                        <Text style={styles.loanItem}>{`${item.loan_type}`}</Text>
+                    <View style={styles.container}>
+                        <View style={styles.loanItemContainer}>
+                            <Text style={styles.loanItem}>{`${index + 1}`}.{" "}{formatBorrowerName(item.borrower_name)}</Text>
+                            <Text style={styles.loanItem}>{`${item.loan_type}`}</Text>
+                        </View>
+                        <View style={styles.loanItemContainer}>
+                            <Text style={styles.loanItem}>{"    "}Start: {" "}
+                                {new Date(item.start_date).toLocaleDateString('en-GB', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                })}
+                            </Text>
+                            <Text style={styles.loanItem}>PayAmt: Rs {`${item.total_payable}`}</Text>
+                        </View>
                     </View>
                 </TouchableOpacity>
 
@@ -333,11 +345,12 @@ const styles = StyleSheet.create({
         // borderRadius: 6,
     },
     container: {
-        // borderWidth: 1,
-        // borderColor: COLORS.tungfamGrey,
+        borderWidth: 1,
+        borderRadius: 6,
+        borderColor: COLORS.tungfamGrey,
         // paddingVertical: 6,
         // paddingHorizontal: 10,
-        // backgroundColor: "red"
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
     },
     headerText: {
         fontSize: 20,
@@ -356,16 +369,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        borderWidth: 1,
-        borderColor: COLORS.tungfamGrey,
-        borderRadius: 6,
-        paddingVertical: 4
+        // borderWidth: 1,
+        // borderColor: COLORS.tungfamGrey,
+        // borderRadius: 6,
+        paddingVertical: 0
     },
     loanItem: {
         fontSize: 16,
         fontWeight: 'bold',
-        paddingVertical: 6,
-        paddingHorizontal: 10,
+        paddingVertical: 4,
+        paddingHorizontal: 4,
     },
     item: {
         backgroundColor: 'rgba(255, 255, 255, 0.6)',

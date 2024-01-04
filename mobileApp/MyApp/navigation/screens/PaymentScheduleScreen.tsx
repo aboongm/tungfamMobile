@@ -169,6 +169,7 @@ const PaymentScheduleScreen = ({ route }) => {
                                         index % 2 === 0 ? styles.evenRow : styles.oddRow,
                                     ]} key={index}>
                                         <Text style={styles.columnItem}>
+                                            {`${index + 1}`}.{" "}
                                             {new Date(payment.date).toLocaleDateString('en-GB', {
                                                 day: 'numeric',
                                                 month: 'short',
@@ -306,7 +307,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 10,
+        paddingHorizontal: 2,
+        paddingVertical: 10,
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
@@ -316,12 +318,14 @@ const styles = StyleSheet.create({
         flex: 1,
         fontWeight: 'bold',
         fontSize: 18,
-        color: 'white'
+        color: 'white',
+        textAlign: 'center'
     },
     columnItem: {
         flex: 1,
         fontWeight: '500',
         fontSize: 16,
+        textAlign: 'center'
     },
     paymentHeader: {
         flex: 1,
