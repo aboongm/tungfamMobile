@@ -57,7 +57,6 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                     if (response.status === 200) {
                         if (userRole === 'firmOwner') {
                             const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
-                            // sort the loanData with start_date
                             loanData.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
                             setLoan(loanData);
                             setIsLoading(false);
@@ -350,7 +349,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
         borderRadius: 6,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        backgroundColor: COLORS.tungfamLightBlue,
+        marginTop: 16,
     },
     headerText: {
         fontSize: 20,
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
-        marginBottom: 10,
+        // marginBottom: 10,
     },
     buttonContainer: {
         flexDirection: 'row',
