@@ -18,6 +18,8 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     const [openItems, setOpenItems] = useState({});
     const [filteredLoan, setFilteredLoan] = useState([]);
     const [displayOption, setDisplayOption] = useState('all');
+    const [loanId, setLoanId] = useState("")
+    const [outstandingPayable, setOutstandingPayable] = useState(0);
 
     const toggleLoanBook = () => {
         setShowDetails(!showDetails);
@@ -25,6 +27,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
 
     useEffect(() => {
         if (loan.length > 0) {
+            fetchLatestPayment()
             if (displayOption === 'all') {
                 setFilteredLoan(loan);
             } else {
@@ -117,13 +120,63 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
 
     useEffect(() => {
         fetchLoan();
-    }, [firmDetails]);
+        fetchLatestPayment();
+    }, [firmDetails, loanId]);
+
+    const handleComplete = async (item: any) => {
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const headers = { Authorization: `${token}` };
+            const updateData = {
+                ...item,
+                status: 'completed'
+            }
+            const response = await axios.put(`${API_URL}/loans/${loanId}`, updateData, { headers });
+
+            if (response.status === 200) {
+                Alert.alert("Loan is now completed!")
+                console.log('Loan is now completed!');
+            } else {
+                console.error('Error updating loan details:', response.data);
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const fetchLatestPayment = async () => {
+
+        if (loanId !== "") {
+            try {
+                const token = await AsyncStorage.getItem("token");
+                const headers = { Authorization: `${token}` };
+
+                const responsePayments = await axios.get(`${API_URL}/loans/${loanId}/paymentschedules`, { headers });
+                const paymentSchedules = responsePayments.data;
+
+                if (paymentSchedules.length > 0) {
+                    paymentSchedules.sort((a, b) => b.payment_id - a.payment_id);
+                    const latestPayment = paymentSchedules[0];
+                    setOutstandingPayable(latestPayment.outstanding_payable)
+                    return latestPayment.outstanding_payable || 0;
+                } else {
+                    console.log("No payment schedules found.");
+                    return 0;
+                }
+            } catch (error) {
+                console.error(error);
+                return 0;
+            }
+        }
+    };
+
 
     const toggleLoanItem = (loanId: string | number) => {
         setOpenItems((prevOpenItems) => ({
             ...prevOpenItems,
             [loanId]: !prevOpenItems[loanId],
         }));
+        setLoanId(loanId)
     };
 
     const goPaymentSchedule = (loan: any) => {
@@ -205,8 +258,8 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                             {isApproved && (
                                 <Button
                                     title="Complete"
-                                    onPress={() => { }}
-                                    disabled={!item.loanOfficer}
+                                    onPress={() => handleComplete(item)}
+                                    disabled={outstandingPayable !== 0}
                                 />
                             )}
                         </View>
