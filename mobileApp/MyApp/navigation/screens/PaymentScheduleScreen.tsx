@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable, ActivityIndicator } from 'react-native';
 
 import PageTitle from '../../components/PageTitle';
 import PageContainer from '../../components/PageContainer';
@@ -27,9 +27,11 @@ const PaymentScheduleScreen = ({ route }) => {
     const [selectedPayment, setSelectedPayment] = useState('');
     const [remark, setRemark] = useState('');
     const [payments, setPayments] = useState([]);
+    const [loading, setLoading] = useState(false);
    
     const fetchPayments = async () => {
         try {
+            setLoading(true);
             const token = await AsyncStorage.getItem("token")
             const headers = {
                 Authorization: `${token}`
@@ -40,6 +42,8 @@ const PaymentScheduleScreen = ({ route }) => {
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
+        } finally {
+            setLoading(false); 
         }
     };
 
@@ -48,7 +52,7 @@ const PaymentScheduleScreen = ({ route }) => {
     const paidAmount = (filteredPayments.length + 1) * loan.installment;
     const outStandingPayable = loan.total_payable - paidAmount;
 
-    console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
+    // console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
     
     const addPayment = async () => {
         try {
@@ -153,22 +157,30 @@ const PaymentScheduleScreen = ({ route }) => {
                 <View style={{ width: '100%' }}>
                     <View style={styles.tableContainer}>
                         <View>
-                            {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
-                                <View style={[
-                                    styles.tableBody,
-                                    index % 2 === 0 ? styles.evenRow : styles.oddRow,
-                                ]} key={index}>
-                                    <Text style={styles.columnItem}>
-                                        {new Date(payment.date).toLocaleDateString('en-GB', {
-                                            day: 'numeric',
-                                            month: 'short',
-                                            year: 'numeric',
-                                        })}
-                                    </Text>
-                                    <Text style={styles.columnItem}>Rs {payment.installment}</Text>
-                                    <Text style={styles.columnItem}>{payment.remarks}</Text>
+                            {loading ? (
+                                <View style={{ alignItems: 'center', paddingTop: 20}}>
+                                    <ActivityIndicator size="large" color={COLORS.primary} />
                                 </View>
-                            ))}
+                            ) : (
+                                <>
+                                {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
+                                    <View style={[
+                                        styles.tableBody,
+                                        index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                                    ]} key={index}>
+                                        <Text style={styles.columnItem}>
+                                            {new Date(payment.date).toLocaleDateString('en-GB', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric',
+                                            })}
+                                        </Text>
+                                        <Text style={styles.columnItem}>Rs {payment.installment}</Text>
+                                        <Text style={styles.columnItem}>{payment.remarks}</Text>
+                                    </View>
+                                ))}
+                            </>
+                            )}
                         </View>
 
                         <Text style={styles.paymentHeader}>Add A Payment</Text>
