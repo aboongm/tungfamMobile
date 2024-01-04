@@ -35,8 +35,8 @@ const PaymentScheduleScreen = ({ route }) => {
                 Authorization: `${token}`
             }
 
-            const response = await axios.get(`${API_URL}/loans/:loanId/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
-            // console.log("fetchPayments: ", response.data)
+            const response = await axios.get(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
+            console.log("fetchPayments: ", response.data)
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
@@ -101,12 +101,12 @@ const PaymentScheduleScreen = ({ route }) => {
     }, []);
     
     const takePermission = () => {
-        const date = new Date();
-        const localizedDate = date.toLocaleString(); 
+        // const date = new Date();
+        // const localizedDate = date.toLocaleString(); 
 
         Alert.alert(
             'Confirm Payment',
-            `Are you sure you want to add this payment for ${localizedDate}?`,
+            `Are you sure you want to add this payment for ${newPaymentDate.toISOString().split('T')[0]}?`,
             [
                 {
                     text: 'Cancel',
