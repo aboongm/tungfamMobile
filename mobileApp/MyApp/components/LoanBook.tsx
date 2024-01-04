@@ -57,6 +57,8 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                     if (response.status === 200) {
                         if (userRole === 'firmOwner') {
                             const loanData = response.data.filter((loan) => loan.lender_firm_id === firmDetails.firm_id)
+                            // sort the loanData with start_date
+                            loanData.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
                             setLoan(loanData);
                             setIsLoading(false);
                         } else if (userRole === 'employee') {
@@ -346,10 +348,8 @@ const styles = StyleSheet.create({
     },
     container: {
         borderWidth: 1,
-        borderRadius: 6,
         borderColor: COLORS.tungfamGrey,
-        // paddingVertical: 6,
-        // paddingHorizontal: 10,
+        borderRadius: 6,
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
     },
     headerText: {
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     loanItemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        // backgroundColor: 'rgba(255, 255, 255, 0.8)',
         // borderWidth: 1,
         // borderColor: COLORS.tungfamGrey,
         // borderRadius: 6,
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         paddingVertical: 4,
-        paddingHorizontal: 4,
+        paddingHorizontal: 6,
     },
     item: {
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
