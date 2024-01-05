@@ -9,16 +9,18 @@ import PageContainer from '../../components/PageContainer';
 import { COLORS } from '../../constants';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
+import { useNavigation } from '@react-navigation/native';
 
 const InvestmentsScreen = ({ route }) => {
-    const { totalOutstandingAmount, totalInvestments, cashBalance, firmValue } = route.params
+    const navigation = useNavigation();
+
+    const { totalOutstandingAmount, totalInvestments, firmValue, firmId } = route.params
     const [open, setOpen] = useState(false)
     const [newInvestmentDate, setNewInvestmentDate] = useState(new Date());
+    const [cashBalance, setCashBalance] = useState('');
     const [selectedInvestment, setSelectedInvestment] = useState('');
-    const [amount, setAmount] = useState('');
     const [investments, setInvestments] = useState([]);
     const [loading, setLoading] = useState(false);
-
 
     const addInvestmentRecord = async () => {
         try {
@@ -31,37 +33,27 @@ const InvestmentsScreen = ({ route }) => {
                 total_outstanding: totalOutstandingAmount,
                 total_investments: totalInvestments,
                 firm_value: firmValue,
-                date: newInvestmentDate.toISOString().split('T')[0],
+                date_recorded: newInvestmentDate.toISOString().split('T')[0],
                 cash_balance: cashBalance
             }
 
             console.log("formData: ", formData);
 
-            // const response = await axios.post(`${API_URL}/loans/${loan.loan_id}/investmentschedules`, formData, { headers })
-            // console.log("response.data: ", response.data);
+            const response = await axios.post(`${API_URL}/firms/${firmId}/investmentrecords`, formData, { headers })
+            console.log("response.data: ", response.data);
 
-            // if (response.status === 200) {
-            //     const updatedinvestments = [...payments, response.data];
-            //     setInvestments(updatedinvestments);
-
-            //     setNewInvestmentDate(new Date());
-            //     setSelectedInvestment('');
-            //     setAmount('');
-            //     Alert.alert("Successfully created payment!")
-            //     console.log("Successfully created payment!")
-            // }
+            if (response.status === 200) {
+                navigation.navigate("Home")
+                Alert.alert("Successfully created InvestmentRecord!")
+                console.log("Successfully created InvestmentRecord!")
+            }
 
         } catch (error) {
             console.log('error: ', error);
-
-            Alert.alert("Failed to create payment!")
+            Alert.alert("Failed to create InvestmentRecord!")
         }
     };
 
-
-    // useEffect(() => {
-    //     fetchInvestments()
-    // }, []);
 
     const takePermission = () => {
         Alert.alert(
@@ -98,13 +90,19 @@ const InvestmentsScreen = ({ route }) => {
                                 <Text style={styles.text}>Rs {totalInvestments}</Text>
                             </View>
                             <View style={styles.textContainer}>
-                                <Text style={styles.text}>CashBalance: </Text>
-                                <Text style={styles.text}>Rs {cashBalance}</Text>
-                            </View>
-                            <View style={styles.textContainer}>
                                 <Text style={styles.text}>FirmValue: </Text>
                                 <Text style={styles.text}>Rs {firmValue}</Text>
                             </View>
+                            <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input} // Add this style for TextInput
+                                placeholder="Enter CashBalance"
+                                keyboardType="numeric"
+                                value={cashBalance} // Set value to cashBalance state
+                                onChangeText={(text) => setCashBalance(text)} // Set the state when text changes
+                            />
+                            </View>
+                            
 
                             <View style={styles.DateInvestment}>
                                 <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
@@ -199,6 +197,21 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         fontWeight: '600',
+    },
+    inputContainer: {
+        marginBottom: 10,
+        borderColor: COLORS.tungfamGrey,
+        borderWidth: 1,
+        borderRadius: 5,
+        // padding: 4,
+        backgroundColor: COLORS.tungfamLightBlue,
+    },
+    input: {
+        fontSize: 16,
+        fontWeight: '600',
+        backgroundColor: 'rgba(255,255,255,0.55)',
+        paddingVertical: 8,
+        paddingHorizontal: 20,
     },
 });
 

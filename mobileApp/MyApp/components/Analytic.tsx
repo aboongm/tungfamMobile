@@ -18,23 +18,30 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
     // Financial data state
     const [totalInvestments, setTotalInvestments] = useState([]);
+    const [totalInvestmentsList, setTotalInvestmentsList] = useState([]);
     const [totalOutstandingAmount, setTotalOutstandingAmount] = useState(0);
     const [cashBalance, setCashBalance] = useState(0);
+    const [firmValue, setFirmValue] = useState(0);
     const [showTotalInvestments, setShowTotalInvestments] = useState(false);
-    const [showCashBalance, setShowCashBalance] = useState(false);
-    const [newCashBalance, setNewCashBalance] = useState('');
     const [weeklyChartData, setWeeklyChartData] = useState([]);
 
     const [isLoadingChartData, setIsLoadingChartData] = useState(true);
 
+    const [firmId, setFirmId] = useState(null); 
+
     useEffect(() => {
-        // Fetch financial data
-        // fetchFinancialData();
+        fetchFinancialData();
         if (firmDetails) {
-            fetchFinancialData();
+            setFirmId(firmDetails.firm_id)
         }
     }, [firmDetails]);
 
+    useEffect(() => {
+        if (firmId !== null) {
+        fetchFinancialData();
+    }
+    }, [firmId]);
+    
     const toggleAnalytics = () => {
         setShowDetails(!showDetails);
     };
@@ -43,252 +50,103 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
         setShowTotalInvestments(!showTotalInvestments);
     };
 
-    const toggleCashBalance = () => {
-        setShowCashBalance(!showCashBalance);
-    };
-
     const toggleDisplayOption = (option) => {
         setDisplayOption(option);
     };
 
     const fetchFinancialData = async () => {
         try {
-            // Fetch investors' total investments (Replace with actual API call)
-            const investorsData = await getInvestorsTotalInvestments();
-
-            // Fetch total outstanding amount from LoanBook (Replace with actual API call)
-            const outstandingAmount = await getTotalOutstandingAmount();
-
-            // Fetch cash balance (Replace with actual API call)
-            const cash = await getCashBalance();
-
-            // Update state with fetched data
-            if (investorsData && outstandingAmount && cash) {
-
-                setTotalInvestments(investorsData);
-                setTotalOutstandingAmount(outstandingAmount);
-                setCashBalance(cash);
+            if (!firmId) {
+                return;
             }
+
+            const token = await AsyncStorage.getItem("token");
+            const headers = { Authorization: `${token}`};
+
+            const response = await axios.get(`${API_URL}/firms/${firmId}/investmentrecords`, { headers });
+            const sortedRecords = response.data.sort((a, b) => new Date(b.date_recorded) - new Date(a.date_recorded));
+            const latestEntry = sortedRecords[0];
+            const { total_investments, total_outstanding, firm_value, cash_balance } = latestEntry;
+            
+            setTotalInvestmentsList(sortedRecords)
+            setTotalInvestments(total_investments);
+            setTotalOutstandingAmount(total_outstanding);
+            setFirmValue(firm_value);
+            setCashBalance(cash_balance);
         } catch (error) {
             console.error('Error fetching financial data:', error);
         }
     };
-
-    const getInvestorsTotalInvestments = () => {
-        return [{
-            name: 'Mayengbam Ranjit Luwang',
-            investments: [
-                {
-                    date: '11 Sept 2023',
-                    amount: '17500',
-                },
-                {
-                    date: '26 Nov 2023',
-                    amount: '10000',
-                },
-                {
-                    date: '12 Dec 2023',
-                    amount: '35000',
-                },
-                {
-                    date: '14 Dec 2023',
-                    amount: '15000',
-                },
-                {
-                    date: '15 Dec 2023',
-                    amount: '40000',
-                },
-                {
-                    date: '18 Dec 2023',
-                    amount: '15000',
-                },
-                {
-                    date: '23 Dec 2023',
-                    amount: '10000',
-                },
-            ],
-        },
-        {
-            name: 'Mayengbam Ranjita Chanu',
-            investments: [
-                {
-                    date: '11Sept 2023',
-                    amount: '17380',
-                },
-            ],
-        }]
-    };
-
-
-    const getTotalOutstandingAmount = async () => {
-        try {
-            const token = await AsyncStorage.getItem("token");
-            const headers = { Authorization: `${token}` }
-
-            const response = await axios.get(`${API_URL}/loans`, { headers });
-            const filteredLoans = response.data.filter(
-                (loan) => loan.lender_firm_id === firmDetails.firm_id && loan.status === "approved"
-            );
-
-            let totalOutstanding = 0;
-
-            for (const loan of filteredLoans) {
-                const paymentResponse = await axios.get(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, { headers });
-                const filteredPayments = paymentResponse.data.filter((payment) => payment.loan_id === loan.loan_id);
-
-                // Get the latest payment schedule (last entry)
-                const latestPaymentSchedule = filteredPayments[filteredPayments.length - 1];
-
-                // Assuming the outstanding amount is present in the latest payment schedule
-                const outstandingPayable = parseFloat(latestPaymentSchedule.outstanding_payable);
-                if (!isNaN(outstandingPayable)) {
-                    totalOutstanding += outstandingPayable;
-                }
-            }
-
-            setTotalOutstandingAmount(totalOutstanding);
-            return totalOutstanding;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-
-
-
-    const getCashBalance = () => {
-        return 10000
-    }
-
-    const calculateTotalInvestments = () => {
-        let total = 0;
-        totalInvestments.forEach((investor) => {
-            investor.investments.forEach((investment) => {
-                total += parseInt(investment.amount);
-            });
-        });
-        return total;
-    };
-
-    const updateCashBalance = async () => {
-        try {
-            // Make an API call to update the cash balance here
-            // Use the newCashBalance state value to update the cash balance
-
-            // Example API call using Axios
-            const token = await AsyncStorage.getItem('token');
-            const headers = { Authorization: `${token}` };
-
-            const updatedBalance = parseInt(newCashBalance); // Convert the new cash balance to an integer if necessary
-
-            // Example API call using POST method to update cash balance
-            // await axios.post(`${API_URL}/updateCashBalance`, { cashBalance: updatedBalance }, { headers });
-
-            // Update the state with the new cash balance value
-            setCashBalance(updatedBalance);
-            console.log("newCashBalance: ", newCashBalance);
-
-            // Clear the input field after successful update
-            setNewCashBalance('');
-        } catch (error) {
-            console.error('Error updating cash balance:', error);
-        }
-    };
-
-    const firmValue = totalOutstandingAmount + cashBalance;
 
     useEffect(() => {
         if (displayOption === 'TrendChart') {
             setIsLoadingChartData(true);
             const fetchChartData = async () => {
                 try {
-                    const data = await fetchDataFromDB();
-                    if (data) {
-                        const labels = data.labels.slice(1); // Exclude the "On Current Date" label
-                        const dataset1 = data.datasets[0].data.slice(1);
-                        const dataset2 = data.datasets[1].data.slice(1);
-                        const dataset3 = data.datasets[2].data.slice(1);
+                    const datasets = {
+                        total_investments: [],
+                        total_outstanding: [],
+                        firm_value: [],
+                    };
 
-                        const updatedChartData = {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    data: dataset1,
-                                    color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
-                                },
-                                {
-                                    data: dataset2,
-                                    color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
-                                },
-                                {
-                                    data: dataset3,
-                                    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
-                                },
-                            ],
-                        };
+                    
+    
+                    const labels = totalInvestmentsList.reverse().slice(0).map((record) => {
+                        const date = new Date(record.date_recorded);
+                        return new Intl.DateTimeFormat('en-GB', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+                    });
 
-                        setWeeklyChartData(updatedChartData);
-                        setIsLoadingChartData(false);
-                    }
+                    totalInvestmentsList.forEach((record) => {
+                        datasets.total_investments.push(record.total_investments);
+                        datasets.total_outstanding.push(record.total_outstanding);
+                        datasets.firm_value.push(record.firm_value);
+                    });
+    
+                    const updatedChartData = {
+                        labels: labels.slice(1), // Exclude the first label if needed
+                        datasets: [
+                            {
+                                data: datasets.total_investments.slice(1), // Exclude the first data if needed
+                                color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
+                            },
+                            {
+                                data: datasets.total_outstanding.slice(1), // Exclude the first data if needed
+                                color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+                            },
+                            {
+                                data: datasets.firm_value.slice(1), // Exclude the first data if needed
+                                color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+                            },
+                        ],
+                    };
+
+                    console.log("updatedChart: ", updatedChartData.datasets);
+                    console.log("updatedChart: ", updatedChartData.labels);
+                    
+    
+                    setWeeklyChartData(updatedChartData);
+                    setIsLoadingChartData(false);
                 } catch (error) {
                     console.error("Error fetching data:", error);
                     setIsLoadingChartData(false);
                 }
             };
-
+    
             fetchChartData();
         }
-    }, [displayOption]);
+    }, [displayOption, totalInvestmentsList]);
 
-    const fetchDataFromDB = () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const data = {
-                    labels: [
-                        "22 Oct 2023",
-                        "28 Oct 2023",
-                        "5 Nov 2023",
-                        "12 Nov 2023",
-                        "19 Nov 2023",
-                        "26 Nov 2023",
-                        "3 Dec 2023",
-                        "10 Dec 2023",
-                        "17 Dec 2023",
-                        "24 Dec 2023",
-                        "31 Dec 2023"
-                    ],
-                    datasets: [
-                        {
-                            data: [
-                                35000, 35000, 35000, 35000, 34880, 34880,
-                                44880, 0, 44880, 134880, 159880
-                            ],
-                        },
-                        {
-                            data: [
-                                41200, 41200, 41200, 46100, 46100,
-                                59050, 0, 58500, 190050, 222250
-                            ],
-                        },
-                        {
-                            data: [
-                                40400, 37100, 37100, 46100, 46100,
-                                57200, null, 49400, 177050, 216750
-                            ],
-                        },
-                        {
-                            data: [
-                                800, 4100, 4100, 0, null,
-                                1850, null, 9100, 13000, 5500
-                            ],
-                        },
-                    ]
-                };
 
-                resolve(data);
-            }, 1000);
-        });
-    };
+    const addInvestmentRecord = async () => {
+        const firmId = firmDetails.firm_id
+
+        navigation.navigate("Investments", {
+            totalOutstandingAmount,
+            totalInvestments,
+            firmValue,
+            firmId
+        })
+    }
 
     return (
         <>
@@ -316,7 +174,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 Financials
                             </Text>
                         </Pressable>
-                        <Pressable
+                        {/* <Pressable
                             style={[
                                 styles.buttonOptions,
                                 displayOption === 'Expenses' && {
@@ -333,7 +191,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             >
                                 Expenses
                             </Text>
-                        </Pressable>
+                        </Pressable> */}
                         <Pressable
                             style={[
                                 styles.buttonOptions,
@@ -356,8 +214,21 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
                     {displayOption === 'Financials' && (
                         <View style={styles.financialsContainer}>
-                            <Text style={styles.financialsTitle}>Financials</Text>
+                            <Text style={styles.financialsTitle}>Financials as on : {new Date().toLocaleDateString('en-GB', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                            })}</Text>
                             <View style={styles.financialsData}>
+                                <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
+                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>FIRM VALUE:</Text>
+                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {firmValue}</Text>
+                                </View>
+
+                                <View style={styles.itemContainer}>
+                                    <Text style={styles.item}>Cash Balance:</Text>
+                                    <Text style={styles.item}>Rs {cashBalance}</Text>
+                                </View>
 
                                 <View style={styles.itemContainer}>
                                     <Text style={styles.item}>Total Outstanding Amount:</Text>
@@ -367,11 +238,11 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 <TouchableOpacity onPress={toggleTotalInvestment}>
                                     <View style={styles.toggelItemContainer}>
                                         <Text style={styles.item}>Total Investments:</Text>
-                                        <Text style={styles.item}>Rs {calculateTotalInvestments()}</Text>
+                                        <Text style={styles.item}>Rs {totalInvestments}</Text>
                                     </View>
                                 </TouchableOpacity>
 
-                                {showTotalInvestments && (
+                                {/* {showTotalInvestments && (
                                     <View style={{ marginBottom: 10 }}>
                                         {totalInvestments.map((investor, index) => (
                                             <View key={index} style={styles.investmentsContainer}>
@@ -385,31 +256,16 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                             </View>
                                         ))}
                                     </View>
-                                )}
+                                )} */}
 
-                                <TouchableOpacity onPress={toggleCashBalance}>
-                                    <View style={styles.toggelItemContainer}>
-                                        <Text style={styles.item}>Cash Balance:</Text>
-                                        <Text style={styles.item}>Rs {cashBalance}</Text>
-                                    </View>
-                                    {showCashBalance && (
-                                        <View style={{ marginBottom: 10 }}>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="Enter new cash balance"
-                                                value={newCashBalance}
-                                                onChangeText={(text) => setNewCashBalance(text)}
-                                                keyboardType="numeric"
-                                            />
-                                            <Button title="Update Cash Balance" onPress={updateCashBalance} />
-                                        </View>
-                                    )}
-                                </TouchableOpacity>
 
-                                <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
-                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>FIRM VALUE:</Text>
-                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {firmValue}</Text>
-                                </View>
+                               
+                                <Pressable
+                                    style={styles.buttonInvestment}
+                                    onPress={addInvestmentRecord}
+                                >
+                                    <Text style={styles.buttonInvestmentText}>Add A Weekly InvestmentRecord</Text>
+                                </Pressable>
                             </View>
                         </View>
                     )}
@@ -509,6 +365,21 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
         backgroundColor: COLORS.white,
+    },
+    buttonInvestment: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: COLORS.tungfamGrey,
+        backgroundColor: COLORS.TungfamBgColor,
+        marginTop: 8,
+    },
+    buttonInvestmentText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: "#ffffff"
     },
     buttonText: {
         fontSize: 16,
