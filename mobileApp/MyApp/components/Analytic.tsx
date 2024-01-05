@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
+import Slider from '@react-native-community/slider';
 
 const Analytic = ({ firmDetails, userRole, userId }) => {
     const navigation = useNavigation();
@@ -19,15 +20,17 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     // Financial data state
     const [totalInvestments, setTotalInvestments] = useState([]);
     const [totalInvestmentsList, setTotalInvestmentsList] = useState([]);
+    const [totalInvestmentsListChart, setTotalInvestmentsListChart] = useState([]);
     const [totalOutstandingAmount, setTotalOutstandingAmount] = useState(0);
     const [cashBalance, setCashBalance] = useState(0);
     const [firmValue, setFirmValue] = useState(0);
     const [showTotalInvestments, setShowTotalInvestments] = useState(false);
     const [weeklyChartData, setWeeklyChartData] = useState([]);
+    const [maxDisplayItems, setMaxDisplayItems] = useState(6);
 
     const [isLoadingChartData, setIsLoadingChartData] = useState(true);
 
-    const [firmId, setFirmId] = useState(null); 
+    const [firmId, setFirmId] = useState(null);
 
     useEffect(() => {
         fetchFinancialData();
@@ -38,10 +41,10 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
     useEffect(() => {
         if (firmId !== null) {
-        fetchFinancialData();
-    }
+            fetchFinancialData();
+        }
     }, [firmId]);
-    
+
     const toggleAnalytics = () => {
         setShowDetails(!showDetails);
     };
@@ -61,14 +64,16 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             }
 
             const token = await AsyncStorage.getItem("token");
-            const headers = { Authorization: `${token}`};
+            const headers = { Authorization: `${token}` };
 
             const response = await axios.get(`${API_URL}/firms/${firmId}/investmentrecords`, { headers });
             const sortedRecords = response.data.sort((a, b) => new Date(b.date_recorded) - new Date(a.date_recorded));
+            const unSortedRecords = response.data;
             const latestEntry = sortedRecords[0];
             const { total_investments, total_outstanding, firm_value, cash_balance } = latestEntry;
-            
+
             setTotalInvestmentsList(sortedRecords)
+            setTotalInvestmentsListChart(unSortedRecords.reverse())
             setTotalInvestments(total_investments);
             setTotalOutstandingAmount(total_outstanding);
             setFirmValue(firm_value);
@@ -89,19 +94,24 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                         firm_value: [],
                     };
 
-                    
-    
-                    const labels = totalInvestmentsList.reverse().slice(0).map((record) => {
+                    let totalItems = totalInvestmentsListChart.length - 1;
+                    let itemToDisplay = totalItems - maxDisplayItems
+                    console.log("totalItems: ", itemToDisplay);
+                    console.log("maxDisplayItems: ", maxDisplayItems);
+
+                    const selectedInvestmentsList = totalInvestmentsListChart.slice(itemToDisplay);
+
+                    const labels = selectedInvestmentsList.map((record) => {
                         const date = new Date(record.date_recorded);
                         return new Intl.DateTimeFormat('en-GB', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
                     });
 
-                    totalInvestmentsList.forEach((record) => {
+                    selectedInvestmentsList.forEach((record) => {
                         datasets.total_investments.push(record.total_investments);
                         datasets.total_outstanding.push(record.total_outstanding);
                         datasets.firm_value.push(record.firm_value);
                     });
-    
+
                     const updatedChartData = {
                         labels: labels.slice(1), // Exclude the first label if needed
                         datasets: [
@@ -122,8 +132,8 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
                     console.log("updatedChart: ", updatedChartData.datasets);
                     console.log("updatedChart: ", updatedChartData.labels);
-                    
-    
+
+
                     setWeeklyChartData(updatedChartData);
                     setIsLoadingChartData(false);
                 } catch (error) {
@@ -131,10 +141,10 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                     setIsLoadingChartData(false);
                 }
             };
-    
+
             fetchChartData();
         }
-    }, [displayOption, totalInvestmentsList]);
+    }, [displayOption, totalInvestmentsList, maxDisplayItems]);
 
 
     const addInvestmentRecord = async () => {
@@ -259,7 +269,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 )} */}
 
 
-                               
+
                                 <Pressable
                                     style={styles.buttonInvestment}
                                     onPress={addInvestmentRecord}
@@ -284,39 +294,58 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                 <ActivityIndicator size="large" color={COLORS.TungfamBgColor} />
                             ) : (
                                 weeklyChartData &&
-                                <LineChart
-                                    data={weeklyChartData}
-                                    width={Dimensions.get("window").width - 60} // from react-native
-                                    height={260}
-                                    yAxisLabel="Rs"
-                                    // yAxisSuffix="k"
-                                    yAxisInterval={1} // optional, defaults to 1
-                                    horizontalLabelRotation={0}
-                                    verticalLabelRotation={-45}
-                                    xLabelsOffset={10} // Adjust the offset to your preference
-                                    chartConfig={{
-                                        backgroundColor: "#3498db",
-                                        backgroundGradientFrom: "#0184db",
-                                        backgroundGradientTo: "#4db1f3",
-                                        // decimalPlaces: 2,
-                                        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                        style: {
-                                            borderRadius: 16,
-                                        },
-                                        propsForDots: {
-                                            r: "6",
-                                            strokeWidth: "2",
-                                            stroke: "#ffa726"
-                                        }
-                                    }}
-                                    yAxisLabelFormatter={(value) => `${value.toFixed(0)}`}
-                                    bezier
-                                    style={{
-                                        marginVertical: 4,
-                                        borderRadius: 8
-                                    }}
-                                />
+                                <>
+                                    <View style={styles.sliderContainer}>
+                                        <Text style={styles.sliderText}>
+                                            Display for {maxDisplayItems} Weeks
+                                        </Text>
+                                        <Slider
+                                            style={styles.slider}
+                                            minimumValue={6} // Set minimum value
+                                            maximumValue={totalInvestmentsList.length - 1} // Set maximum value based on total data
+                                            step={1} // Set step size
+                                            minimumTrackTintColor={COLORS.TungfamBgColor}
+                                            maximumTrackTintColor="#000000"
+                                            thumbTintColor={COLORS.TungfamBgColor}
+                                            value={maxDisplayItems} // Set initial value
+                                            onValueChange={(value) => setMaxDisplayItems(value)} // Set value on change
+                                            />
+                                    </View>
+                                    
+                                    <LineChart
+                                        data={weeklyChartData}
+                                        width={Dimensions.get("window").width - 60} // from react-native
+                                        height={260}
+                                        yAxisLabel="Rs"
+                                        // yAxisSuffix="k"
+                                        yAxisInterval={1} // optional, defaults to 1
+                                        horizontalLabelRotation={0}
+                                        verticalLabelRotation={-45}
+                                        xLabelsOffset={10} // Adjust the offset to your preference
+                                        chartConfig={{
+                                            backgroundColor: "#3498db",
+                                            backgroundGradientFrom: "#0184db",
+                                            backgroundGradientTo: "#4db1f3",
+                                            // decimalPlaces: 2,
+                                            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                                            style: {
+                                                borderRadius: 16,
+                                            },
+                                            propsForDots: {
+                                                r: "6",
+                                                strokeWidth: "2",
+                                                stroke: "#ffa726"
+                                            }
+                                        }}
+                                        yAxisLabelFormatter={(value) => `${value.toFixed(0)}`}
+                                        bezier
+                                        style={{
+                                            marginVertical: 4,
+                                            borderRadius: 8
+                                        }}
+                                    />
+                                </>
                             )
                             }
 
@@ -502,4 +531,20 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'center',
     },
+    sliderContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+    },
+    sliderText: { 
+        fontSize: 16,
+        textAlign: 'center', 
+        padding: 2
+    },
+    slider: { 
+        width: '100%', 
+        marginBottom: 8,
+        padding: 2,
+    }
+    
 });
