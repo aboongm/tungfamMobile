@@ -107,9 +107,9 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                     });
 
                     selectedInvestmentsList.forEach((record) => {
-                        datasets.total_investments.push(record.total_investments);
-                        datasets.total_outstanding.push(record.total_outstanding);
-                        datasets.firm_value.push(record.firm_value);
+                        datasets.total_investments.push(record.total_investments / 1000);
+                        datasets.total_outstanding.push(record.total_outstanding / 1000);
+                        datasets.firm_value.push(record.firm_value / 1000);
                     });
 
                     const updatedChartData = {
@@ -317,7 +317,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                         width={Dimensions.get("window").width - 60} // from react-native
                                         height={260}
                                         yAxisLabel="Rs"
-                                        // yAxisSuffix="k"
+                                        yAxisSuffix="k"
                                         yAxisInterval={1} // optional, defaults to 1
                                         horizontalLabelRotation={0}
                                         verticalLabelRotation={-45}
@@ -350,9 +350,9 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             }
 
                             <View style={{ flexDirection: 'row', justifyContent: 'center', padding: 4, borderRadius: 6 }}>
-                                <Text style={{ marginRight: 10, color: 'green', fontWeight: 'bold' }}>FirmValue</Text>
-                                <Text style={{ marginRight: 10, color: 'red', fontWeight: 'bold' }}>TotalInvestments</Text>
-                                <Text style={{ marginRight: 10, color: 'blue', fontWeight: 'bold' }}>TotalOutstanding</Text>
+                                <Text style={{ marginRight: 10, color: 'blue', fontWeight: 'bold' }}>FirmValue</Text>
+                                <Text style={{ marginRight: 10, color: 'green', fontWeight: 'bold' }}>TotalInvestments</Text>
+                                <Text style={{ marginRight: 10, color: 'red', fontWeight: 'bold' }}>TotalOutstanding</Text>
                             </View>
                         </View>
 
