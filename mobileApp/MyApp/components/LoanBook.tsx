@@ -20,6 +20,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     const [displayOption, setDisplayOption] = useState('all');
     const [loanId, setLoanId] = useState("")
     const [outstandingPayable, setOutstandingPayable] = useState(0);
+    const [totalPayable, setTotalPayable] = useState(0);
 
     const toggleLoanBook = () => {
         setShowDetails(!showDetails);
@@ -28,14 +29,17 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     useEffect(() => {
         if (loan.length > 0) {
             fetchLatestPayment()
+            let filtered = [];
             if (displayOption === 'all') {
-                setFilteredLoan(loan);
+                filtered = loan.filter((item) => item.status.toLowerCase() !== 'completed');
             } else {
-                const filtered = loan.filter(
-                    (item) => item.payment_type.toLowerCase() === displayOption
+                filtered = loan.filter(
+                    (item) =>
+                        item.payment_type.toLowerCase() === displayOption &&
+                        item.status.toLowerCase() !== 'completed'
                 );
-                setFilteredLoan(filtered);
             }
+            setFilteredLoan(filtered);
         }
     }, [loan, displayOption]);
 
@@ -133,6 +137,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                 status: 'completed'
             }
             const response = await axios.put(`${API_URL}/loans/${loanId}`, updateData, { headers });
+            console.log("response: ", response.data);
 
             if (response.status === 200) {
                 Alert.alert("Loan is now completed!")
@@ -159,6 +164,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                     paymentSchedules.sort((a, b) => b.payment_id - a.payment_id);
                     const latestPayment = paymentSchedules[0];
                     setOutstandingPayable(latestPayment.outstanding_payable)
+                    setTotalPayable(latestPayment.total_payable)
                     return latestPayment.outstanding_payable || 0;
                 } else {
                     console.log("No payment schedules found.");
@@ -188,12 +194,15 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     const toggleDisplayOption = (option) => {
         setDisplayOption(option);
     };
+console.log("true: ", outstandingPayable === 0);
+console.log("outstandingPayable: ", outstandingPayable);
 
     const renderItem = ({ item, index }) => {
         const isPending = item.status === 'pending';
         const isApproved = item.status === 'approved';
+        const isCompleted = item.status === 'completed';
         const isOpen = openItems[item.loan_id];
-        
+
         const formatBorrowerName = (name) => {
             const nameParts = name.split(' ');
             if (nameParts.length >= 2) {
@@ -272,7 +281,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                                 <Button
                                     title="Complete"
                                     onPress={() => handleComplete(item)}
-                                    disabled={outstandingPayable !== 0}
+                                    disabled={isApproved ? Number(outstandingPayable) !== 0 : true}
                                 />
                             )}
                         </View>
