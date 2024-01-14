@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
     },
     headerText: {
+        color: COLORS.black,
         fontSize: 20,
         fontWeight: 'bold',
         marginVertical: 5,
@@ -201,6 +202,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     selectedUserInfo: {
+        color: COLORS.black,
         fontSize: 16,
         marginBottom: 10,
     },

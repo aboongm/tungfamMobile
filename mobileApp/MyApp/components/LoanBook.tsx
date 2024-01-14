@@ -194,8 +194,8 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     const toggleDisplayOption = (option) => {
         setDisplayOption(option);
     };
-console.log("true: ", outstandingPayable === 0);
-console.log("outstandingPayable: ", outstandingPayable);
+// console.log("true: ", outstandingPayable === 0);
+// console.log("outstandingPayable: ", outstandingPayable);
 
     const renderItem = ({ item, index }) => {
         const isPending = item.status === 'pending';
@@ -362,6 +362,7 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     headerText: {
+        color: COLORS.black,
         fontSize: 20,
         fontWeight: 'bold',
         marginVertical: 5,
@@ -384,6 +385,7 @@ const styles = StyleSheet.create({
         paddingVertical: 0
     },
     loanItem: {
+        color: COLORS.black,
         fontSize: 16,
         fontWeight: 'bold',
         paddingVertical: 4,
@@ -398,10 +400,12 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     title: {
+        color: COLORS.black,
         fontWeight: 'bold',
         fontSize: 16,
     },
     text: {
+        color: COLORS.black,
         fontSize: 14,
         marginBottom: 5,
     },

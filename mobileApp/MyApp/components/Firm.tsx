@@ -65,10 +65,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 6,
     textAlign: "center",
+    color: COLORS.black,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     
   },
   status: {
+    color: COLORS.black,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
@@ -83,6 +85,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.tungfamGrey,
   },
   text: {
+    color: COLORS.black,
     marginBottom: 4,
     fontSize: 14,
     fontWeight: '500'

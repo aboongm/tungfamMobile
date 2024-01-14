@@ -368,6 +368,7 @@ export default Analytic;
 
 const styles = StyleSheet.create({
     headerText: {
+        color: COLORS.black,
         fontSize: 20,
         fontWeight: 'bold',
         marginVertical: 5,
@@ -411,6 +412,7 @@ const styles = StyleSheet.create({
         color: "#ffffff"
     },
     buttonText: {
+        color: COLORS.black,
         fontSize: 16,
     },
     financialsContainer: {
@@ -421,6 +423,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
     financialsTitle: {
+        color: COLORS.black,
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
@@ -463,6 +466,7 @@ const styles = StyleSheet.create({
         paddingVertical: 2
     },
     item: {
+        color: COLORS.black,
         fontSize: 16,
         fontWeight: 'bold',
         paddingVertical: 6,

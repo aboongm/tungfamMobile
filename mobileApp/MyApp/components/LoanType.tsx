@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
     },
     headerText: {
+        color: COLORS.black,
         fontSize: 20,
         fontWeight: 'bold',
         marginVertical: 5,
@@ -110,6 +111,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     title: {
+        color: COLORS.black,
         fontWeight: 'bold',
         fontSize: 16,
     },

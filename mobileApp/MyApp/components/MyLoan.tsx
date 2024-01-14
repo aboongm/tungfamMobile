@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
         borderColor: COLORS.tungfamGrey,
     },
     loanItem: {
+        color: COLORS.black,
         fontSize: 16,
         fontWeight: 'bold',
         paddingVertical: 6,
@@ -244,10 +245,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     title: {
+        color: COLORS.black,
         fontWeight: 'bold',
         fontSize: 16,
     },
     text: {
+        color: COLORS.black,
         fontSize: 14,
         marginBottom: 5,
     },
@@ -336,6 +339,7 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     columnItem: {
+        color: COLORS.black,
         flex: 1,
         fontWeight: '500',
         fontSize: 16,
