@@ -22,8 +22,10 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const [totalInvestmentsList, setTotalInvestmentsList] = useState([]);
     const [totalInvestmentsListChart, setTotalInvestmentsListChart] = useState([]);
     const [totalOutstandingAmount, setTotalOutstandingAmount] = useState(0);
+    const [latestTotalOutstandingAmount, setLatestTotalOutstandingAmount] = useState(0);
     const [cashBalance, setCashBalance] = useState(0);
     const [firmValue, setFirmValue] = useState(0);
+    const [dateRecorded, setDateRecorded] = useState(0);
     const [showTotalInvestments, setShowTotalInvestments] = useState(false);
     const [weeklyChartData, setWeeklyChartData] = useState([]);
     const [maxDisplayItems, setMaxDisplayItems] = useState(6);
@@ -33,6 +35,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const [firmId, setFirmId] = useState(null);
 
     useEffect(() => {
+        fetchLatestFinancialData();
         fetchFinancialData();
         if (firmDetails) {
             setFirmId(firmDetails.firm_id)
@@ -70,18 +73,76 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             const sortedRecords = response.data.sort((a, b) => new Date(b.date_recorded) - new Date(a.date_recorded));
             const unSortedRecords = response.data;
             const latestEntry = sortedRecords[0];
-            const { total_investments, total_outstanding, firm_value, cash_balance } = latestEntry;
-
+            const { total_investments, total_outstanding, firm_value, cash_balance, date_recorded } = latestEntry;
+            console.log("latestEntry: ", latestEntry);
+            
             setTotalInvestmentsList(sortedRecords)
             setTotalInvestmentsListChart(unSortedRecords.reverse())
             setTotalInvestments(total_investments);
             setTotalOutstandingAmount(total_outstanding);
             setFirmValue(firm_value);
+            setDateRecorded(date_recorded)
             setCashBalance(cash_balance);
         } catch (error) {
             console.error('Error fetching financial data:', error);
         }
     };
+
+    const fetchLatestFinancialData = async () => {
+        try {
+            // if (!firmId) {
+            //     console.log("fetchLatestFinancialData>>>>>");
+            //     return;
+            // }
+            const token = await AsyncStorage.getItem("token");
+            const headers = { Authorization: `${token}` };
+
+            // Fetch all loans
+            const loanResponse = await axios.get(`${API_URL}/loans`, { headers });
+            const allLoans = loanResponse.data;
+
+            // Filter active loans based on the 'status' property
+            const activeLoans = allLoans.filter(loan => loan.status === "approved");
+
+            // Fetch latest payment schedules for each active loan
+            const paymentSchedulesPromises = activeLoans.map(async loan => {
+                try {
+                    const paymentResponse = await axios.get(`${API_URL}/loans/${loan.loan_id}/latestpaymentschedules`, { headers });
+                    const paymentSchedules = paymentResponse.data;
+
+                    return paymentSchedules;
+                } catch (error) {
+                    console.error(`Error fetching payment schedules for loan ${loan.loan_id}:`, error);
+                    return null;
+                }
+            });
+
+            // Wait for all payment schedules to be fetched
+            const latestPaymentSchedules = await Promise.all(paymentSchedulesPromises);
+            console.log("fetchLatestFinancialData!!!!");
+            // Remove null entries (failed requests) and calculate the total outstanding_payable for the latest entries
+            if (latestPaymentSchedules) {
+                const validPaymentSchedules = latestPaymentSchedules.flat().filter(entry => entry !== null);
+
+                const totalOutstandingPayable = validPaymentSchedules.reduce((total, entry) => {
+
+                    // Ensure that entry has the expected structure
+                    if (entry && entry.hasOwnProperty('outstanding_payable')) {
+                        return total + parseFloat(entry.outstanding_payable);
+                    } else {
+                        return total;
+                    }
+                }, 0);
+
+                setLatestTotalOutstandingAmount(totalOutstandingPayable)
+                // console.log("fetchLatestFinancialData!!!!");
+                
+            }
+        } catch (error) {
+            console.error('Error fetching financial data:', error);
+        }
+    };
+
 
     useEffect(() => {
         if (displayOption === 'TrendChart') {
@@ -154,10 +215,13 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             totalOutstandingAmount,
             totalInvestments,
             firmValue,
-            firmId
+            firmId,
+            latestTotalOutstandingAmount,
         })
     }
 
+    console.log("latestTotalOutstandingPayable: ", latestTotalOutstandingAmount);
+    
     return (
         <>
             <TouchableOpacity onPress={toggleAnalytics}>
@@ -224,7 +288,18 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
 
                     {displayOption === 'Financials' && (
                         <View style={styles.financialsContainer}>
-                            <Text style={styles.financialsTitle}>Financials as on : {new Date().toLocaleDateString('en-GB', {
+                            <Text style={styles.financialsTitle}>On {new Date().toLocaleDateString('en-GB', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                            })}:</Text>
+                            <View style={{marginBottom: 10}}>
+                                <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
+                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>OUT PAYABLE:</Text>
+                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {latestTotalOutstandingAmount}</Text>
+                                </View>
+                            </View>
+                            <Text style={styles.financialsTitle}>Financials as on : {new Date(dateRecorded).toLocaleDateString('en-GB', {
                                 day: 'numeric',
                                 month: 'short',
                                 year: 'numeric',
@@ -309,9 +384,9 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                             thumbTintColor={COLORS.TungfamBgColor}
                                             value={maxDisplayItems} // Set initial value
                                             onValueChange={(value) => setMaxDisplayItems(value)} // Set value on change
-                                            />
+                                        />
                                     </View>
-                                    
+
                                     <LineChart
                                         data={weeklyChartData}
                                         width={Dimensions.get("window").width - 60} // from react-native
@@ -540,15 +615,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-around',
     },
-    sliderText: { 
+    sliderText: {
         fontSize: 16,
-        textAlign: 'center', 
+        textAlign: 'center',
         padding: 2
     },
-    slider: { 
-        width: '100%', 
+    slider: {
+        width: '100%',
         marginBottom: 8,
         padding: 2,
     }
-    
+
 });

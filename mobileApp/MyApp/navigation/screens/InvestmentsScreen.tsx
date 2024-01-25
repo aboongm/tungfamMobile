@@ -13,8 +13,9 @@ import { useNavigation } from '@react-navigation/native';
 
 const InvestmentsScreen = ({ route }) => {
     const navigation = useNavigation();
+    console.log("routes.param: ", route.params);
 
-    const { totalOutstandingAmount, totalInvestments, firmValue, firmId } = route.params
+    const { totalOutstandingAmount, totalInvestments, firmValue, firmId, latestTotalOutstandingAmount } = route.params
     const [open, setOpen] = useState(false)
     const [newInvestmentDate, setNewInvestmentDate] = useState(new Date());
     const [cashBalance, setCashBalance] = useState('');
@@ -29,13 +30,22 @@ const InvestmentsScreen = ({ route }) => {
                 Authorization: `${token}`
             }
 
-            const formData = {
-                total_outstanding: totalOutstandingAmount,
-                total_investments: totalInvestments,
-                firm_value: firmValue,
-                date_recorded: newInvestmentDate.toISOString().split('T')[0],
-                cash_balance: cashBalance
+            // Parse cashBalance as a float to ensure accurate addition
+            const cashBalanceValue = parseFloat(cashBalance);
+
+            // Check if cashBalance is a valid number
+            if (isNaN(cashBalanceValue)) {
+                Alert.alert("Cash Balance must be a valid number");
+                return;
             }
+
+            const formData = {
+                total_outstanding: latestTotalOutstandingAmount,
+                total_investments: totalInvestments,
+                cash_balance: cashBalanceValue,
+                firm_value: latestTotalOutstandingAmount + cashBalanceValue,
+                date_recorded: newInvestmentDate.toISOString().split("T")[0],
+            };
 
             console.log("formData: ", formData);
 
@@ -83,7 +93,7 @@ const InvestmentsScreen = ({ route }) => {
                         <View style={styles.tableInput}>
                             <View style={styles.textContainer}>
                                 <Text style={styles.text}>TotalOutstanding: </Text>
-                                <Text style={styles.text}>Rs {totalOutstandingAmount}</Text>
+                                <Text style={styles.text}>Rs {latestTotalOutstandingAmount}</Text>
                             </View>
                             <View style={styles.textContainer}>
                                 <Text style={styles.text}>TotalInvestments: </Text>
@@ -91,18 +101,20 @@ const InvestmentsScreen = ({ route }) => {
                             </View>
                             <View style={styles.textContainer}>
                                 <Text style={styles.text}>FirmValue: </Text>
-                                <Text style={styles.text}>Rs {firmValue}</Text>
+                                <Text style={styles.text}>Rs {" "}
+                                    { cashBalance !== '' ? parseFloat(latestTotalOutstandingAmount) + parseFloat(cashBalance) : latestTotalOutstandingAmount}
+                                </Text>
                             </View>
                             <View style={styles.inputContainer}>
-                            <TextInput
-                                style={styles.input} // Add this style for TextInput
-                                placeholder="Enter CashBalance"
-                                keyboardType="numeric"
-                                value={cashBalance} // Set value to cashBalance state
-                                onChangeText={(text) => setCashBalance(text)} // Set the state when text changes
-                            />
+                                <TextInput
+                                    style={styles.input} // Add this style for TextInput
+                                    placeholder="Enter CashBalance"
+                                    keyboardType="numeric"
+                                    value={cashBalance} // Set value to cashBalance state
+                                    onChangeText={(text) => setCashBalance(text)} // Set the state when text changes
+                                />
                             </View>
-                            
+
 
                             <View style={styles.DateInvestment}>
                                 <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>

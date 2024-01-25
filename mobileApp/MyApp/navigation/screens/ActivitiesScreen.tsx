@@ -174,6 +174,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
         return (
           <View>
             <MyLoan userId={userId} />
+            <ApplyLoan onPress={applyLoan} />
           </View>
         );
       case 'user':
