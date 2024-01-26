@@ -211,13 +211,19 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
     const addInvestmentRecord = async () => {
         const firmId = firmDetails.firm_id
 
-        navigation.navigate("Investments", {
-            totalOutstandingAmount,
-            totalInvestments,
-            firmValue,
-            firmId,
-            latestTotalOutstandingAmount,
-        })
+        console.log("addInvestmentRecord!!!");
+        
+
+        navigation.navigate("PaymentSchedule", {
+            screen: "InvestmentsScreen",
+            params: {
+                totalOutstandingAmount,
+                totalInvestments,
+                firmValue,
+                firmId,
+                latestTotalOutstandingAmount,
+            },
+        });
     }
 
     console.log("latestTotalOutstandingPayable: ", latestTotalOutstandingAmount);

@@ -138,7 +138,9 @@ const PaymentScheduleScreen = () => {
 
     return (
         <PageContainer style={styles.container}>
-            <PageTitle text="Payment Schedule" />
+            <View style={{marginTop: 10 }}>
+                <PageTitle text="Payment Schedule" />
+            </View>
             <TouchableOpacity onPress={handleGoBack}>
                 <Feather name="arrow-left-circle" size={24} color="#333" style={[
                     styles.backArrow,
@@ -257,7 +259,7 @@ const styles = StyleSheet.create({
     },
     backArrow: {
         position: 'absolute',
-        top: -35,
+        top: -32,
         left: 0,
         transform: [{ translateY: -12 }],
         borderWidth: 1,
