@@ -5,11 +5,13 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { setSelectedLoan } from '../redux/slices/loanSlice';
 
 const LoanBook = ({ firmDetails, userRole, userId }) => {
     const navigation = useNavigation();
+    const dispatch = useDispatch()
     const employees = useSelector(state => state.employees.employees)
 
     const [showDetails, setShowDetails] = useState(false);
@@ -27,6 +29,11 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     };
 
     useEffect(() => {
+        fetchLoan();
+        fetchLatestPayment();
+    }, [firmDetails, loanId]);
+
+    useEffect(() => {
         if (loan.length > 0) {
             fetchLatestPayment()
             let filtered = [];
@@ -42,7 +49,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
             setFilteredLoan(filtered);
         }
     }, [loan, displayOption]);
-
+    
     const fetchLoan = async () => {
         try {
             if (firmDetails) {
@@ -50,13 +57,15 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                 if (!token) {
                     throw new Error('Token not found');
                 }
-
+                
                 const headers = {
                     Authorization: `${token}`,
                 };
 
                 if (firmDetails && firmDetails.firm_id) {
                     const response = await axios.get(`${API_URL}/loans`, { headers });
+                    console.log("firmDetails: ", firmDetails);
+                    // console.log("firmDetails: ", firmDetails);
 
                     if (response.status === 200) {
                         if (userRole === 'firmOwner') {
@@ -123,11 +132,6 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
         }
     };
 
-    useEffect(() => {
-        fetchLoan();
-        fetchLatestPayment();
-    }, [firmDetails, loanId]);
-
     const handleComplete = async (item: any) => {
         try {
             const token = await AsyncStorage.getItem("token");
@@ -187,7 +191,9 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     };
 
     const goPaymentSchedule = (loan: any) => {
-        navigation.navigate("PaymentSchedule", { loan });
+        console.log("loan: ", loan);
+        dispatch(setSelectedLoan(loan))
+        navigation.navigate("PaymentSchedule");
 
     };
 

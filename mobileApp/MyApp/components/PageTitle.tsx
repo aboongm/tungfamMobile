@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
         fontFamily: '900',
         fontSize: 28,
         color: COLORS.tungfamBgColor,
-        letterSpacing: 0.3
+        letterSpacing: 0.3,
+        textAlign: 'center'
     }
 })

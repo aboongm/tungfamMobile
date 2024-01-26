@@ -3,7 +3,7 @@ import { API_URL } from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authenticate, logOut } from '../slices/auth/authSlice';
 import { Dispatch } from 'redux';
-import { setFirmData } from '../slices/HeaderSlice';
+import { setFirmData } from '../slices/headerSlice';
 
 interface FirmData {
   firm_id: number,
@@ -38,7 +38,6 @@ export const getFirmData = async (userId: string): Promise<FirmData | void> => {
       if (userFirmForId) {
         const firmId = userFirmForId.firm_id;
         const firmDetailsResponse = await axios.get(`${API_URL}/firms/${firmId}`, { headers });
-        console.log("firmDetailsResponse: ", firmDetailsResponse.data);
         
         if (firmDetailsResponse.status === 200) {
          return firmDetailsResponse.data;

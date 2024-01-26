@@ -1,23 +1,25 @@
 import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable, ActivityIndicator } from 'react-native';
-
+import Feather from 'react-native-vector-icons/Feather';
 import PageTitle from '../components/PageTitle';
 import PageContainer from '../components/PageContainer';
 import { COLORS } from '../constants';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-const PaymentScheduleScreen = ({ route }) => {
-
-    const { loan } = route.params;
+const PaymentScheduleScreen = () => {
+    const navigation = useNavigation()
+    const loan = useSelector((state: RootState) => state.loanSlice.selectedLoan)
     const loanList = [{
         installment: 'Choose',
     }];
     loanList.push(loan)
-    // console.log(loanList);
 
 
     const [date, setDate] = useState(new Date())
@@ -28,7 +30,18 @@ const PaymentScheduleScreen = ({ route }) => {
     const [remark, setRemark] = useState('');
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(false);
-   
+
+    useEffect(() => {
+        fetchPayments()
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchPayments();
+        }, [loan.loan_id]) // Refetch payments when loan.loan_id changes (screen is focused again)
+    );
+
+
     const fetchPayments = async () => {
         try {
             setLoading(true);
@@ -43,17 +56,17 @@ const PaymentScheduleScreen = ({ route }) => {
         } catch (error) {
             console.error('Error fetching payments:', error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
-    
+
     const filteredPayments = payments.filter(item => item.loan_id === loan.loan_id)
     const paidAmount = (filteredPayments.length + 1) * loan.installment;
     const outStandingPayable = loan.total_payable - paidAmount;
 
-    // console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
-    
+    console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
+
     const addPayment = async () => {
         try {
             const token = await AsyncStorage.getItem("token")
@@ -76,11 +89,11 @@ const PaymentScheduleScreen = ({ route }) => {
             }
 
             console.log("formData: ", formData);
-            
+
 
             const response = await axios.post(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, formData, { headers })
             console.log("response.data: ", response.data);
-            
+
             if (response.status === 200) {
                 const updatedPayments = [...payments, response.data];
                 setPayments(updatedPayments);
@@ -94,15 +107,10 @@ const PaymentScheduleScreen = ({ route }) => {
 
         } catch (error) {
             console.log('error: ', error);
-            
+
             Alert.alert("Failed to create payment!")
         }
     };
-
-
-    useEffect(() => {
-        fetchPayments()
-    }, []);
     
     const takePermission = () => {
         // const date = new Date();
@@ -118,15 +126,24 @@ const PaymentScheduleScreen = ({ route }) => {
                 },
                 {
                     text: 'OK',
-                    onPress: addPayment 
+                    onPress: addPayment
                 }
             ]
         );
     }
 
+    const handleGoBack = () => {
+        navigation.goBack()
+    }
+
     return (
         <PageContainer style={styles.container}>
             <PageTitle text="Payment Schedule" />
+            <TouchableOpacity onPress={handleGoBack}>
+                <Feather name="arrow-left-circle" size={24} color="#333" style={[
+                    styles.backArrow,
+                ]} />
+            </TouchableOpacity>
             <View style={styles.infoContainer}>
                 <View style={styles.infoBlock}>
                     <Text style={styles.infoHeader}>{loan.borrower_name}</Text>
@@ -158,38 +175,35 @@ const PaymentScheduleScreen = ({ route }) => {
                     <View style={styles.tableContainer}>
                         <View>
                             {loading ? (
-                                <View style={{ alignItems: 'center', paddingTop: 20}}>
+                                <View style={{ alignItems: 'center', paddingTop: 20 }}>
                                     <ActivityIndicator size="large" color={COLORS.primary} />
                                 </View>
                             ) : (
                                 <>
-                                {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
-                                    <View style={[
-                                        styles.tableBody,
-                                        index % 2 === 0 ? styles.evenRow : styles.oddRow,
-                                    ]} key={index}>
-                                        <Text style={styles.columnItem}>
-                                            {`${index + 1}`}.{" "}
-                                            {new Date(payment.date).toLocaleDateString('en-GB', {
-                                                day: 'numeric',
-                                                month: 'short',
-                                                year: 'numeric',
-                                            })}
-                                        </Text>
-                                        <Text style={styles.columnItem}>Rs {payment.installment}</Text>
-                                        <Text style={styles.columnItem}>{payment.remarks}</Text>
-                                    </View>
-                                ))}
-                            </>
+                                    {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
+                                        <View style={[
+                                            styles.tableBody,
+                                            index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                                        ]} key={index}>
+                                            <Text style={styles.columnItem}>
+                                                {`${index + 1}`}.{" "}
+                                                {new Date(payment.date).toLocaleDateString('en-GB', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                })}
+                                            </Text>
+                                            <Text style={styles.columnItem}>Rs {payment.installment}</Text>
+                                            <Text style={styles.columnItem}>{payment.remarks}</Text>
+                                        </View>
+                                    ))}
+                                </>
                             )}
                         </View>
 
                         <Text style={styles.paymentHeader}>Add A Payment</Text>
                         <View style={styles.tableInput}>
                             <View style={styles.DatePayment}>
-                                {/* <View style={styles.dateButton}>
-                                    <Button color={COLORS.tungfamBgColor} title="Pick Date" onPress={() => setOpen(true)} />
-                                </View> */}
                                 <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
                                     <Text style={styles.button}>Pick Date</Text>
                                 </Pressable>
@@ -213,7 +227,6 @@ const PaymentScheduleScreen = ({ route }) => {
                                     {loanList.map((type, index) => (
                                         <Picker.Item key={index} label={type.installment} value={type.installment} />
                                     ))}
-                                    {/* <Picker.Item label={loan.installment} value={loan.installment} /> */}
                                 </Picker>
                             </View>
 
@@ -237,11 +250,25 @@ const PaymentScheduleScreen = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: COLORS.tungfamGrey,
-        margin: 4,
-        padding: 10
+        // borderWidth: 1,
+        // borderColor: COLORS.tungfamGrey,
+        marginTop: 10,
+        padding: 10,
     },
+    backArrow: {
+        position: 'absolute',
+        top: -35,
+        left: 0,
+        transform: [{ translateY: -12 }],
+        borderWidth: 1,
+        borderColor: 'rgba(52,152,219, 0.4)',
+        backgroundColor: 'rgba(52,152,219, 1)',
+        borderTopRightRadius: 50,
+        borderBottomRightRadius: 50,
+        padding: 8,
+        color: 'white',
+        zIndex: 10
+      },
     infoContainer: {
         flexDirection: 'column',
         justifyContent: 'space-between',

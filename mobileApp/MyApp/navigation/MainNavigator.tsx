@@ -148,31 +148,27 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import ActivitiesScreen from '../screens/ActivitiesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import HomeScreen from '../screens/homescreen/HomeScreen';
+import LoanBookScreen from '../screens/homescreen/LoanBookScreen';
+import InvestmentScreen from '../screens/homescreen/InvestmentScreen';
+import EmployeeScreen from '../screens/homescreen/EmployeeScreen';
+import LoanTypeScreen from '../screens/homescreen/LoanTypeScreen';
+import CashFlowScreen from '../screens/homescreen/CashFlowScreen';
+import ExpenseScreen from '../screens/homescreen/ExpenseScreen';
+import PaymentScheduleScreen from '../screens/PaymentScheduleScreen';
 
 const MaterialTopTabs = createMaterialTopTabNavigator();
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// const HomeStack = () => (
-//   <Stack.Navigator screenOptions={{ headerShown: false }}>
-//     <Stack.Screen 
-//       name="ProductDetailsScreen" 
-//       component={ProductDetailsScreen}
-//       // options={{ tabBarVisible: false }}
-//     />
-//     <Stack.Screen 
-//       name="SearchScreen" 
-//       component={SearchScreen}
-//       // options={{ tabBarVisible: false }}
-//     />
-//     <Stack.Screen 
-//       name="BuyScreen" 
-//       component={BuyScreen}
-//       options={{ tabBarVisible: false }}
-//     />
-//   </Stack.Navigator>
-// );
+const HomeStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen 
+      name="PaymentScheduleScreen" 
+      component={PaymentScheduleScreen}
+      // options={{ tabBarVisible: false }}
+    />
+  </Stack.Navigator>
+);
 
 type Category = {
   category_id: number;
@@ -192,23 +188,21 @@ export type RootStackParamList = ReturnType<typeof generateRootStackParamList>;
 
 const CategoryTabs = () => {
   return (
-      <MaterialTopTabs.Navigator
-        tabBarPosition= 'top'
-        screenOptions={{
-          tabBarShowLabel: false,
-          tabBarIndicator: () => null,
-          // tabBar: () => null
-        }}
-        tabBar={props => <Header {...props} />}
-      >
-      <MaterialTopTabs.Screen name="All" component={ActivitiesScreen}  />
-      {/* <MaterialTopTabs.Screen name="Women" component={WomenScreen} 
-      />
-      <MaterialTopTabs.Screen name="Men" component={MenScreen} />
-      <MaterialTopTabs.Screen name="Kids" component={KidsScreen} />
-      <MaterialTopTabs.Screen name="Baby" component={BabyScreen} />
-      <MaterialTopTabs.Screen name="Jewelry" component={JewelryScreen} />
-      <MaterialTopTabs.Screen name="Bags" component={BagsScreen} /> */}
+    <MaterialTopTabs.Navigator
+      tabBarPosition='top'
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarIndicator: () => null,
+        // tabBar: () => null
+      }}
+      tabBar={props => <Header {...props} />}
+    >
+      <MaterialTopTabs.Screen name="LoanBook" component={LoanBookScreen} />
+      <MaterialTopTabs.Screen name="CashFlow" component={CashFlowScreen}/>
+      <MaterialTopTabs.Screen name="Expense" component={ExpenseScreen}/>
+      <MaterialTopTabs.Screen name="Investment" component={InvestmentScreen}/>
+      <MaterialTopTabs.Screen name="Employee" component={EmployeeScreen} />
+      <MaterialTopTabs.Screen name="LoanType" component={LoanTypeScreen} />
     </MaterialTopTabs.Navigator>
   );
 };
@@ -226,7 +220,7 @@ const MainNavigator = () => {
       elevation: 0,
       height: 60,
       borderRadius: 10,
-      backgroundColor:  'rgba(241,246,249, 0.98)',
+      backgroundColor: 'rgba(241,246,249, 0.98)',
     } as ViewStyle,
     tabBarIconStyle: {
       margin: 0,
@@ -239,12 +233,12 @@ const MainNavigator = () => {
       padding: 0,
     } as TextStyle,
   };
-  
+
   return (
     <BottomTab.Navigator screenOptions={screenOptions}>
       <BottomTab.Screen
         name="Home"
-        component={CategoryTabs }
+        component={CategoryTabs}
         options={{
           tabBarIcon: ({ focused }) => (
             <Ionicons
@@ -268,17 +262,17 @@ const MainNavigator = () => {
           ),
         }}
       />
-      {/* 
+      
       <BottomTab.Screen
-        name="ProductDetails"
+        name="PaymentSchedule"
         component={HomeStack}
         options={({ route }) => ({
-          // tabBarStyle: {
-          //   display: "none",
-          // },
+          tabBarStyle: {
+            display: "none",
+          },
           tabBarButton: () => null,
         })}
-      /> */}
+      />
     </BottomTab.Navigator>
   )
 };

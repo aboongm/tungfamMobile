@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { COLORS } from '../constants';
-import firmLogo from '../assets/images/logo.png';
+import firmLogo from '../assets/logos/logo.png';
 
 const FirmDetails = ({ firmDetails }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -41,9 +41,13 @@ const FirmDetails = ({ firmDetails }) => {
         <View style={styles.firmContainer}>
           {/* <Image source={{ uri: subcategory.image }} style={styles.image} /> */}
           {firmLogo && (
-            <Image source={firmLogo} style={styles.image} />
+            <View style={styles.imageContainer}>
+              <Image source={firmLogo} style={styles.image} />
+            </View>
           )}
-          <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
+          <View style={styles.textContainer}>
+            <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
+          </View>
           {firmDetails.status !== 'approved' && (
             <Text style={styles.status}>Status: {firmDetails.status}</Text>
           )}
@@ -56,34 +60,42 @@ const FirmDetails = ({ firmDetails }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'rgba(255, 255, 255, 1)',
-    backgroundColor: 'transparent',
+    // backgroundColor: 'rgba(241,246,249, 0.98)',
+    // backgroundColor: 'transparent',
     // borderWidth: 1,
     // borderColor: COLORS.tungfamGrey,
     // padding: 10,
     marginTop: 30,
-    // borderRadius: 8,
-    // marginBottom: 10,
-    // elevation: 5,
   },
   firmContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: "center",
-    paddingHorizontal: 20
-
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+    padding: 6,
+    borderRadius: 50,
+    backgroundColor: 'rgba(221,228,229, 1',
+  },
+  textContainer: {
+     flex: 1,
   },
   firmName: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 6,
-    textAlign: "center",
-    color: COLORS.white,
+    textAlign: "left",
+    color: 'black',
+  },
+  imageContainer: {
+    backgroundColor: COLORS.tungfamBgColor,
+    borderRadius: 50,
+    padding: 8,
+    marginRight: 10
   },
   image: {
     width: 40,
     height: 40,
-    marginRight: 10
+    objectFit: "fill",
   },
   status: {
     // color: COLORS.black,
