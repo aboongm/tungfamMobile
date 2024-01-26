@@ -1,5 +1,5 @@
 {
-  "name": "Pungfam",
+  "name": "PunfamApp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "@reduxjs/toolkit": "^2.0.1",
     "axios": "^1.6.2",
     "react": "18.2.0",
-    "react-native": "0.73.1",
+    "react-native": "0.73.2",
     "react-native-chart-kit": "^6.12.0",
     "react-native-date-picker": "^4.3.5",
     "react-native-dotenv": "^3.4.9",
