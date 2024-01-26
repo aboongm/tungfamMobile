@@ -15,7 +15,7 @@ export default PageTitle
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 10,
+        margin: 20,
     },
     text: {
         fontFamily: '900',
