@@ -47,6 +47,7 @@ const FirmDetails = ({ firmDetails }) => {
           )}
           <View style={styles.textContainer}>
             <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
+            <Text style={styles.text}>{firmDetails.address}</Text>
           </View>
           {firmDetails.status !== 'approved' && (
             <Text style={styles.status}>Status: {firmDetails.status}</Text>
@@ -74,7 +75,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     padding: 6,
     borderRadius: 50,
-    backgroundColor: 'rgba(221,228,229, 1',
+    // backgroundColor: 'rgba(221,228,229, 1',
+    backgroundColor: '#dde4e580',
   },
   textContainer: {
      flex: 1,
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   firmName: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 6,
+    // marginBottom: 6,
     textAlign: "left",
     color: 'black',
   },
@@ -113,10 +115,10 @@ const styles = StyleSheet.create({
     // borderColor: COLORS.tungfamGrey,
   },
   text: {
-    // color: COLORS.black,
+    color: COLORS.black,
     // marginBottom: 4,
-    // fontSize: 14,
-    // fontWeight: '500'
+    fontSize: 14,
+    fontWeight: '500'
   },
 });
 
