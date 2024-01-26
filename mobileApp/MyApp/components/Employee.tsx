@@ -47,6 +47,8 @@ const Employee = ({ firmDetails }) => {
     };
 
     const searchUser = () => {
+        console.log("searchUser??");
+        
         try {
             const foundUser = users.find(
                 (user) =>

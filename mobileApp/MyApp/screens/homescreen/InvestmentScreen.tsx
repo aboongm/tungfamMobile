@@ -22,6 +22,7 @@ const InvestmentScreen = ({userRole, userId}) => {
 
     fetchData();
 }, [dispatch, userId]);
+
   return (
     <ScrollView style={styles.investmentContainer}>
       <Analytic firmDetails={firm} userRole={userRole} userId={userId} />
