@@ -4,9 +4,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable, ActivityIndicator } from 'react-native';
 
-import PageTitle from '../../components/PageTitle';
-import PageContainer from '../../components/PageContainer';
-import { COLORS } from '../../constants';
+import PageTitle from '../components/PageTitle';
+import PageContainer from '../components/PageContainer';
+import { COLORS } from '../constants';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
 import { useNavigation } from '@react-navigation/native';
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     dateButton: {
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     },
     addInvestmentButton: {
         fontSize: 16,
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         color: 'white',
         borderRadius: 5,
         padding: 14,

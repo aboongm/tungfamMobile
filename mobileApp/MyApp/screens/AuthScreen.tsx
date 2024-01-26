@@ -9,11 +9,11 @@ import {
 } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
-import PageContainer from '../../components/PageContainer';
-import logo from "../../../assets/images/logo.png";
-import SignUpForm from '../../components/SignUpForm';
-import SignInForm from '../../components/SignInForm';
-import { COLORS } from '../../constants';
+import PageContainer from '../components/PageContainer';
+import logo from "../assets/images/logo.png";
+import SignUpForm from '../components/SignUpForm';
+import SignInForm from '../components/SignInForm';
+import { COLORS } from '../constants';
 import LinearGradient from 'react-native-linear-gradient';
 
 const AuthScreen = () => {
@@ -59,7 +59,7 @@ export default AuthScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: COLORS.TungfamBgColor,
+    // backgroundColor: COLORS.tungfamBgColor,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   linkContainer: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   link: {
-    color: COLORS.TungfamBgColor,
+    color: COLORS.tungfamBgColor,
     fontWeight: "500",
     fontSize: 16,
     letterSpacing: 0.3,

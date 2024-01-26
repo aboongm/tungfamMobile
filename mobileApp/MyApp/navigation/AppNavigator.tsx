@@ -2,8 +2,8 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import MainNavigator from './MainNavigator'
 import { useSelector } from 'react-redux'
-import AuthScreen from './screens/AuthScreen'
-import StartUpScreen from './screens/StartUpScreen'
+import AuthScreen from '../screens/AuthScreen'
+import StartUpScreen from '../screens/StartUpScreen'
 
 
 const AppNavigator = (props) => {

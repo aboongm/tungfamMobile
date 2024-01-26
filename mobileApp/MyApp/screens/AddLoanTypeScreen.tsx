@@ -5,11 +5,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import PageTitle from '../../components/PageTitle';
-import PageContainer from '../../components/PageContainer';
-import { COLORS } from '../../constants';
+import PageTitle from '../components/PageTitle';
+import PageContainer from '../components/PageContainer';
+import { COLORS } from '../constants';
 import { useNavigation } from '@react-navigation/native';
-import { updateUserRole } from '../../redux/slices/auth/authSlice';
+import { updateUserRole } from '../redux/slices/auth/authSlice';
 
 const AddLoanType = ({ route }) => {
     const firmId = route.params.firm_id;
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     button: {
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         borderRadius: 5,
         padding: 15,
         alignItems: 'center',

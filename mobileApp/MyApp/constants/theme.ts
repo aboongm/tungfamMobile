@@ -13,7 +13,7 @@ const commonStyles = StyleSheet.create({
 });
 
 const COLORS = {
-  TungfamBgColor: "#3498db",
+  tungfamBgColor: "#3498db",
   tungfamWhite: "#e2e9eb",
   tungfamDarkerWhite: "#c4ced1",
   tungfamDarkNavyblue: '#193b59',

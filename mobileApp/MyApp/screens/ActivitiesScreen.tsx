@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { connect, useSelector } from 'react-redux';
-import { COLORS } from '../../constants';
-import PageContainer from '../../components/PageContainer';
-import ApplyToFirm from '../../components/ApplyToFirm';
+import { COLORS } from '../constants';
+import PageContainer from '../components/PageContainer';
+import ApplyToFirm from '../components/ApplyToFirm';
 import AdminApprovalScreen from './AdminApprovalScreen';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Firm from '../../components/Firm';
-import LoanType from '../../components/LoanType';
-import Employee from '../../components/Employee';
-import LoanBook from '../../components/LoanBook';
-import ApplyLoan from '../../components/ApplyLoan';
-import MyLoan from '../../components/MyLoan';
+import Firm from '../components/Firm';
+import LoanType from '../components/LoanType';
+import Employee from '../components/Employee';
+import LoanBook from '../components/LoanBook';
+import ApplyLoan from '../components/ApplyLoan';
+import MyLoan from '../components/MyLoan';
 import LinearGradient from 'react-native-linear-gradient';
-import Analytic from '../../components/Analytic';
+import Analytic from '../components/Analytic';
 
 const ActivitiesScreen = ({ userRole, userId }) => {
 
@@ -156,7 +156,7 @@ const ActivitiesScreen = ({ userRole, userId }) => {
       case 'firmOwner':
         return (
           <View>
-            <Firm firmDetails={firmDetails} />
+            {/* <Firm firmDetails={firmDetails} /> */}
             <LoanType firmDetails={firmDetails} />
             <Employee firmDetails={firmDetails} />
             <Analytic firmDetails={firmDetails} userRole={userRole} userId={userId} />

@@ -234,7 +234,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             style={[
                                 styles.buttonOptions,
                                 displayOption === 'Financials' && {
-                                    backgroundColor: COLORS.TungfamBgColor,
+                                    backgroundColor: COLORS.tungfamBgColor,
                                 },
                             ]}
                             onPress={() => toggleDisplayOption('Financials')}
@@ -252,7 +252,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             style={[
                                 styles.buttonOptions,
                                 displayOption === 'Expenses' && {
-                                    backgroundColor: COLORS.TungfamBgColor,
+                                    backgroundColor: COLORS.tungfamBgColor,
                                 },
                             ]}
                             onPress={() => toggleDisplayOption('Expenses')}
@@ -270,7 +270,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             style={[
                                 styles.buttonOptions,
                                 displayOption === 'TrendChart' && {
-                                    backgroundColor: COLORS.TungfamBgColor,
+                                    backgroundColor: COLORS.tungfamBgColor,
                                 },
                             ]}
                             onPress={() => toggleDisplayOption('TrendChart')}
@@ -296,7 +296,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             <View style={{marginBottom: 10}}>
                                 <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
                                     <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>OUT PAYABLE:</Text>
-                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {latestTotalOutstandingAmount}</Text>
+                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.tungfamBgColor }]}>Rs {latestTotalOutstandingAmount}</Text>
                                 </View>
                             </View>
                             <Text style={styles.financialsTitle}>Financials as on : {new Date(dateRecorded).toLocaleDateString('en-GB', {
@@ -307,7 +307,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                             <View style={styles.financialsData}>
                                 <View style={[styles.itemContainer, { paddingVertical: 1 }]}>
                                     <Text style={[styles.item, { fontWeight: '500', fontSize: 20 }]}>FIRM VALUE:</Text>
-                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.TungfamBgColor }]}>Rs {firmValue}</Text>
+                                    <Text style={[styles.item, { fontWeight: '500', fontSize: 20, color: COLORS.tungfamBgColor }]}>Rs {firmValue}</Text>
                                 </View>
 
                                 <View style={styles.itemContainer}>
@@ -366,7 +366,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                         <View style={styles.trendChartContainer}>
                             <Text style={styles.sectionTitle}>FirmValue Trend</Text>
                             {isLoadingChartData ? (
-                                <ActivityIndicator size="large" color={COLORS.TungfamBgColor} />
+                                <ActivityIndicator size="large" color={COLORS.tungfamBgColor} />
                             ) : (
                                 weeklyChartData &&
                                 <>
@@ -379,9 +379,9 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                                             minimumValue={6} // Set minimum value
                                             maximumValue={totalInvestmentsList.length - 1} // Set maximum value based on total data
                                             step={1} // Set step size
-                                            minimumTrackTintColor={COLORS.TungfamBgColor}
+                                            minimumTrackTintColor={COLORS.tungfamBgColor}
                                             maximumTrackTintColor="#000000"
-                                            thumbTintColor={COLORS.TungfamBgColor}
+                                            thumbTintColor={COLORS.tungfamBgColor}
                                             value={maxDisplayItems} // Set initial value
                                             onValueChange={(value) => setMaxDisplayItems(value)} // Set value on change
                                         />
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         marginTop: 8,
     },
     buttonInvestmentText: {

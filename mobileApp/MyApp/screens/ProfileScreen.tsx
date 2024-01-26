@@ -5,17 +5,17 @@ import React, { useCallback, useState, useReducer, useEffect } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import PageTitle from '../../components/PageTitle';
-import PageContainer from '../../components/PageContainer';
-import Input from '../../components/Input';
-import { validateInput } from '../../redux/actions/formAction';
-import SubmitButton from '../../components/SubmitButton';
-import { COLORS } from '../../constants';
-import { updateSignInUserData, userLogout } from '../../redux/actions/authActions';
-import { updateLoggedInSignInUserData } from '../../redux/slices/auth/authSlice';
-import { reducer } from '../../redux/reducers/formReducer';
-import ProfileImage from '../../components/ProfileImage';
-import AadharImagePicker from '../../components/AadharImagePicker';
+import PageTitle from '../components/PageTitle';
+import PageContainer from '../components/PageContainer';
+import Input from '../components/Input';
+import { validateInput } from '../redux/actions/formAction';
+import SubmitButton from '../components/SubmitButton';
+import { COLORS } from '../constants';
+import { updateSignInUserData, userLogout } from '../redux/actions/authActions';
+import { updateLoggedInSignInUserData } from '../redux/slices/auth/authSlice';
+import { reducer } from '../redux/reducers/formReducer';
+import ProfileImage from '../components/ProfileImage';
+import AadharImagePicker from '../components/AadharImagePicker';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -109,7 +109,7 @@ const ProfileScreen = props => {
             title="Logout"
             onPress={() => dispatch<any>(userLogout())}
             style={styles.logOutButton}
-            color={COLORS.TungfamBgColor}
+            color={COLORS.tungfamBgColor}
           />
         </View>
         <ScrollView contentContainerStyle={styles.formContainer}>

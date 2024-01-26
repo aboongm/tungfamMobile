@@ -4,9 +4,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Alert, Pressable, ActivityIndicator } from 'react-native';
 
-import PageTitle from '../../components/PageTitle';
-import PageContainer from '../../components/PageContainer';
-import { COLORS } from '../../constants';
+import PageTitle from '../components/PageTitle';
+import PageContainer from '../components/PageContainer';
+import { COLORS } from '../constants';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
 
@@ -188,7 +188,7 @@ const PaymentScheduleScreen = ({ route }) => {
                         <View style={styles.tableInput}>
                             <View style={styles.DatePayment}>
                                 {/* <View style={styles.dateButton}>
-                                    <Button color={COLORS.TungfamBgColor} title="Pick Date" onPress={() => setOpen(true)} />
+                                    <Button color={COLORS.tungfamBgColor} title="Pick Date" onPress={() => setOpen(true)} />
                                 </View> */}
                                 <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
                                     <Text style={styles.button}>Pick Date</Text>
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         elevation: 5
     },
     tableBody: {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     dateButton: {
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     },
     addPaymentButton: {
         fontSize: 16,
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         color: 'white',
         borderRadius: 5,
         padding: 14,

@@ -8,7 +8,7 @@ interface SubmitButtonProps extends TouchableOpacityProps {
   }
 
 const SubmitButton: React.FC<SubmitButtonProps> = props => {
-  const enabledBgColor = props.color || COLORS.TungfamBgColor;
+  const enabledBgColor = props.color || COLORS.tungfamBgColor;
   const disabledBgColor = COLORS.tungfamPurple;
   const bgColor = props.disabled ? disabledBgColor : enabledBgColor;
 

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: '900',
         fontSize: 28,
-        color: COLORS.TungfamBgColor,
+        color: COLORS.tungfamBgColor,
         letterSpacing: 0.3
     }
 })

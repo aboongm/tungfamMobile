@@ -312,19 +312,19 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                     <>
                         <View style={styles.buttonContainer}>
                             <Pressable
-                                style={[styles.buttonOptions, displayOption === 'all' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                style={[styles.buttonOptions, displayOption === 'all' && { backgroundColor: COLORS.tungfamBgColor }]}
                                 onPress={() => toggleDisplayOption('all')}
                             >
                                 <Text style={[styles.buttonText, displayOption === 'all' && { color: COLORS.white }]}>All</Text>
                             </Pressable>
                             <Pressable
-                                style={[styles.buttonOptions, displayOption === 'daily' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                style={[styles.buttonOptions, displayOption === 'daily' && { backgroundColor: COLORS.tungfamBgColor }]}
                                 onPress={() => toggleDisplayOption('daily')}
                             >
                                 <Text style={[styles.buttonText, displayOption === 'daily' && { color: COLORS.white }]}>Daily</Text>
                             </Pressable>
                             <Pressable
-                                style={[styles.buttonOptions, displayOption === 'weekly' && { backgroundColor: COLORS.TungfamBgColor }]}
+                                style={[styles.buttonOptions, displayOption === 'weekly' && { backgroundColor: COLORS.tungfamBgColor }]}
                                 onPress={() => toggleDisplayOption('weekly')}
                             >
                                 <Text style={[styles.buttonText, displayOption === 'weekly' && { color: COLORS.white }]}>Weekly</Text>

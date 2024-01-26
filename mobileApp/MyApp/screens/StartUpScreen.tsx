@@ -1,10 +1,10 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
-import { COLORS, commonStyles } from '../../constants/theme'
+import { COLORS, commonStyles } from '../constants/theme'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useDispatch } from 'react-redux'
-import { authenticate, setDidTryAutoLogin } from '../../redux/slices/auth/authSlice'
-import { getUserData } from '../../redux/actions/userActions'
+import { authenticate, setDidTryAutoLogin } from '../redux/slices/auth/authSlice'
+import { getUserData } from '../redux/actions/userActions'
 import LinearGradient from 'react-native-linear-gradient';
 
 const StartUpScreen = () => {

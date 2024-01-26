@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         elevation: 5
     },
     tableBody: {
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     dateButton: {
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     },
     addPaymentButton: {
         fontSize: 16,
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         color: 'white',
         borderRadius: 5,
         padding: 14,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     payScheduleText: {
         fontSize: 16,
         fontWeight: "bold",
-        backgroundColor: COLORS.TungfamBgColor,
+        backgroundColor: COLORS.tungfamBgColor,
         color: 'white',
         borderRadius: 5,
         padding: 10,

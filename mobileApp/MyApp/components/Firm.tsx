@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { COLORS } from '../constants';
+import firmLogo from '../assets/images/logo.png';
 
 const FirmDetails = ({ firmDetails }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -37,58 +38,73 @@ const FirmDetails = ({ firmDetails }) => {
   return (
     <>
       <TouchableOpacity onPress={toggleDetails} style={styles.container}>
-        <View style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)'}}>
+        <View style={styles.firmContainer}>
+          {/* <Image source={{ uri: subcategory.image }} style={styles.image} /> */}
+          {firmLogo && (
+            <Image source={firmLogo} style={styles.image} />
+          )}
           <Text style={styles.firmName}>{firmDetails.firm_name}</Text>
           {firmDetails.status !== 'approved' && (
             <Text style={styles.status}>Status: {firmDetails.status}</Text>
           )}
         </View>
       </TouchableOpacity>
-      {renderAdditionalDetails()}
+      {/* {renderAdditionalDetails()} */}
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    borderWidth: 1,
-    borderColor: COLORS.tungfamGrey,
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    marginBottom: 10,
-    elevation: 5,
+    // backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: 'transparent',
+    // borderWidth: 1,
+    // borderColor: COLORS.tungfamGrey,
+    // padding: 10,
+    marginTop: 30,
+    // borderRadius: 8,
+    // marginBottom: 10,
+    // elevation: 5,
+  },
+  firmContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: "center",
+    paddingHorizontal: 20
+
   },
   firmName: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 6,
     textAlign: "center",
-    color: COLORS.black,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    
+    color: COLORS.white,
+  },
+  image: {
+    width: 40,
+    height: 40,
+    marginRight: 10
   },
   status: {
-    color: COLORS.black,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    textAlign: "center",
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    // color: COLORS.black,
+    // fontSize: 18,
+    // fontWeight: 'bold',
+    // marginBottom: 5,
+    // textAlign: "center",
+    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   additionalDetails: {
-    padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: COLORS.tungfamGrey,
+    // padding: 10,
+    // backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    // borderWidth: 1,
+    // borderRadius: 8,
+    // borderColor: COLORS.tungfamGrey,
   },
   text: {
-    color: COLORS.black,
-    marginBottom: 4,
-    fontSize: 14,
-    fontWeight: '500'
+    // color: COLORS.black,
+    // marginBottom: 4,
+    // fontSize: 14,
+    // fontWeight: '500'
   },
 });
 
