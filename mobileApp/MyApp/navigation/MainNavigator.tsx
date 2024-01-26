@@ -270,7 +270,7 @@ const MainNavigator = () => {
       />
       
       <BottomTab.Screen
-        name="PaymentSchedule"
+        name="HomeStack"
         component={HomeStack}
         options={({ route }) => ({
           tabBarStyle: {

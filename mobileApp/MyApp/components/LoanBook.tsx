@@ -193,7 +193,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     const goPaymentSchedule = (loan: any) => {
         console.log("loan: ", loan);
         dispatch(setSelectedLoan(loan))
-        navigation.navigate("PaymentSchedule");
+        navigation.navigate("HomeStack");
 
     };
 

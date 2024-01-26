@@ -214,7 +214,7 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
         console.log("addInvestmentRecord!!!");
         
 
-        navigation.navigate("PaymentSchedule", {
+        navigation.navigate("HomeStack", {
             screen: "InvestmentsScreen",
             params: {
                 totalOutstandingAmount,
