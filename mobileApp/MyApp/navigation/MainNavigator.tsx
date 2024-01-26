@@ -156,6 +156,7 @@ import CashFlowScreen from '../screens/homescreen/CashFlowScreen';
 import ExpenseScreen from '../screens/homescreen/ExpenseScreen';
 import PaymentScheduleScreen from '../screens/PaymentScheduleScreen';
 import InvestmentsScreen from '../screens/InvestmentsScreen';
+import AddLoanTypeScreen from "../screens/AddLoanTypeScreen"
 
 const MaterialTopTabs = createMaterialTopTabNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -171,6 +172,11 @@ const HomeStack = () => (
     <Stack.Screen 
       name="InvestmentsScreen" 
       component={InvestmentsScreen}
+      // options={{ tabBarVisible: false }}
+    />
+    <Stack.Screen 
+      name="AddLoanTypeScreen" 
+      component={AddLoanTypeScreen}
       // options={{ tabBarVisible: false }}
     />
   </Stack.Navigator>

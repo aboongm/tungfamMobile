@@ -16,7 +16,11 @@ const LoanType = ({ firmDetails }) => {
     };
 
     const addLoanType = () => {
-        navigation.navigate('AddLoanType', { firm_id: firmDetails.firm_id });
+        navigation.navigate(
+            'HomeStack', { 
+                screen: "AddLoanTypeScreen", 
+                params: { firm_id: firmDetails.firm_id },
+            });
     };
 
     const fetchLoanTypes = async () => {
