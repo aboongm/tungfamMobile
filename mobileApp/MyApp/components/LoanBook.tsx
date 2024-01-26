@@ -307,7 +307,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
     }
 
     return (
-        <>
+        <View style={styles.loanContainer}>
             <TouchableOpacity onPress={toggleLoanBook}>
                 <Text style={styles.headerText}>LoanBook</Text>
             </TouchableOpacity>
@@ -346,13 +346,16 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                     </>
                 )
             )}
-        </>
+        </View>
     );
 };
 
 export default LoanBook;
 
 const styles = StyleSheet.create({
+    loanContainer: {
+        marginBottom: 200
+    },
     list: {
         // flexGrow: 1,
         // backgroundColor: 'rgba(255, 255, 255, 0.6)',
