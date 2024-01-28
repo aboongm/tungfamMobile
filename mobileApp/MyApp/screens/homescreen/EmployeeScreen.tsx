@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Employee from '../../components/Employee'
 import { connect, useDispatch } from 'react-redux'
@@ -24,9 +24,9 @@ const EmployeeScreen = ({userRole, userId}) => {
 }, [dispatch, userId]);
 
   return (
-    <View style={styles.employeeContainer}>
+    <ScrollView style={styles.employeeContainer}>
       <Employee firmDetails={firm} />
-    </View>
+    </ScrollView>
   )
 }
 

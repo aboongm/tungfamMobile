@@ -51,7 +51,7 @@ const PaymentScheduleScreen = () => {
             }
 
             const response = await axios.get(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
-            console.log("fetchPayments: ", response.data)
+            // console.log("fetchPayments: ", response.data)
             setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
@@ -65,7 +65,7 @@ const PaymentScheduleScreen = () => {
     const paidAmount = (filteredPayments.length + 1) * loan.installment;
     const outStandingPayable = loan.total_payable - paidAmount;
 
-    console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
+    // console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
 
     const addPayment = async () => {
         try {
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
-        elevation: 5
+        // elevation: 5
     },
     columnHeader: {
         flex: 1,
@@ -423,10 +423,10 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     evenRow: {
-        backgroundColor: COLORS.tungfamPurple,
+        backgroundColor: 'rgba(52, 152, 219, 0.45)'
     },
     oddRow: {
-        backgroundColor: 'lightblue',
+        backgroundColor: 'rgba(52, 152, 219, 0.30)'
     },
 });
 

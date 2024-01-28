@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { connect, useDispatch } from 'react-redux';
 import LoanType from '../../components/LoanType';
@@ -24,9 +24,9 @@ const LoanTypeScreen = ({userRole, userId}) => {
 }, [dispatch, userId]);
 
   return (
-    <View style={styles.loanTypeContainer}>
+    <ScrollView style={styles.loanTypeContainer}>
        <LoanType firmDetails={firm} />
-    </View>
+    </ScrollView>
   )
 }
 
