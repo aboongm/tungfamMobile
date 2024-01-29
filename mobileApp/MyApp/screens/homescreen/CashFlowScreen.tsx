@@ -39,7 +39,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
       ...prevOpenItems,
       [entryId]: !prevOpenItems[entryId],
     }));
-    setEntryId(entryId);  // You can remove this line if you don't need to store the entryId separately
+    setEntryId(entryId); 
   };
 
   useEffect(() => {
@@ -51,7 +51,6 @@ const CashFlowScreen = ({ userRole, userId }) => {
         };
 
         const firmId = firmData.firm_id;
-
         const cashFlowReponse = await axios.get(
           `${API_URL}/cashflows/${firmId.toString()}`,
           { headers }
@@ -59,24 +58,18 @@ const CashFlowScreen = ({ userRole, userId }) => {
 
         if (cashFlowReponse.status === 200) {
           setCashFlows(cashFlowReponse.data);
-
-          // console.log("data", cashFlowReponse.data);
           setIsLoading(false)
         } else {
-          // Handle the case where the cashflow entry is not found
           console.log("Cashflow entry not found!");
           setIsLoading(false)
-          // You might want to set a default value or show an error message to the user
         }
       } catch (error) {
         console.log("Error fetching latest cash flow:", error);
         setIsLoading(false)
-        // Handle the error if needed
       }
     };
 
     fetchCashFlows();
-    // console.log("useEffect : ", cashFlows);
 
   }, [firmData]);
 
@@ -98,25 +91,18 @@ const CashFlowScreen = ({ userRole, userId }) => {
         };
 
         const firmId = firmData.firm_id;
-        // console.log("firmId: ", firmId);
-        // console.log("firmId: ", `${API_URL}/cashflows/latest/${firmId}`);
-
         const latestCashFlowResponse = await axios.get(
           `${API_URL}/cashflows/latest/${firmId.toString()}`,
           { headers }
         );
 
         if (latestCashFlowResponse.status === 200) {
-          // If there is an entry, update the latestCashflowBalance
           setLatestCashflowBalance(latestCashFlowResponse.data.cash_balance);
         } else {
-          // Handle the case where the cashflow entry is not found
           console.log("Cashflow entry not found!");
-          // You might want to set a default value or show an error message to the user
         }
       } catch (error) {
         console.log("Error fetching latest cash flow:", error);
-        // Handle the error if needed
       }
     };
 
@@ -126,17 +112,10 @@ const CashFlowScreen = ({ userRole, userId }) => {
 
   const addCashFlow = async () => {
     try {
-      // Your existing code for calculating entryData based on latestCashflowBalance
-      // console.log("latestCashflowBalance: ", latestCashflowBalance);
       const token = await AsyncStorage.getItem("token");
-      const headers = {
-        Authorization: `${token}`
-      };
-
+      const headers = { Authorization: `${token}` };
       const firmId = firmData.firm_id;
-
       const newCashBalance = latestCashflowBalance + inflowsTotal - outflowsTotal;
-
       const entryData = {
         entry_date: newPaymentDate.toISOString().split("T")[0],
         inflows_total: inflowsTotal,
@@ -209,8 +188,6 @@ const CashFlowScreen = ({ userRole, userId }) => {
     setOutflows(updatedOutflows);
   };
 
-  console.log('cashFlows: ', cashFlows);
-
   const renderCashFlows = () => (
     <View style={styles.tableContainer}>
       <View>
@@ -256,7 +233,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
                           .filter((detail) => detail.type === 'inflow')
                           .map((detail, ind) => (
                             <View style={styles.detailItemContainer} key={ind}>
-                              <Text style={styles.detailItem}>{index + 1}. {`Amount: Rs ${detail.amount}`}</Text>
+                              <Text style={styles.detailItem}>{ind + 1}. {`Amount: Rs ${detail.amount}`}</Text>
                               <Text style={styles.detailItem}>{"     "}Remark: {detail.remark}</Text>
                             </View>
                           ))}
@@ -273,7 +250,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
                           .filter((detail) => detail.type === 'outflow')
                           .map((detail, ind) => (
                             <View style={styles.detailItemContainer} key={ind}>
-                              <Text style={styles.detailItem}>{index + 1}. {`Amount: Rs ${detail.amount}`}</Text>
+                              <Text style={styles.detailItem}>{ind + 1}. {`Amount: Rs ${detail.amount}`}</Text>
                               <Text style={styles.detailItem}>{"     "}Remark: {detail.remark}</Text>
                             </View>
                           ))}
@@ -336,10 +313,10 @@ const CashFlowScreen = ({ userRole, userId }) => {
           {inflows.map((inflow, index) => (
             <View key={`inflow${index}`} style={styles.itemContainer}>
               <Text style={[styles.item, { fontWeight: '400' }]}>{index + 1}. Amount: {inflow.amount}; Remark: {inflow.remark}</Text>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => removeInflow(index)}>
+              <TouchableOpacity style={[styles.iconContainer, {backgroundColor: 'pink'}]} onPress={() => removeInflow(index)}>
                 <Feather
-                  name="minus-square"
-                  color="#000"
+                  name="x-square"
+                  color="#fff"
                   size={40}
                 />
               </TouchableOpacity>
@@ -369,7 +346,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
         <TouchableOpacity style={styles.iconContainer} onPress={addInflow}>
           <Feather
             name="plus-square"
-            color="#000"
+            color="#fff"
             size={40}
           />
         </TouchableOpacity>
@@ -394,10 +371,10 @@ const CashFlowScreen = ({ userRole, userId }) => {
               <Text style={[styles.item, { fontWeight: '400' }]}>
                 {index + 1}. Amount: {outflow.amount}; Remark: {outflow.remark}
               </Text>
-              <TouchableOpacity style={styles.iconContainer} onPress={() => removeOutflow(index)}>
+              <TouchableOpacity style={[styles.iconContainer, {backgroundColor: 'pink'}]} onPress={() => removeOutflow(index)}>
                 <Feather
-                  name="minus-square"
-                  color="#000"
+                  name="x-square"
+                  color="fff"
                   size={40}
                 />
               </TouchableOpacity>
@@ -427,7 +404,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
         <TouchableOpacity style={styles.iconContainer} onPress={addOutflow}>
           <Feather
             name="plus-square"
-            color="#000"
+            color="#fff"
             size={40}
           />
         </TouchableOpacity>
