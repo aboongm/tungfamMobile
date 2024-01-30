@@ -25,9 +25,11 @@ const CashFlowScreen = ({ userRole, userId }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [cashFlows, setCashFlows] = useState([]);
   const [latestCashflowBalance, setLatestCashflowBalance] = useState(0);
+  const [latestPreviousCashflowBalance, setLatestPreviousCashflowBalance] = useState(0);
   const [showCashFlowItem, setShowCashFlowItem] = useState(false);
   const [entryId, setEntryId] = useState("");
   const [page, setPage] = useState(1);
+  const [latestCashFlowDate, setLatestCashFlowDate] = useState(null);
 
   const firmData = useSelector((state: RootState) => state.loanSlice.firm)
 
@@ -104,6 +106,14 @@ const CashFlowScreen = ({ userRole, userId }) => {
 
         if (latestCashFlowResponse.status === 200) {
           setLatestCashflowBalance(latestCashFlowResponse.data.cash_balance);
+          setLatestPreviousCashflowBalance(latestCashFlowResponse.data.previous_cash_balance);
+          console.log("latestCashFlowDate Before: ", latestCashFlowDate);
+          setLatestCashFlowDate(latestCashFlowResponse.data.entry_date)
+          console.log("latestCashflowBalance: ", latestCashflowBalance);
+          console.log("latestPreviousCashflowBalance: ", latestPreviousCashflowBalance);
+          console.log("latestCashFlowDate: ", latestCashFlowDate);
+          console.log("newPaymentDate: ", newPaymentDate);
+
         } else {
           console.log("Cashflow entry not found!");
         }
@@ -113,7 +123,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
     };
 
     fetchLatestCashFlow();
-  }, []);
+  }, [firmData]);
 
 
   const addCashFlow = async () => {
@@ -127,6 +137,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
         inflows_total: inflowsTotal,
         outflows_total: outflowsTotal,
         cash_balance: newCashBalance,
+        previous_cash_balance: parseFloat(latestCashflowBalance),
         entry_details: [
           ...inflows.map((inflow) => ({
             type: "inflow",
@@ -140,6 +151,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
           })),
         ],
       };
+      console.log(entryData);
 
       const response = await axios.post(`${API_URL}/cashflows/${firmId}`, entryData, { headers });
 
@@ -156,20 +168,27 @@ const CashFlowScreen = ({ userRole, userId }) => {
     if (inflows.length <= 0 && outflows.length <= 0) {
       Alert.alert("Create an entry to inflows/outflows First!");
     } else {
-      Alert.alert(
-        'Confirm Payment',
-        `Are you sure you want to add this CashFlow Entry for ${newPaymentDate.toISOString().split('T')[0]}?`,
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel'
-          },
-          {
-            text: 'OK',
-            onPress: addCashFlow
-          }
-        ]
-      );
+      const newPaymentDateString = newPaymentDate.toISOString().split('T')[0];
+      const latestCashFlowDateString = latestCashFlowDate.split('T')[0];
+      
+      if (newPaymentDateString === latestCashFlowDateString) {
+        Alert.alert(`Entry for Date ${newPaymentDateString} already exists!`);
+      } else {
+        Alert.alert(
+          'Confirm Payment',
+          `Are you sure you want to add this CashFlow Entry for ${newPaymentDateString}?`,
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel'
+            },
+            {
+              text: 'OK',
+              onPress: addCashFlow
+            }
+          ]
+        );
+      }
     }
   }
 
@@ -235,10 +254,6 @@ const CashFlowScreen = ({ userRole, userId }) => {
 
                   {showCashFlowItem[item.entry_id] && (
                     <>
-                      <View style={styles.itemContainer}>
-                        <Text style={styles.detailItem}>Previous CashBalance: </Text>
-                        <Text style={styles.detailItem}>Rs {latestCashflowBalance}</Text>
-                      </View>
 
                       <View style={styles.detailContainer}>
 
@@ -315,14 +330,18 @@ const CashFlowScreen = ({ userRole, userId }) => {
         />
       </View>
       <View style={styles.itemContainer}>
-        <Text style={styles.item}>SelectedDate: </Text>
-        <Text style={styles.item}>{newPaymentDate.toISOString().split('T')[0]}</Text>
+        <Text style={styles.item}>Previous CashBalance: </Text>
+        <Text style={styles.item}>{latestCashflowBalance}</Text>
       </View>
     </View>
   )
 
   const renderAddInflow = () => (
     <View style={styles.inflowContainer}>
+      <View style={styles.itemContainer}>
+        <Text style={styles.item}>SelectedDate: </Text>
+        <Text style={styles.item}>{newPaymentDate.toISOString().split('T')[0]}</Text>
+      </View>
 
       <View style={styles.itemContainer}>
         <Text style={styles.item}>inflowsTotal: </Text>
