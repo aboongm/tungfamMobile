@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Button, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { connect, useSelector } from 'react-redux';
 import { COLORS } from '../../constants';
@@ -27,6 +27,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
   const [latestCashflowBalance, setLatestCashflowBalance] = useState(0);
   const [showCashFlowItem, setShowCashFlowItem] = useState(false);
   const [entryId, setEntryId] = useState("");
+  const [page, setPage] = useState(1);
 
   const firmData = useSelector((state: RootState) => state.loanSlice.firm)
 
@@ -39,7 +40,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
       ...prevOpenItems,
       [entryId]: !prevOpenItems[entryId],
     }));
-    setEntryId(entryId); 
+    setEntryId(entryId);
   };
 
   useEffect(() => {
@@ -51,18 +52,23 @@ const CashFlowScreen = ({ userRole, userId }) => {
         };
 
         const firmId = firmData.firm_id;
-        const cashFlowReponse = await axios.get(
-          `${API_URL}/cashflows/${firmId.toString()}`,
-          { headers }
-        );
-
-        if (cashFlowReponse.status === 200) {
-          setCashFlows(cashFlowReponse.data);
-          setIsLoading(false)
-        } else {
-          console.log("Cashflow entry not found!");
-          setIsLoading(false)
+        const allCashFlows = [];
+        for (let i = 1; i <= page; i++) {
+          const cashFlowReponse = await axios.get(
+            `${API_URL}/cashflows/${firmId.toString()}?page=${i}`,
+            { headers }
+          );
+          if (cashFlowReponse.status === 200) {
+            allCashFlows.push(...cashFlowReponse.data.entries)
+            console.log("allCashFlows: ", cashFlowReponse.data.totalCount);
+            
+            setIsLoading(false)
+          } else {
+            console.log("Cashflow entry not found!");
+            setIsLoading(false)
+          }
         }
+        setCashFlows(allCashFlows);
       } catch (error) {
         console.log("Error fetching latest cash flow:", error);
         setIsLoading(false)
@@ -71,7 +77,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
 
     fetchCashFlows();
 
-  }, [firmData]);
+  }, [firmData, page]);
 
   useEffect(() => {
     const totalInflows = inflows.reduce((acc, val) => acc + parseFloat(val.amount), 0);
@@ -146,22 +152,25 @@ const CashFlowScreen = ({ userRole, userId }) => {
     }
   };
 
-
   const takePermission = () => {
-    Alert.alert(
-      'Confirm Payment',
-      `Are you sure you want to add this CashFlow Entry for ${newPaymentDate.toISOString().split('T')[0]}?`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'OK',
-          onPress: addCashFlow
-        }
-      ]
-    );
+    if (inflows.length <= 0 && outflows.length <= 0) {
+      Alert.alert("Create an entry to inflows/outflows First!");
+    } else {
+      Alert.alert(
+        'Confirm Payment',
+        `Are you sure you want to add this CashFlow Entry for ${newPaymentDate.toISOString().split('T')[0]}?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'OK',
+            onPress: addCashFlow
+          }
+        ]
+      );
+    }
   }
 
   const addInflow = () => {
@@ -186,6 +195,12 @@ const CashFlowScreen = ({ userRole, userId }) => {
     const updatedOutflows = [...outflows];
     updatedOutflows.splice(index, 1);
     setOutflows(updatedOutflows);
+  };
+
+  const handleLoadMore = () => {
+    console.log("More cashflows");
+    setPage(prevPage => prevPage + 1);
+    // setPage(page + 1);
   };
 
   const renderCashFlows = () => (
@@ -313,7 +328,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
           {inflows.map((inflow, index) => (
             <View key={`inflow${index}`} style={styles.itemContainer}>
               <Text style={[styles.item, { fontWeight: '400' }]}>{index + 1}. Amount: {inflow.amount}; Remark: {inflow.remark}</Text>
-              <TouchableOpacity style={[styles.iconContainer, {backgroundColor: 'pink'}]} onPress={() => removeInflow(index)}>
+              <TouchableOpacity style={[styles.iconContainer, { backgroundColor: 'pink' }]} onPress={() => removeInflow(index)}>
                 <Feather
                   name="x-square"
                   color="#fff"
@@ -371,7 +386,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
               <Text style={[styles.item, { fontWeight: '400' }]}>
                 {index + 1}. Amount: {outflow.amount}; Remark: {outflow.remark}
               </Text>
-              <TouchableOpacity style={[styles.iconContainer, {backgroundColor: 'pink'}]} onPress={() => removeOutflow(index)}>
+              <TouchableOpacity style={[styles.iconContainer, { backgroundColor: 'pink' }]} onPress={() => removeOutflow(index)}>
                 <Feather
                   name="x-square"
                   color="fff"
@@ -425,6 +440,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
             <Text style={styles.columnHeader}>CashBalance</Text>
           </View>
           {renderCashFlows()}
+          <Button title="Load More" onPress={handleLoadMore} />
 
           <View style={styles.formContainer}>
             <View style={styles.tableContainer}>
