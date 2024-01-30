@@ -61,7 +61,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
           if (cashFlowReponse.status === 200) {
             allCashFlows.push(...cashFlowReponse.data.entries)
             console.log("allCashFlows: ", cashFlowReponse.data.totalCount);
-            
+
             setIsLoading(false)
           } else {
             console.log("Cashflow entry not found!");
@@ -121,7 +121,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
       const token = await AsyncStorage.getItem("token");
       const headers = { Authorization: `${token}` };
       const firmId = firmData.firm_id;
-      const newCashBalance = latestCashflowBalance + inflowsTotal - outflowsTotal;
+      const newCashBalance = parseFloat(latestCashflowBalance) + parseFloat(inflowsTotal) - parseFloat(outflowsTotal);
       const entryData = {
         entry_date: newPaymentDate.toISOString().split("T")[0],
         inflows_total: inflowsTotal,
@@ -200,7 +200,6 @@ const CashFlowScreen = ({ userRole, userId }) => {
   const handleLoadMore = () => {
     console.log("More cashflows");
     setPage(prevPage => prevPage + 1);
-    // setPage(page + 1);
   };
 
   const renderCashFlows = () => (
@@ -235,42 +234,49 @@ const CashFlowScreen = ({ userRole, userId }) => {
                   </TouchableOpacity>
 
                   {showCashFlowItem[item.entry_id] && (
-                    <View style={styles.detailContainer}>
-
-                      <View style={styles.wrapper}>
-                        <View style={[styles.itemContainer, { paddingHorizontal: 0 }]}>
-                          <Text style={styles.detailItem}>inflows Total: </Text>
-                          <Text style={styles.detailItem}>Rs {item.inflows_total}</Text>
-                        </View>
-
-                        <Text style={styles.detailItem}>Inflow Entries:</Text>
-                        {item.entry_details
-                          .filter((detail) => detail.type === 'inflow')
-                          .map((detail, ind) => (
-                            <View style={styles.detailItemContainer} key={ind}>
-                              <Text style={styles.detailItem}>{ind + 1}. {`Amount: Rs ${detail.amount}`}</Text>
-                              <Text style={styles.detailItem}>{"     "}Remark: {detail.remark}</Text>
-                            </View>
-                          ))}
+                    <>
+                      <View style={styles.itemContainer}>
+                        <Text style={styles.detailItem}>Previous CashBalance: </Text>
+                        <Text style={styles.detailItem}>Rs {latestCashflowBalance}</Text>
                       </View>
 
-                      <View style={styles.wrapper}>
-                        <View style={[styles.itemContainer, { paddingHorizontal: 0 }]}>
-                          <Text style={styles.detailItem}>Outflows Total: </Text>
-                          <Text style={styles.detailItem}>Rs {item.outflows_total}</Text>
+                      <View style={styles.detailContainer}>
+
+                        <View style={styles.wrapper}>
+                          <View style={[styles.itemContainer, { paddingHorizontal: 0 }]}>
+                            <Text style={styles.detailItem}>inflows Total: </Text>
+                            <Text style={styles.detailItem}>Rs {item.inflows_total}</Text>
+                          </View>
+
+                          <Text style={styles.detailItem}>Inflow Entries:</Text>
+                          {item.entry_details
+                            .filter((detail) => detail.type === 'inflow')
+                            .map((detail, ind) => (
+                              <View style={styles.detailItemContainer} key={ind}>
+                                <Text style={styles.detailItem}>{ind + 1}. {`Amount: Rs ${detail.amount}`}</Text>
+                                <Text style={styles.detailItem}>{"     "}Remark: {detail.remark}</Text>
+                              </View>
+                            ))}
                         </View>
 
-                        <Text style={styles.detailItem}>Outflow Entries: </Text>
-                        {item.entry_details
-                          .filter((detail) => detail.type === 'outflow')
-                          .map((detail, ind) => (
-                            <View style={styles.detailItemContainer} key={ind}>
-                              <Text style={styles.detailItem}>{ind + 1}. {`Amount: Rs ${detail.amount}`}</Text>
-                              <Text style={styles.detailItem}>{"     "}Remark: {detail.remark}</Text>
-                            </View>
-                          ))}
+                        <View style={styles.wrapper}>
+                          <View style={[styles.itemContainer, { paddingHorizontal: 0 }]}>
+                            <Text style={styles.detailItem}>Outflows Total: </Text>
+                            <Text style={styles.detailItem}>Rs {item.outflows_total}</Text>
+                          </View>
+
+                          <Text style={styles.detailItem}>Outflow Entries: </Text>
+                          {item.entry_details
+                            .filter((detail) => detail.type === 'outflow')
+                            .map((detail, ind) => (
+                              <View style={styles.detailItemContainer} key={ind}>
+                                <Text style={styles.detailItem}>{ind + 1}. {`Amount: Rs ${detail.amount}`}</Text>
+                                <Text style={styles.detailItem}>{"     "}Remark: {detail.remark}</Text>
+                              </View>
+                            ))}
+                        </View>
                       </View>
-                    </View>
+                    </>
                   )}
                 </View>
               ))
@@ -389,7 +395,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
               <TouchableOpacity style={[styles.iconContainer, { backgroundColor: 'pink' }]} onPress={() => removeOutflow(index)}>
                 <Feather
                   name="x-square"
-                  color="fff"
+                  color="#fff"
                   size={40}
                 />
               </TouchableOpacity>
@@ -440,7 +446,9 @@ const CashFlowScreen = ({ userRole, userId }) => {
             <Text style={styles.columnHeader}>CashBalance</Text>
           </View>
           {renderCashFlows()}
-          <Button title="Load More" onPress={handleLoadMore} />
+          {cashFlows.length > 10 && (
+            <Button title="Load More" onPress={handleLoadMore} />
+          )}
 
           <View style={styles.formContainer}>
             <View style={styles.tableContainer}>
