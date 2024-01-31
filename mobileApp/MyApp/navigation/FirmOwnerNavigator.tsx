@@ -219,7 +219,7 @@ const CategoryTabs = () => {
   );
 };
 
-const MainNavigator = () => {
+const FirmOwnerNavigator = () => {
   const screenOptions = {
     tabBarShowLabel: true,
     tabBarHideOnKeyboard: true,
@@ -289,7 +289,7 @@ const MainNavigator = () => {
   )
 };
 
-export default MainNavigator;
+export default FirmOwnerNavigator;
 
 const styles = StyleSheet.create({
   cartBadge: {
