@@ -1,5 +1,5 @@
 import { ActivityIndicator, Alert, Button, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { connect, useSelector } from 'react-redux';
 import { COLORS } from '../../constants';
 import DatePicker from 'react-native-date-picker';
@@ -30,8 +30,21 @@ const CashFlowScreen = ({ userRole, userId }) => {
   const [entryId, setEntryId] = useState("");
   const [page, setPage] = useState(1);
   const [latestCashFlowDate, setLatestCashFlowDate] = useState(null);
+  const [selectedLoan, setSelectedLoan] = useState(null);
+  const [isPaymentSchedule, setIsPaymentSchedule] = useState(false);
+  const [borrowerName, setBorrowerName] = useState('');
+  const [loanId, setLoanId] = useState('');
+  const [loanType, setLoanType] = useState('');
+  const [noOfPayments, setNoOfPayments] = useState('');
+  const [outstandingPayable, setOutstandingPayable] = useState('');
+  const [paidAmount, setPaidAmount] = useState('');
+  const [totalPayable, setTotalPayable] = useState('');
 
   const firmData = useSelector((state: RootState) => state.loanSlice.firm)
+  const loanData = useSelector((state: RootState) => state.loanSlice.loans)
+
+  const isPaymentScheduleRef = useRef(isPaymentSchedule);
+  const selectedLoanRef = useRef(selectedLoan);
 
   const toggleCashFlow = () => {
     setShowDetails(!showDetails);
@@ -62,8 +75,6 @@ const CashFlowScreen = ({ userRole, userId }) => {
           );
           if (cashFlowReponse.status === 200) {
             allCashFlows.push(...cashFlowReponse.data.entries)
-            console.log("allCashFlows: ", cashFlowReponse.data.totalCount);
-
             setIsLoading(false)
           } else {
             console.log("Cashflow entry not found!");
@@ -107,13 +118,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
         if (latestCashFlowResponse.status === 200) {
           setLatestCashflowBalance(latestCashFlowResponse.data.cash_balance);
           setLatestPreviousCashflowBalance(latestCashFlowResponse.data.previous_cash_balance);
-          console.log("latestCashFlowDate Before: ", latestCashFlowDate);
           setLatestCashFlowDate(latestCashFlowResponse.data.entry_date)
-          console.log("latestCashflowBalance: ", latestCashflowBalance);
-          console.log("latestPreviousCashflowBalance: ", latestPreviousCashflowBalance);
-          console.log("latestCashFlowDate: ", latestCashFlowDate);
-          console.log("newPaymentDate: ", newPaymentDate);
-
         } else {
           console.log("Cashflow entry not found!");
         }
@@ -125,6 +130,10 @@ const CashFlowScreen = ({ userRole, userId }) => {
     fetchLatestCashFlow();
   }, [firmData]);
 
+  useEffect(() => {
+    isPaymentScheduleRef.current = isPaymentSchedule;
+    selectedLoanRef.current = selectedLoan;
+  }, [isPaymentSchedule, selectedLoan]);
 
   const addCashFlow = async () => {
     try {
@@ -132,6 +141,26 @@ const CashFlowScreen = ({ userRole, userId }) => {
       const headers = { Authorization: `${token}` };
       const firmId = firmData.firm_id;
       const newCashBalance = parseFloat(latestCashflowBalance) + parseFloat(inflowsTotal) - parseFloat(outflowsTotal);
+      // const entryData = {
+      //   entry_date: newPaymentDate.toISOString().split("T")[0],
+      //   inflows_total: inflowsTotal,
+      //   outflows_total: outflowsTotal,
+      //   cash_balance: newCashBalance,
+      //   previous_cash_balance: parseFloat(latestCashflowBalance),
+      //   entry_details: [
+      //     ...inflows.map((inflow) => ({
+      //       type: "inflow",
+      //       amount: parseFloat(inflow.amount),
+      //       remark: inflow.remark,
+      //       is_payment_schedule: inflow.is_payment_schedule,
+      //     })),
+      //     ...outflows.map((outflow) => ({
+      //       type: "outflow",
+      //       amount: parseFloat(outflow.amount),
+      //       remark: outflow.remark
+      //     })),
+      //   ],
+      // };
       const entryData = {
         entry_date: newPaymentDate.toISOString().split("T")[0],
         inflows_total: inflowsTotal,
@@ -142,12 +171,25 @@ const CashFlowScreen = ({ userRole, userId }) => {
           ...inflows.map((inflow) => ({
             type: "inflow",
             amount: parseFloat(inflow.amount),
-            remark: inflow.remark
+            remark: inflow.remark,
+            is_payment_schedule: inflow.is_payment_schedule,
+            // Include additional fields when is_payment_schedule is true
+            ...(inflow.is_payment_schedule && {
+              loan_id: loanId,
+              // loan_type: loanType,
+              // borrower_name: borrowerName,
+              // no_of_payments: noOfPayments,
+              // total_payable: totalPayable,
+              // paid_amount: paidAmount,
+              // outstanding_payable: outstandingPayable,
+              // date: inflow.entry_date,
+              // installment: inflow.installment,
+            }),
           })),
           ...outflows.map((outflow) => ({
             type: "outflow",
             amount: parseFloat(outflow.amount),
-            remark: outflow.remark
+            remark: outflow.remark,
           })),
         ],
       };
@@ -170,7 +212,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
     } else {
       const newPaymentDateString = newPaymentDate.toISOString().split('T')[0];
       const latestCashFlowDateString = latestCashFlowDate.split('T')[0];
-      
+
       if (newPaymentDateString === latestCashFlowDateString) {
         Alert.alert(`Entry for Date ${newPaymentDateString} already exists!`);
       } else {
@@ -193,9 +235,10 @@ const CashFlowScreen = ({ userRole, userId }) => {
   }
 
   const addInflow = () => {
-    setInflows((prevInflows) => [...prevInflows, { amount: latestInflowAmount, remark: latestInflowRemark }]);
-    setLatestInflowAmount('');
+    setInflows((prevInflows) => [...prevInflows, { amount: latestInflowAmount, remark: latestInflowRemark, is_payment_schedule: isPaymentSchedule }]);
     setLatestInflowRemark('');
+    setLatestInflowAmount('');
+    setIsPaymentSchedule(false);
   };
 
   const removeInflow = (index) => {
@@ -219,6 +262,15 @@ const CashFlowScreen = ({ userRole, userId }) => {
   const handleLoadMore = () => {
     console.log("More cashflows");
     setPage(prevPage => prevPage + 1);
+  };
+
+  const handleLoan = async (loan) => {
+    setIsPaymentSchedule(true);
+    isPaymentScheduleRef.current = true;
+    selectedLoanRef.current = loan;
+    setLatestInflowAmount(`${loan.installment}`);
+    setLatestInflowRemark(`From ${loan.borrower_name}`);
+    setLoanId(`${loan.loan_id}`);
   };
 
   const renderCashFlows = () => (
@@ -247,8 +299,8 @@ const CashFlowScreen = ({ userRole, userId }) => {
                         year: 'numeric',
                       })}
                     </Text>
-                    <Text style={styles.columnItem}>
-                      {item.cash_balance}
+                    <Text style={[styles.columnItem, { textAlign: 'right', paddingRight: 20 }]}>
+                      Rs {item.cash_balance}
                     </Text>
                   </TouchableOpacity>
 
@@ -331,7 +383,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
       </View>
       <View style={styles.itemContainer}>
         <Text style={styles.item}>Previous CashBalance: </Text>
-        <Text style={styles.item}>{latestCashflowBalance}</Text>
+        <Text style={styles.item}>Rs {latestCashflowBalance}</Text>
       </View>
     </View>
   )
@@ -348,11 +400,18 @@ const CashFlowScreen = ({ userRole, userId }) => {
         <Text style={styles.item}>Rs {inflows.reduce((acc, item) => acc + parseFloat(item.amount), 0)}</Text>
       </View>
 
+      {renderLoanSelector()}
+
       {inflows.length > 0 && (
         <View style={styles.entriesContainer}>
           {inflows.map((inflow, index) => (
             <View key={`inflow${index}`} style={styles.itemContainer}>
-              <Text style={[styles.item, { fontWeight: '400' }]}>{index + 1}. Amount: {inflow.amount}; Remark: {inflow.remark}</Text>
+              <Text style={[styles.loanItem, { fontWeight: '400' }]}>{index + 1}. </Text>
+              <View style={{ flex: 1, paddingLeft: 10 }}>
+                <Text style={[styles.loanItem, { fontWeight: '400' }]}>Amount: {inflow.amount}</Text>
+                <Text style={[styles.loanItem, { fontWeight: '400' }]}>Remark: {inflow.remark}</Text>
+                {/* <Text style={[styles.loanItem, { fontWeight: '400' }]}>isPaymentSchedule: {inflow.is_payment_schedule}</Text> */}
+              </View>
               <TouchableOpacity style={[styles.iconContainer, { backgroundColor: 'pink' }]} onPress={() => removeInflow(index)}>
                 <Feather
                   name="x-square"
@@ -374,12 +433,14 @@ const CashFlowScreen = ({ userRole, userId }) => {
             value={latestInflowAmount}
             onChangeText={(text) => setLatestInflowAmount(text)}
             keyboardType="numeric"
+            placeholderTextColor={'black'}
           />
           <TextInput
             style={styles.descriptionInput}
             placeholder="Remark"
             value={latestInflowRemark}
             onChangeText={(text) => setLatestInflowRemark(text)}
+            placeholderTextColor={'black'}
           />
         </View>
 
@@ -432,12 +493,14 @@ const CashFlowScreen = ({ userRole, userId }) => {
             value={latestOutflowAmount}
             onChangeText={(text) => setLatestOutflowAmount(text)}
             keyboardType="numeric"
+            placeholderTextColor={'black'}
           />
           <TextInput
             style={styles.descriptionInput}
             placeholder="Remark"
             value={latestOutflowRemark}
             onChangeText={(text) => setLatestOutflowRemark(text)}
+            placeholderTextColor={'black'}
           />
         </View>
 
@@ -451,6 +514,27 @@ const CashFlowScreen = ({ userRole, userId }) => {
       </View>
     </View>
   );
+
+  const renderLoanSelector = () => (
+    <View style={styles.loanContainer}>
+      {loanData.map((loan, index) => (
+        <TouchableOpacity onPress={() => handleLoan(loan)} key={index} style={styles.loanSelectorContainer}>
+          <Text style={[
+            styles.loanSelector,
+            {
+              fontWeight: selectedLoan === loan.loan_id ? 'bold' : 'normal',
+            }
+          ]}>{loan.borrower_name.split(' ')[1].substring(0, 5)}</Text>
+          <Text style={[
+            styles.loanSelector,
+            {
+              fontWeight: selectedLoan === loan.loan_id ? 'bold' : 'normal',
+            }
+          ]}>{`P${loan.installment}`}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  )
 
 
   return (
@@ -646,12 +730,42 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderWidth: 1,
     borderColor: COLORS.tungfamGrey,
     borderRadius: 6,
     paddingVertical: 4,
     paddingHorizontal: 14,
+  },
+  loanContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderWidth: 1,
+    borderColor: COLORS.tungfamGrey,
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  loanSelectorContainer: {
+    backgroundColor: COLORS.tungfamBgColor,
+    borderRadius: 8,
+    paddingVertical: 3,
+    margin: 2,
+  },
+  loanSelector: {
+    textAlign: 'center',
+    color: "white",
+    fontSize: 12,
+    paddingHorizontal: 6,
+  },
+  loanItem: {
+    color: COLORS.black,
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   item: {
     color: COLORS.black,

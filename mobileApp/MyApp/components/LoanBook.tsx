@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { setSelectedLoan } from '../redux/slices/loanSlice';
+import { setLoans, setSelectedLoan } from '../redux/slices/loanSlice';
 
 const LoanBook = ({ firmDetails, userRole, userId }) => {
     const navigation = useNavigation();
@@ -47,6 +47,7 @@ const LoanBook = ({ firmDetails, userRole, userId }) => {
                 );
             }
             setFilteredLoan(filtered);
+            dispatch(setLoans(filtered))
         }
     }, [loan, displayOption]);
     

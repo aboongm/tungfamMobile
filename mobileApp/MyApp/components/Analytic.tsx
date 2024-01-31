@@ -123,10 +123,8 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
             // Remove null entries (failed requests) and calculate the total outstanding_payable for the latest entries
             if (latestPaymentSchedules) {
                 const validPaymentSchedules = latestPaymentSchedules.flat().filter(entry => entry !== null);
-
                 const totalOutstandingPayable = validPaymentSchedules.reduce((total, entry) => {
 
-                    // Ensure that entry has the expected structure
                     if (entry && entry.hasOwnProperty('outstanding_payable')) {
                         return total + parseFloat(entry.outstanding_payable);
                     } else {
@@ -135,8 +133,6 @@ const Analytic = ({ firmDetails, userRole, userId }) => {
                 }, 0);
 
                 setLatestTotalOutstandingAmount(totalOutstandingPayable)
-                // console.log("fetchLatestFinancialData!!!!");
-                
             }
         } catch (error) {
             console.error('Error fetching financial data:', error);

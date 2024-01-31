@@ -135,6 +135,7 @@ const PaymentScheduleScreen = () => {
     const handleGoBack = () => {
         navigation.goBack()
     }
+console.log("payments********", payments);
 
     return (
         <PageContainer style={styles.container}>
@@ -182,13 +183,13 @@ const PaymentScheduleScreen = () => {
                                 </View>
                             ) : (
                                 <>
-                                    {payments.filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
+                                    {payments.reverse().filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
                                         <View style={[
                                             styles.tableBody,
                                             index % 2 === 0 ? styles.evenRow : styles.oddRow,
                                         ]} key={index}>
+                                            <Text style={[styles.columnItem, {flex: 0, width: 50}]} >{`${payments.length - index - 1}.`}</Text>
                                             <Text style={styles.columnItem}>
-                                                {`${index + 1}`}.{" "}
                                                 {new Date(payment.date).toLocaleDateString('en-GB', {
                                                     day: 'numeric',
                                                     month: 'short',
@@ -354,7 +355,10 @@ const styles = StyleSheet.create({
         flex: 1,
         fontWeight: '500',
         fontSize: 16,
-        textAlign: 'center'
+        textAlign: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     paymentHeader: {
         flex: 1,
