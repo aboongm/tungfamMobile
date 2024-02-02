@@ -25,7 +25,7 @@ const Header = ({ userRole, userId, headerBackgroundColor, descriptors }: { head
             try {
                 const firmData = await getFirmData(userId);
                 setFirm(firmData)
-                // dispatch(setFirmData(firmData));
+                dispatch(setFirmData(firmData));
             } catch (error) {
                 console.error("Error fetching firm data:", error);
             }

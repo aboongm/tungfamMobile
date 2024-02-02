@@ -3,23 +3,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { updateUserRole } from '../../redux/slices/auth/authSlice';
 import PageContainer from '../../components/PageContainer';
 import PageTitle from '../../components/PageTitle';
 import { COLORS } from '../../constants';
 import DatePicker from 'react-native-date-picker';
+import { RootState } from '../../redux/store';
 
 const CreateMaroopScreen = () => {
-  const disptach = useDispatch();
   const [maroopName, setMaroopName] = useState('');
   const [open, setOpen] = useState(false)
   const [startDate, setStartDate] = useState(new Date());
 
   const navigation = useNavigation();
+  const firmId = useSelector((state: RootState) => state.headerSlice.firmData.firm_id)
 
-  console.log("startDate: ", startDate);
   const handleSubmit = async () => {
     const formData = {
       name: maroopName,
@@ -31,44 +30,20 @@ const CreateMaroopScreen = () => {
       throw new Error('Token not found');
     }
 
-    const headers = {
-      // Authorization: `Bearer ${token}`,
-      Authorization: `${token}`,
-    };
+    const headers = { Authorization: `${token}` };
     console.log('formData: ', formData);
 
-    // const response = await axios.post(`${API_URL}/firms`, formData, { headers });
+    const response = await axios.post(`${API_URL}/firms/${firmId}/maroops/`, formData, { headers });
 
-    // if (response.status === 200) {
-    //   try {
-    //     const userId = await AsyncStorage.getItem('user_id');
-
-    //     if (!userId) {
-    //       throw new Error('userId not found');
-    //     }
-
-    //     const userResponse = await axios.get(`${API_URL}/users/${userId}`, { headers });
-    //     const updatedUserData = {
-    //       ...userResponse.data,
-    //       role: 'firmOwner',
-    //     };
-
-    //     const updateRoleResponse = await axios.put(`${API_URL}/users/${userId}`, updatedUserData, { headers });
-
-    //     if (updateRoleResponse.status === 200) {
-    //       disptach(updateUserRole(updatedUserData));
-    //     } else {
-    //       throw new Error('Failed to update user role');
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-
-    //   navigation.navigate('Maroops');
-    //   console.log('Firm was created successfully');
-    // } else {
-    //   throw new Error('Failed to create firm');
-    // }
+    if (response.status === 200) {
+      navigation.navigate('Maroops');
+      console.log('Firm was created successfully');
+      setMaroopName("")
+    } else {
+      navigation.navigate('Maroops');
+      setMaroopName("")
+      throw new Error('Failed to create firm');
+    }
   };
 
   return (
@@ -110,7 +85,6 @@ const CreateMaroopScreen = () => {
                 year: 'numeric',
               })}
             </Text>
-            {/* <Text style={styles.item}>{startDate.toISOString().split('T')[0]}</Text> */}
           </View>
 
           <TouchableOpacity style={[styles.button, { marginTop: 20 }]} onPress={handleSubmit}>
@@ -125,9 +99,7 @@ const CreateMaroopScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // borderWidth: 1,
     borderColor: COLORS.tungfamGrey,
-    // margin: 4,
     backgroundColor: 'rgba(52, 152, 210, 0.1)',
   },
   formContainer: {
@@ -178,7 +150,6 @@ const styles = StyleSheet.create({
   item: {
     color: COLORS.black,
     fontSize: 16,
-    // fontWeight: 'bold',
     paddingVertical: 4,
   },
 });
