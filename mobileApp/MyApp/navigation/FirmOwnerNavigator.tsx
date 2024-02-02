@@ -161,6 +161,7 @@ import { getFirmData } from '../redux/actions/firmActions';
 import MaroopScreen from '../screens/maroopScreen/MaroopScreen';
 import HeaderMaroop from '../components/HeaderMaroop';
 import CreateMaroopScreen from '../screens/maroopScreen/CreateMaroopScreen';
+import AddSubscriberScreen from '../screens/maroopScreen/AddSubscriberScreen';
 
 const MaterialTopTabs = createMaterialTopTabNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -257,6 +258,7 @@ const MaroopTab = () => {
     >
       <MaterialTopTabs.Screen name="Maroops" component={MaroopScreen} />
       <MaterialTopTabs.Screen name="CreateMaroop" component={CreateMaroopScreen}/>
+      <MaterialTopTabs.Screen name="AddSubscriber" component={AddSubscriberScreen}/>
     </MaterialTopTabs.Navigator>
   );
 };

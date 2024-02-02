@@ -17,7 +17,7 @@ const HeaderMaroop = ({ userRole, userId, headerBackgroundColor, descriptors }: 
 
     const selectedCategory = useSelector((state: RootState) => state.headerSlice.selectedCategory)
     const [colors, setColors] = useState(['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 240, 0.65)']);
-    const [activities, setActivities] = useState(['Maroops', "CreateMaroop"])
+    const [activities, setActivities] = useState(['Maroops', "CreateMaroop", "AddSubscriber"])
     const [firm, setFirm] = useState({})
 
     useEffect(() => {

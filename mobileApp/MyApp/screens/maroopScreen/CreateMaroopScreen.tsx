@@ -13,6 +13,10 @@ import { RootState } from '../../redux/store';
 
 const CreateMaroopScreen = () => {
   const [maroopName, setMaroopName] = useState('');
+  const [monthlyInstallment, setMonthlyInstallment] = useState('');
+  const [totalMonth, setTotalMonth] = useState('');
+  const [amount, setAmount] = useState("");
+  const [monthlyInterestAmount, setMonthlyInterestAmount] = useState('');
   const [open, setOpen] = useState(false)
   const [startDate, setStartDate] = useState(new Date());
 
@@ -22,7 +26,11 @@ const CreateMaroopScreen = () => {
   const handleSubmit = async () => {
     const formData = {
       name: maroopName,
-      start_date: startDate.toISOString().split('T')[0]
+      start_date: startDate.toISOString().split('T')[0],
+      monthlyInstallment: monthlyInstallment,
+      maroopTotalMonth: totalMonth,
+      maroopAmount: parseInt(monthlyInstallment) * parseInt(totalMonth),
+      monthlyInterestAmount: monthlyInterestAmount
     };
 
     const token = await AsyncStorage.getItem('token');
@@ -32,13 +40,17 @@ const CreateMaroopScreen = () => {
 
     const headers = { Authorization: `${token}` };
     console.log('formData: ', formData);
-
+    
     const response = await axios.post(`${API_URL}/firms/${firmId}/maroops/`, formData, { headers });
+    console.log('response: ', response.data);
 
     if (response.status === 200) {
       navigation.navigate('Maroops');
       console.log('Firm was created successfully');
       setMaroopName("")
+      setMonthlyInstallment("")
+      setTotalMonth("")
+      setMonthlyInterestAmount("")
     } else {
       navigation.navigate('Maroops');
       setMaroopName("")
@@ -51,12 +63,6 @@ const CreateMaroopScreen = () => {
       <PageTitle text="Create A Maroop" />
       <ScrollView contentContainerStyle={styles.formContainer}>
         <View style={{ width: '100%' }}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name of the Maroop"
-            value={maroopName}
-            onChangeText={setMaroopName}
-          />
 
           <View style={styles.DatePayment}>
             <TouchableOpacity style={styles.button} onPress={() => setOpen(true)}>
@@ -87,6 +93,35 @@ const CreateMaroopScreen = () => {
             </Text>
           </View>
 
+          <TextInput
+            style={styles.input}
+            placeholder="Name of the Maroop"
+            value={maroopName}
+            onChangeText={setMaroopName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Monthly Installment"
+            value={monthlyInstallment}
+            onChangeText={setMonthlyInstallment}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Total Month "
+            value={totalMonth}
+            onChangeText={setTotalMonth}
+          />
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>Amount: </Text>
+            <Text style={styles.item}>{parseInt(monthlyInstallment) * parseInt(totalMonth)}</Text>
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="monthly Interest Amount"
+            value={monthlyInterestAmount}
+            onChangeText={setMonthlyInterestAmount}
+          />
+
           <TouchableOpacity style={[styles.button, { marginTop: 20 }]} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Create Maroop</Text>
           </TouchableOpacity>
@@ -115,8 +150,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.tungfamGrey,
     borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    margin: 2,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   button: {
@@ -144,7 +180,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.tungfamGrey,
     borderRadius: 6,
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 14,
   },
   item: {
