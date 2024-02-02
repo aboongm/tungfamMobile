@@ -219,8 +219,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.tungfamGrey,
         margin: 4,
-        paddingVertical: 0,
         paddingHorizontal: 10,
+        paddingTop: 0,
+        paddingBottom: 80,
     },
     formContainer: {
         padding: 0,

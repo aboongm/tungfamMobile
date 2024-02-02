@@ -26,9 +26,11 @@ type FormState = {
 const initialState: FormState = {
   inputValues: {
     // email: isTestMode ? "support@tungfam.com" : "",
+    // password: isTestMode ? "password" : "",
     email: isTestMode ? "ranjitamayengbamchanu@yahoo.com" : "",
     password: isTestMode ? "neonova" : "",
-    // password: isTestMode ? "password" : "",
+    // email: isTestMode ? "niroda@tungfam.com" : "",
+    // password: isTestMode ? "niroda11" : "",
   },
   inputValidities: {
     email: false,
