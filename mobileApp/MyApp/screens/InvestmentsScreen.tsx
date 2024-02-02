@@ -53,7 +53,7 @@ const InvestmentsScreen = ({ route }) => {
             console.log("response.data: ", response.data);
 
             if (response.status === 200) {
-                navigation.navigate("Home")
+                navigation.navigate("Loan")
                 Alert.alert("Successfully created InvestmentRecord!")
                 console.log("Successfully created InvestmentRecord!")
             }

@@ -71,7 +71,7 @@ const CreateFirmScreen = () => {
                 console.error(error);
             }
 
-            navigation.navigate('Home');
+            navigation.navigate('Loan');
             console.log('Firm was created successfully');
         } else {
             throw new Error('Failed to create firm');

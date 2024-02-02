@@ -9,7 +9,7 @@ import { setCategoryStyling, setFirmData } from '../redux/slices/headerSlice';
 import { getFirmData } from '../redux/actions/firmActions';
 import FirmDetails from './Firm';
 
-const Header = ({ userRole, userId, headerBackgroundColor, descriptors }: { headerBackgroundColor?: string, descriptors: any }) => {
+const HeaderMaroop = ({ userRole, userId, headerBackgroundColor, descriptors }: { headerBackgroundColor?: string, descriptors: any }) => {
     const dispatch = useDispatch()
     const navigation = useNavigation()
     const route = useRoute();
@@ -17,7 +17,7 @@ const Header = ({ userRole, userId, headerBackgroundColor, descriptors }: { head
 
     const selectedCategory = useSelector((state: RootState) => state.headerSlice.selectedCategory)
     const [colors, setColors] = useState(['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 240, 0.65)']);
-    const [activities, setActivities] = useState(['LoanBook', "CashFlow", "Expense",  "Investment", 'Employee', "LoanType"])
+    const [activities, setActivities] = useState(['Maroops', "CreateMaroop"])
     const [firm, setFirm] = useState({})
 
     useEffect(() => {
@@ -58,8 +58,8 @@ const Header = ({ userRole, userId, headerBackgroundColor, descriptors }: { head
                 const currentTab = route.name;
                 const currentCategory = '';
 
-                if (currentCategory !== 'LoanBook') {
-                    navigation.navigate('LoanBook');
+                if (currentCategory !== 'Maroops') {
+                    navigation.navigate('Maroops');
                     e.preventDefault();
                 }
             }
@@ -107,7 +107,7 @@ const mapStateToProps = (state) => ({
     userId: state.auth.userData.user_id,
 })
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps)(HeaderMaroop);
 
 const styles = StyleSheet.create({
     containerBackground: {

@@ -50,7 +50,7 @@ const AddLoanType = ({ route }) => {
         
         if (response.status === 200) {
 
-            navigation.navigate('Home');
+            navigation.navigate('Loan');
             Alert.alert("LoanType was created successfully")
             console.log('LoanType was created successfully');
         } else {

@@ -1,15 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import AdminApprovalScreen from '../screens/AdminApprovalScreen'
 
-const AdminNavigator = () => {
+const MaroopScreen = () => {
   return (
     <View>
-      <AdminApprovalScreen />
+      <Text>MaroopScreen</Text>
     </View>
   )
 }
 
-export default AdminNavigator
+export default MaroopScreen
 
 const styles = StyleSheet.create({})

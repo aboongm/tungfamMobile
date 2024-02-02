@@ -140,7 +140,7 @@ const LoanApplicationScreen = () => {
         const response = await axios.post(`${API_URL}/loans`, formData, { headers });
 
         if (response.status === 200 && updateRoleResponse.status === 200) {
-            navigation.navigate('Home');
+            navigation.navigate('Loan');
             Alert.alert("Loan was created successfully")
             console.log('Loan was created successfully');
         } else {

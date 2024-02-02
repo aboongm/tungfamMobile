@@ -157,6 +157,10 @@ import ExpenseScreen from '../screens/homescreen/ExpenseScreen';
 import PaymentScheduleScreen from '../screens/PaymentScheduleScreen';
 import InvestmentsScreen from '../screens/InvestmentsScreen';
 import AddLoanTypeScreen from "../screens/AddLoanTypeScreen"
+import { getFirmData } from '../redux/actions/firmActions';
+import MaroopScreen from '../screens/maroopScreen/MaroopScreen';
+import HeaderMaroop from '../components/HeaderMaroop';
+import CreateMaroopScreen from '../screens/maroopScreen/CreateMaroopScreen';
 
 const MaterialTopTabs = createMaterialTopTabNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -164,20 +168,20 @@ const Stack = createStackNavigator();
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen 
-      name="PaymentScheduleScreen" 
+    <Stack.Screen
+      name="PaymentScheduleScreen"
       component={PaymentScheduleScreen}
-      // options={{ tabBarVisible: false }}
+    // options={{ tabBarVisible: false }}
     />
-    <Stack.Screen 
-      name="InvestmentsScreen" 
+    <Stack.Screen
+      name="InvestmentsScreen"
       component={InvestmentsScreen}
-      // options={{ tabBarVisible: false }}
+    // options={{ tabBarVisible: false }}
     />
-    <Stack.Screen 
-      name="AddLoanTypeScreen" 
+    <Stack.Screen
+      name="AddLoanTypeScreen"
       component={AddLoanTypeScreen}
-      // options={{ tabBarVisible: false }}
+    // options={{ tabBarVisible: false }}
     />
   </Stack.Navigator>
 );
@@ -198,7 +202,7 @@ const generateRootStackParamList = (categories: Category[]): Record<string, unde
 
 export type RootStackParamList = ReturnType<typeof generateRootStackParamList>;
 
-const CategoryTabs = () => {
+const HomeTab = () => {
   return (
     <MaterialTopTabs.Navigator
       tabBarPosition='top'
@@ -210,11 +214,49 @@ const CategoryTabs = () => {
       tabBar={props => <Header {...props} />}
     >
       <MaterialTopTabs.Screen name="LoanBook" component={LoanBookScreen} />
-      <MaterialTopTabs.Screen name="CashFlow" component={CashFlowScreen}/>
-      <MaterialTopTabs.Screen name="Expense" component={ExpenseScreen}/>
-      <MaterialTopTabs.Screen name="Investment" component={InvestmentScreen}/>
+      {/* <MaterialTopTabs.Screen name="CashFlow" component={CashFlowScreen} />
+      <MaterialTopTabs.Screen name="Expense" component={ExpenseScreen} />
+      <MaterialTopTabs.Screen name="Investment" component={InvestmentScreen} />
+      <MaterialTopTabs.Screen name="Employee" component={EmployeeScreen} />
+      <MaterialTopTabs.Screen name="LoanType" component={LoanTypeScreen} /> */}
+    </MaterialTopTabs.Navigator>
+  );
+};
+
+const LoanTab = () => {
+  return (
+    <MaterialTopTabs.Navigator
+      tabBarPosition='top'
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarIndicator: () => null,
+        // tabBar: () => null
+      }}
+      tabBar={props => <Header {...props} />}
+    >
+      <MaterialTopTabs.Screen name="LoanBook" component={LoanBookScreen} />
+      <MaterialTopTabs.Screen name="CashFlow" component={CashFlowScreen} />
+      <MaterialTopTabs.Screen name="Expense" component={ExpenseScreen} />
+      <MaterialTopTabs.Screen name="Investment" component={InvestmentScreen} />
       <MaterialTopTabs.Screen name="Employee" component={EmployeeScreen} />
       <MaterialTopTabs.Screen name="LoanType" component={LoanTypeScreen} />
+    </MaterialTopTabs.Navigator>
+  );
+};
+
+const MaroopTab = () => {
+  return (
+    <MaterialTopTabs.Navigator
+      tabBarPosition='top'
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarIndicator: () => null,
+        // tabBar: () => null
+      }}
+      tabBar={props => <HeaderMaroop {...props} />}
+    >
+      <MaterialTopTabs.Screen name="Maroops" component={MaroopScreen} />
+      <MaterialTopTabs.Screen name="CreateMaroop" component={CreateMaroopScreen}/>
     </MaterialTopTabs.Navigator>
   );
 };
@@ -246,11 +288,12 @@ const FirmOwnerNavigator = () => {
     } as TextStyle,
   };
 
+
   return (
     <BottomTab.Navigator screenOptions={screenOptions}>
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="Home"
-        component={CategoryTabs}
+        component={HomeTab}
         options={{
           tabBarIcon: ({ focused }) => (
             <Ionicons
@@ -260,7 +303,35 @@ const FirmOwnerNavigator = () => {
             />
           ),
         }}
+      /> */}
+      <BottomTab.Screen
+        name="Loan"
+        component={LoanTab}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? 'storefront' : 'storefront-outline'}
+              size={30}
+              color={focused ? COLORS.tungfamBgColor : COLORS.black}
+            />
+          ),
+        }}
       />
+
+      <BottomTab.Screen
+        name="Maroop"
+        component={MaroopTab}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? 'diamond' : 'diamond-outline'}
+              size={30}
+              color={focused ? COLORS.tungfamBgColor : COLORS.black}
+            />
+          ),
+        }}
+      />
+
       <BottomTab.Screen
         name="You"
         component={ProfileScreen}
@@ -274,7 +345,7 @@ const FirmOwnerNavigator = () => {
           ),
         }}
       />
-      
+
       <BottomTab.Screen
         name="HomeStack"
         component={HomeStack}
@@ -288,6 +359,8 @@ const FirmOwnerNavigator = () => {
     </BottomTab.Navigator>
   )
 };
+
+
 
 export default FirmOwnerNavigator;
 
