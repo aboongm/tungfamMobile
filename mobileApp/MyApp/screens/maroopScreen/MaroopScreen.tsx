@@ -43,9 +43,9 @@ const MaroopScreen = () => {
   };
 
   const toggleDisplayOption = (option) => {
-    setDisplayOption(option);
+    setDisplayOption(option.name);
     setSelectedMaroop(option)
-    console.log("OPTION: ", option);
+    // console.log("OPTION: ", option);
 
   };
 
@@ -106,7 +106,10 @@ const MaroopScreen = () => {
   const renderWinners = (maroop) => {
     return (
       <View style={styles.subscribersContainer} >
-        <Text style={styles.text}>WINNERS LIST</Text>
+        <View style={styles.list}>
+          <Text style={styles.text}>WINNERS LIST</Text>
+          <Text style={styles.text}>SUBSCRIBERS LIST</Text>
+        </View>
         <View>
           <View style={styles.tableRow}>
             <Text style={styles.columnHeader}>Month</Text>
@@ -117,17 +120,16 @@ const MaroopScreen = () => {
           <FlatList
             data={maroopData}
             renderItem={({ item, index }) => {
-              console.log('item: ', item);
 
               return (
-                <View style={styles.subscribersContainer}>
+                <View >
                   <View style={[
                     styles.tableBody,
                     index % 2 === 0 ? styles.evenRow : styles.oddRow,
                   ]}>
-                    <Text>{item.winners.month}</Text>
-                    <Text>{item.winners.winner}</Text>
-                    <Text>{item.winners.amount}</Text>
+                    <Text style={[styles.buttonText, {padding: 10}]}>Month{item.winners.month}</Text>
+                    <Text style={[styles.buttonText, {padding: 10}]}>Winner{item.winners.winner}</Text>
+                    <Text style={[styles.buttonText, {padding: 10}]}>Amount{item.winners.amount}</Text>
                   </View>
                 </View>
               )
@@ -135,9 +137,6 @@ const MaroopScreen = () => {
             keyExtractor={(item) => item.maroop_id.toString()}
           />
 
-          <View>
-
-          </View>
         </View>
       </View>
     );
@@ -179,7 +178,6 @@ const MaroopScreen = () => {
       </View>
     )
   }
-console.log('selectedMaroop: ', selectedMaroop);
 
   return (
     <View style={styles.container}>
@@ -196,7 +194,7 @@ console.log('selectedMaroop: ', selectedMaroop);
 
                 <TouchableOpacity
                   key={index}
-                  style={[styles.buttonOptions, displayOption === item.name && { backgroundColor: COLORS.tungfamBgColor }]}
+                  style={[styles.buttonOptions, displayOption === item.name && { backgroundColor: 'rgba(52, 152, 219, 0.90)' }]}
                   onPress={() => toggleDisplayOption(item)}
                 >
                   <Text style={[styles.buttonText, displayOption === item.name && { color: COLORS.white, fontWeight: 'bold' }]}>{index + 1}. {" "}</Text>
@@ -243,17 +241,21 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   list: {
-    flex: 0
+    // flex: 0
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   subscribersContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius: 6,
-    padding: 10,
-    marginVertical: 4,
+    // padding: 10,
+    marginVertical: 10,
   },
   text: {
     fontSize: 16,
     color: COLORS.black,
+    padding: 10
   },
   tableRow: {
     flexDirection: 'row',
@@ -292,8 +294,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(52, 152, 219, 0.30)'
   },
   buttonContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    padding: 4
+    backgroundColor: 'rgba(255, 255, 255, 0.35)',
+    // padding: 4
   },
   buttonOptions: {
     flexDirection: 'row',
@@ -305,6 +307,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: COLORS.tungfamGrey,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
   buttonText: {
     fontSize: 16,

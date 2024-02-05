@@ -135,77 +135,6 @@ const CashFlowScreen = ({ userRole, userId }) => {
     selectedLoanRef.current = selectedLoan;
   }, [isPaymentSchedule, selectedLoan]);
 
-  const addCashFlow = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const headers = { Authorization: `${token}` };
-      const firmId = firmData.firm_id;
-      const newCashBalance = parseFloat(latestCashflowBalance) + parseFloat(inflowsTotal) - parseFloat(outflowsTotal);
-      // const entryData = {
-      //   entry_date: newPaymentDate.toISOString().split("T")[0],
-      //   inflows_total: inflowsTotal,
-      //   outflows_total: outflowsTotal,
-      //   cash_balance: newCashBalance,
-      //   previous_cash_balance: parseFloat(latestCashflowBalance),
-      //   entry_details: [
-      //     ...inflows.map((inflow) => ({
-      //       type: "inflow",
-      //       amount: parseFloat(inflow.amount),
-      //       remark: inflow.remark,
-      //       is_payment_schedule: inflow.is_payment_schedule,
-      //     })),
-      //     ...outflows.map((outflow) => ({
-      //       type: "outflow",
-      //       amount: parseFloat(outflow.amount),
-      //       remark: outflow.remark
-      //     })),
-      //   ],
-      // };
-      const entryData = {
-        entry_date: newPaymentDate.toISOString().split("T")[0],
-        inflows_total: inflowsTotal,
-        outflows_total: outflowsTotal,
-        cash_balance: newCashBalance,
-        previous_cash_balance: parseFloat(latestCashflowBalance),
-        entry_details: [
-          ...inflows.map((inflow) => ({
-            type: "inflow",
-            amount: parseFloat(inflow.amount),
-            remark: inflow.remark,
-            is_payment_schedule: inflow.is_payment_schedule,
-            // Include additional fields when is_payment_schedule is true
-            ...(inflow.is_payment_schedule && {
-              loan_id: loanId,
-              // loan_type: loanType,
-              // borrower_name: borrowerName,
-              // no_of_payments: noOfPayments,
-              // total_payable: totalPayable,
-              // paid_amount: paidAmount,
-              // outstanding_payable: outstandingPayable,
-              // date: inflow.entry_date,
-              // installment: inflow.installment,
-            }),
-          })),
-          ...outflows.map((outflow) => ({
-            type: "outflow",
-            amount: parseFloat(outflow.amount),
-            remark: outflow.remark,
-          })),
-        ],
-      };
-      console.log(entryData);
-
-      const response = await axios.post(`${API_URL}/cashflows/${firmId}`, entryData, { headers });
-
-      if (response.status === 200) {
-        Alert.alert("Successfully created cash flow entry!");
-      }
-    } catch (error) {
-      console.log("Error adding cash flow:", error);
-      Alert.alert("Failed to create cash flow entry!");
-    }
-  };
-
   const takePermission = () => {
     if (inflows.length <= 0 && outflows.length <= 0) {
       Alert.alert("Create an entry to inflows/outflows First!");
@@ -235,12 +164,21 @@ const CashFlowScreen = ({ userRole, userId }) => {
   }
 
   const addInflow = () => {
-    setInflows((prevInflows) => [...prevInflows, { amount: latestInflowAmount, remark: latestInflowRemark, is_payment_schedule: isPaymentSchedule }]);
+    setInflows((prevInflows) => [
+        ...prevInflows, 
+        { 
+          amount: latestInflowAmount, 
+          remark: latestInflowRemark, 
+          is_payment_schedule: isPaymentSchedule,
+          loan_id: loanId
+        }
+      ]);
     setLatestInflowRemark('');
     setLatestInflowAmount('');
     setIsPaymentSchedule(false);
   };
-
+  console.log('inflows: ', inflows);
+  
   const removeInflow = (index) => {
     const updatedInflows = [...inflows];
     updatedInflows.splice(index, 1);
@@ -271,6 +209,51 @@ const CashFlowScreen = ({ userRole, userId }) => {
     setLatestInflowAmount(`${loan.installment}`);
     setLatestInflowRemark(`From ${loan.borrower_name}`);
     setLoanId(`${loan.loan_id}`);
+  };
+
+  
+  const addCashFlow = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const headers = { Authorization: `${token}` };
+      const firmId = firmData.firm_id;
+      const newCashBalance = parseFloat(latestCashflowBalance) + parseFloat(inflowsTotal) - parseFloat(outflowsTotal);
+      const entryData = {
+        entry_date: newPaymentDate.toISOString().split("T")[0],
+        inflows_total: inflowsTotal,
+        outflows_total: outflowsTotal,
+        cash_balance: newCashBalance,
+        previous_cash_balance: parseFloat(latestCashflowBalance),
+        entry_details: [
+          ...inflows.map((inflow) => ({
+            type: "inflow",
+            amount: parseFloat(inflow.amount),
+            remark: inflow.remark,
+            is_payment_schedule: inflow.is_payment_schedule,
+            ...(inflow.is_payment_schedule && {
+              loan_id: inflow.loan_id,
+            }),
+          })),
+          ...outflows.map((outflow) => ({
+            type: "outflow",
+            amount: parseFloat(outflow.amount),
+            remark: outflow.remark,
+          })),
+        ],
+      };
+      console.log("entryData: ", entryData);
+      
+      const response = await axios.post(`${API_URL}/cashflows/${firmId}`, entryData, { headers });
+
+      if (response.status === 200) {
+        Alert.alert("Successfully created cash flow entry!");
+        setInflows([])
+        setOutflows([])
+      }
+    } catch (error) {
+      console.log("Error adding cash flow:", error);
+      Alert.alert("Failed to create cash flow entry!");
+    }
   };
 
   const renderCashFlows = () => (

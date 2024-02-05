@@ -117,7 +117,7 @@ const CreateMaroopScreen = () => {
           </View>
           <TextInput
             style={styles.input}
-            placeholder="monthly Interest Amount"
+            placeholder="Monthly Interest Amount"
             value={monthlyInterestAmount}
             onChangeText={setMonthlyInterestAmount}
           />
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     margin: 2,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    color: COLORS.black,
   },
   button: {
     backgroundColor: COLORS.tungfamBgColor,

@@ -3,6 +3,7 @@ import authSlice from "./slices/auth/authSlice";
 import employeesSlice from './slices/employees/employeesSlice'
 import HeaderSlice from "./slices/headerSlice"
 import LoanSlice from "./slices/loanSlice"
+import maroopSlice from "./slices/maroopSlice";
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         headerSlice: HeaderSlice,
         loanSlice: LoanSlice,
         employees: employeesSlice,
+        maroops: maroopSlice
     },
 })
 
