@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { COLORS } from '../../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { getMaroopData } from '../../redux/actions/maroopActions';
+import { getMaroopData, getMaroopUserData } from '../../redux/actions/maroopActions';
 import { setMaroops } from '../../redux/slices/maroopSlice';
 
 const MaroopScreen = () => {
@@ -13,13 +13,16 @@ const MaroopScreen = () => {
   const [openItems, setOpenItems] = useState({});
   const [maroopList, setMaroopList] = useState([]);
   const [selectedMaroop, setSelectedMaroop] = useState(null);
-  const [selectedWinners, setSelectedWinners] = useState([]);
+  const [maroopUser, setMaroopUser] = useState([]);
+  const [winners, setWinners] = useState([]);
+  const [subscribers, setSubscribers] = useState([]);
   const [displayOption, setDisplayOption] = useState('');
+  const [listOption, setListOption] = useState('');
 
   const dispatch = useDispatch()
   const firmId = useSelector((state: RootState) => state.headerSlice.firmData.firm_id)
 
-  const toggleLoanBook = () => {
+  const toggleButtonMaroopList = () => {
     setShowDetails(!showDetails);
   };
 
@@ -34,154 +37,114 @@ const MaroopScreen = () => {
     fetchData()
   }, [firmId])
 
-  const toggleMaroopItem = (maroopId: string | number) => {
-    setOpenItems((prevOpenItems) => ({
-      ...prevOpenItems,
-      [maroopId]: !prevOpenItems[maroopId],
-    }));
-    setMaroopId(maroopId)
-  };
+  useEffect(() => {
+    const fetchMaroopUserData = async () => {
+      if (selectedMaroop) {
+        const maroopUserData = await getMaroopUserData(selectedMaroop.maroop_id);
+        if (maroopUserData) {
+          const winnersList = maroopUserData.filter(item => {
+            return item.haswon === true; // Add the return statement here
+          });
+  
+          setWinners(winnersList);
+          setSubscribers(maroopUserData);
+          console.log(winnersList);
+          
+        }
+      }
+    };
+  
+    fetchMaroopUserData();
+  }, [selectedMaroop]);
 
-  const toggleDisplayOption = (option) => {
+  const toggleDisplayOption = async (option) => {
     setDisplayOption(option.name);
     setSelectedMaroop(option)
-    // console.log("OPTION: ", option);
-
+    setMaroopId(option.maroop_id)
   };
 
+  const toggleListOption = async (option) => {
+    setListOption(option.name);
+  };
 
-
-  const maroopData = [
-    {
-      "maroop_id": 1,
-      subscribers: [
-        { "name": "Tomtom1", 'address': "address1" },
-        { "name": "Tomtom2", 'address': "address2" },
-        { "name": "Tomtom3", 'address': "address3" },
-        { "name": "Tomtom4", 'address': "address4" },
-        { "name": "Tomtom5", 'address': "address5" },
-        { "name": "Tomtom6", 'address': "address6" },
-      ],
-      winners: [
-        { 'month': "Jan", "winner": "Tomtom", 'amount': "15000" },
-        { 'month': "Feb", "winner": "Tomtom", 'amount': "15000" },
-        { 'month': "Mar", "winner": "Tomtom", 'amount': "15000" },
-      ],
-    },
-    {
-      "maroop_id": 2,
-      subscribers: [
-        { "name": "Tomtom1", 'address': "address1" },
-        { "name": "Tomtom2", 'address': "address2" },
-        { "name": "Tomtom3", 'address': "address3" },
-        { "name": "Tomtom4", 'address': "address4" },
-        { "name": "Tomtom5", 'address': "address5" },
-        { "name": "Tomtom6", 'address': "address6" },
-      ],
-      winners: [
-        { 'month': "Jan", "winner": "Tomtom", 'amount': "15000" },
-        { 'month': "Feb", "winner": "Tomtom", 'amount': "15000" },
-        { 'month': "Mar", "winner": "Tomtom", 'amount': "15000" },
-      ],
-    },
-    {
-      "maroop_id": 3,
-      subscribers: [
-        { "name": "Tomtom1", 'address': "address1" },
-        { "name": "Tomtom2", 'address': "address2" },
-        { "name": "Tomtom3", 'address': "address3" },
-        { "name": "Tomtom4", 'address': "address4" },
-        { "name": "Tomtom5", 'address': "address5" },
-        { "name": "Tomtom6", 'address': "address6" },
-      ],
-      winners: [
-        { 'month': "Jan", "winner": "Tomtom", 'amount': "15000" },
-        { 'month': "Feb", "winner": "Tomtom", 'amount': "15000" },
-        { 'month': "Mar", "winner": "Tomtom", 'amount': "15000" },
-      ],
-    },
-
-  ];
-
-  const renderWinners = (maroop) => {
-    return (
-      <View style={styles.subscribersContainer} >
-        <View style={styles.list}>
+  const renderList = () => (
+    <View style={styles.subscribersContainer} >
+      <View style={styles.list}>
+        <TouchableOpacity onPress={() => toggleListOption({ name: 'WINNERS LIST' })}>
           <Text style={styles.text}>WINNERS LIST</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => toggleListOption({ name: 'SUBSCRIBERS LIST' })}>
           <Text style={styles.text}>SUBSCRIBERS LIST</Text>
-        </View>
-        <View>
-          <View style={styles.tableRow}>
-            <Text style={styles.columnHeader}>Month</Text>
-            <Text style={styles.columnHeader}>Winner</Text>
-            <Text style={styles.columnHeader}>Amount</Text>
-          </View>
+        </TouchableOpacity>
+      </View>
+      <View>
 
-          <FlatList
-            data={maroopData}
-            renderItem={({ item, index }) => {
-
-              return (
-                <View >
-                  <View style={[
-                    styles.tableBody,
-                    index % 2 === 0 ? styles.evenRow : styles.oddRow,
-                  ]}>
-                    <Text style={[styles.buttonText, {padding: 10}]}>Month{item.winners.month}</Text>
-                    <Text style={[styles.buttonText, {padding: 10}]}>Winner{item.winners.winner}</Text>
-                    <Text style={[styles.buttonText, {padding: 10}]}>Amount{item.winners.amount}</Text>
+        {listOption === 'WINNERS LIST' && winners.length > 0 ? (
+          <>
+            <View style={styles.tableRow}>
+              <Text style={styles.columnHeader}>Month</Text>
+              <Text style={styles.columnHeader}>Winner</Text>
+              <Text style={styles.columnHeader}>Amount</Text>
+            </View>
+            <FlatList
+              data={winners}
+              renderItem={({ item, index }) => (
+                <View>
+                  <View
+                    style={[
+                      styles.tableBody,
+                      index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                    ]}
+                  >
+                    <Text style={[styles.buttonText, { padding: 10, flex: 1 }]}>{item.monthwon}</Text>
+                    <Text style={[styles.buttonText, { padding: 10, flex: 1 }]}>{item.user_name}</Text>
+                    <Text style={[styles.buttonText, { padding: 10, flex: 1 }]}>{item.totalpayable}</Text>
                   </View>
                 </View>
-              )
-            }}
-            keyExtractor={(item) => item.maroop_id.toString()}
-          />
+              )}
+              keyExtractor={(item) => item.maroop_user_id.toString()}
+            />
+            <View>
+              <Text>Add a Winner</Text>
+            </View>
+          </>
+        ) : listOption === 'SUBSCRIBERS LIST' && subscribers.length > 0 ? (
+          <>
+            <View style={styles.tableRow}>
+              <Text style={[styles.columnHeader, {flex: 0, width: 60}]}>Sl. No</Text>
+              <Text style={styles.columnHeader}>Subscriber</Text>
+            </View>
 
-        </View>
+            <FlatList
+              data={subscribers}
+              renderItem={({ item, index }) => (
+                <View>
+                  <View
+                    style={[
+                      styles.tableBody,
+                      index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                    ]}
+                  >
+                    <Text style={[styles.buttonText, { padding: 10, width: 60 }]}>{index+1}. {" "}</Text>
+                    <Text style={[styles.buttonText, { padding: 10, flex: 1 }]}>{item.user_name}</Text>
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item) => item.maroop_user_id.toString()}
+            />
+          </>
+        ) : (
+          null
+          // <Text style={styles.buttonText}>No data available</Text>
+        )}
+
       </View>
-    );
-  };
-
-  // const renderWinners = (maroop) => {
-  //   console.log("Maroop: ", maroop);
-
-  //   return (
-  //     <FlatList
-  //       data={subscribers}
-  //       renderItem={({ item }) => (
-  //         <View style={styles.subscribersContainer}>
-  //           {/* Render subscriber information here */}
-  //           {/* <Text>{item.month}</Text>
-  //           <Text>{item.winner}</Text>
-  //           <Text>{item.amount}</Text> */}
-  //           <Text>Checkingggggg: {item.maroop_id}</Text>
-  //         </View>
-  //       )}
-  //       keyExtractor={(item) => item.maroop_id.toString()}
-  //     />
-  //   );
-  // };
-
-  const renderItem = ({ item, index }) => {
-
-    return (
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          key={index}
-          style={[styles.buttonOptions, displayOption === item.name && { backgroundColor: COLORS.tungfamBgColor }]}
-          onPress={() => toggleDisplayOption(item)}
-        >
-          <Text style={[styles.buttonText, displayOption === item.name && { color: COLORS.white, fontWeight: 'bold' }]}>{index + 1}. {" "}</Text>
-          <Text style={[styles.buttonText, displayOption === item.name && { color: COLORS.white, fontWeight: 'bold' }]}>{item.name}</Text>
-        </TouchableOpacity>
-        {selectedMaroop === item && renderWinners(item)}
-      </View>
-    )
-  }
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={toggleLoanBook}>
+      <TouchableOpacity onPress={toggleButtonMaroopList}>
         <Text style={styles.headerText}>MaroopList</Text>
       </TouchableOpacity>
       {isLoading ? (
@@ -202,14 +165,7 @@ const MaroopScreen = () => {
                 </TouchableOpacity>
               ))}
             </View>
-            {selectedMaroop && renderWinners(selectedMaroop)}
-            {/* <FlatList
-              // scrollEnabled={false}
-              data={selectedMaroop.winners}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.maroop_id.toString()}
-              contentContainerStyle={styles.list}
-            /> */}
+            {selectedMaroop && renderList(selectedMaroop)}
           </>
         )
       )}
