@@ -8,6 +8,7 @@ import { RootState } from '../redux/store'
 import UserNavigator from './UserNavigator'
 import BorrowerNavigator from './BorrowerNavigator'
 import AdminNavigator from './AdminNavigator'
+import LoanOfficerNavigator from './LoanOfficerNavigator'
 
 
 const AppNavigator = (props) => {
@@ -21,6 +22,9 @@ const AppNavigator = (props) => {
     switch (userRole) {
       case 'firmOwner':
         mainNavigator = <FirmOwnerNavigator />;
+        break;
+      case 'employee':
+        mainNavigator = <LoanOfficerNavigator />;
         break;
       case 'user':
         mainNavigator = <UserNavigator />;

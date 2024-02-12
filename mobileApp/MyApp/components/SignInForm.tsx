@@ -31,8 +31,10 @@ const initialState: FormState = {
     // password: isTestMode ? "MyPassword@11" : "",
     email: isTestMode ? "ranjitamayengbamchanu@yahoo.com" : "",
     password: isTestMode ? "neonova" : "",
-    // email: isTestMode ? "niroda@tungfam.com" : "",
-    // password: isTestMode ? "niroda11" : "",
+    // email: isTestMode ? "loanofficer@tungfam.com" : "",
+    // password: isTestMode ? "loanofficer11" : "",
+    // email: isTestMode ? "sobita@tungfam.com" : "",
+    // password: isTestMode ? "sobita11" : "",
   },
   inputValidities: {
     email: false,

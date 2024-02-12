@@ -28,9 +28,9 @@ export const getFirmData = async (userId: string): Promise<FirmData | void> => {
     const headers = {
       Authorization: `${token}`,
     };
-
+    
     const userFirmResponse = await axios.get(`${API_URL}/userfirm`, { headers });
-
+    
     if (userFirmResponse.status === 200 && userFirmResponse.data.length > 0) {
       const userFirms = userFirmResponse.data;
       const userFirmForId = userFirms.find((userFirm) => userFirm.user_id === userId);
@@ -48,4 +48,37 @@ export const getFirmData = async (userId: string): Promise<FirmData | void> => {
     console.error(error);
   }
 };
+
+
+export const getEmployeeFirmData = async (userId: string): Promise<FirmData | void> => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const headers = {
+      Authorization: `${token}`,
+    };
+    
+    const employeeFirmResponse = await axios.get(`${API_URL}/employeefirm`, { headers });
+    
+    if (employeeFirmResponse.status === 200 && employeeFirmResponse.data.length > 0) {
+      const employeeFirms = employeeFirmResponse.data;
+      const employeeFirmId = employeeFirms.find((userFirm) => userFirm.user_id === userId);
+      
+      if (employeeFirmId) {
+        const firmId = employeeFirmId.firm_id;
+        const firmDetailsResponse = await axios.get(`${API_URL}/firms/${firmId}`, { headers });
+        
+        if (firmDetailsResponse.status === 200) {
+         return firmDetailsResponse.data;
+        }
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
