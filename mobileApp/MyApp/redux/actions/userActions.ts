@@ -50,3 +50,31 @@ export const getUserData = (userId: string): ((dispatch: Dispatch) => Promise<Us
     }
   };
 };
+
+export const getUserList = (): ((dispatch: Dispatch) => Promise<UserData[] | void>) => {
+  console.log("called getUserList()!!!!");
+  
+  return async (dispatch: Dispatch): Promise<UserData[] | void> => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      if (!token) {
+        console.error('Token is missing or expired.');
+        dispatch(logOut());
+        return;
+      }
+
+      const headers = {
+        Authorization: `${token}`,
+      };
+
+      const response = await axios.get<UserData[]>(`${API_URL}/users/`, { headers });
+      const userList: UserData[] = response.data;
+
+      return userList;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      dispatch(logOut());
+    }
+  };
+};

@@ -81,4 +81,23 @@ export const getEmployeeFirmData = async (userId: string): Promise<FirmData | vo
   }
 };
 
+export const getAllEmployeeFirmData = async (firmId: string): Promise<FirmData | void> => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const headers = {Authorization: `${token}`};
+    const employeeFirmResponse = await axios.get(`${API_URL}/employeefirm`, { headers });
+    
+    if (employeeFirmResponse.status === 200 && employeeFirmResponse.data.length > 0) {
+      const employeeFirms = employeeFirmResponse.data;
+      return employeeFirms
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
