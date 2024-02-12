@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
     // elevation: 5
   },
   columnItem: {
-    flex: 1,
+    // flex: 1,
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'center',

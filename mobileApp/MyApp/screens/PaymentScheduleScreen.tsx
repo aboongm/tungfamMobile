@@ -62,10 +62,8 @@ const PaymentScheduleScreen = () => {
 
 
     const filteredPayments = payments.filter(item => item.loan_id === loan.loan_id)
-    const paidAmount = (filteredPayments.length + 1) * loan.installment;
+    const paidAmount = (filteredPayments.length ) * loan.installment;
     const outStandingPayable = loan.total_payable - paidAmount;
-
-    // console.log("filteredPayments: ", filteredPayments[filteredPayments.length - 1]);
 
     const addPayment = async () => {
         try {
@@ -97,7 +95,6 @@ const PaymentScheduleScreen = () => {
             if (response.status === 200) {
                 const updatedPayments = [...payments, response.data];
                 setPayments(updatedPayments);
-
                 setNewPaymentDate(new Date());
                 setSelectedPayment('');
                 setRemark('');

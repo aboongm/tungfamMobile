@@ -107,11 +107,7 @@ const MaroopScreen = () => {
       const token = await AsyncStorage.getItem("token");
       const headers = { Authorization: `${token}` };
       const maroopUserId  = subscriber.maroop_user_id
-
-      console.log("data: ", token);
-      console.log("data: ", maroopId,  updatedData);
       const maroopResponse = await axios.put(`${API_URL}/maroopusers/${maroopId}/${maroopUserId}`, updatedData, { headers });
-      console.log("responsedata: ", maroopResponse.data);
 
       if (maroopResponse.status === 200) {
         setSelectedWinner("")
