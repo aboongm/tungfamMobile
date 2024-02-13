@@ -147,6 +147,10 @@ const CashFlowScreen = ({ userRole, userId }) => {
   }, []);
 
   useEffect(() => {
+
+  }, [loanOfficerList])
+
+  useEffect(() => {
     isPaymentScheduleRef.current = isPaymentSchedule;
     selectedLoanRef.current = selectedLoan;
   }, [isPaymentSchedule, selectedLoan]);

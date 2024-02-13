@@ -51,8 +51,20 @@ const PaymentScheduleScreen = () => {
             }
 
             const response = await axios.get(`${API_URL}/loans/${loan.loan_id}/paymentschedules`, { headers }); // Replace :loanId with the actual loan ID
-            // console.log("fetchPayments: ", response.data)
-            setPayments(response.data);
+            const sortedPayments = response.data.sort((a, b) => {
+                const dateA = new Date(`${a.date}`);
+                const dateB = new Date(`${b.date}`);
+          
+                // If dates are equal, compare by entry_id
+                if (dateA === dateB) {
+                  return a.payment_id - b.payment_id;
+                }
+          
+                return dateA - dateB;
+              });
+
+            setPayments(sortedPayments);
+            // setPayments(response.data);
         } catch (error) {
             console.error('Error fetching payments:', error);
         } finally {
@@ -62,7 +74,7 @@ const PaymentScheduleScreen = () => {
 
 
     const filteredPayments = payments.filter(item => item.loan_id === loan.loan_id)
-    const paidAmount = (filteredPayments.length ) * loan.installment;
+    const paidAmount = (filteredPayments.length) * loan.installment;
     const outStandingPayable = loan.total_payable - paidAmount;
 
     const addPayment = async () => {
@@ -108,7 +120,7 @@ const PaymentScheduleScreen = () => {
             Alert.alert("Failed to create payment!")
         }
     };
-    
+
     const takePermission = () => {
         // const date = new Date();
         // const localizedDate = date.toLocaleString(); 
@@ -132,11 +144,11 @@ const PaymentScheduleScreen = () => {
     const handleGoBack = () => {
         navigation.goBack()
     }
-console.log("payments********", payments);
+    console.log("payments********", payments);
 
     return (
         <PageContainer style={styles.container}>
-            <View style={{marginTop: 10 }}>
+            <View style={{ marginTop: 10 }}>
                 <PageTitle text="Payment Schedule" />
             </View>
             <TouchableOpacity onPress={handleGoBack}>
@@ -185,7 +197,7 @@ console.log("payments********", payments);
                                             styles.tableBody,
                                             index % 2 === 0 ? styles.evenRow : styles.oddRow,
                                         ]} key={index}>
-                                            <Text style={[styles.columnItem, {flex: 0, width: 50}]} >{`${payments.length - index - 1}.`}</Text>
+                                            <Text style={[styles.columnItem, { flex: 0, width: 50 }]} >{`${payments.length - index - 1}.`}</Text>
                                             <Text style={styles.columnItem}>
                                                 {new Date(payment.date).toLocaleDateString('en-GB', {
                                                     day: 'numeric',
@@ -268,7 +280,7 @@ const styles = StyleSheet.create({
         padding: 8,
         color: 'white',
         zIndex: 10
-      },
+    },
     infoContainer: {
         flexDirection: 'column',
         justifyContent: 'space-between',
