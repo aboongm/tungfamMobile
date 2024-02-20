@@ -88,13 +88,11 @@ const CashFlowScreen = ({ userRole, userId }) => {
           if (cashFlowReponse.status === 200) {
             allCashFlows.push(...cashFlowReponse.data.entries)
             previousCashFlow = allCashFlows
-          .filter(item => item.user_id === selectedLoanOfficer.user_id)
-          .sort((a, b) => {
-            // Sort based on the 'created_at' field in descending order
-            return new Date(b.created_at) - new Date(a.created_at);
-          });           
+              .filter(item => item.user_id === selectedLoanOfficer.user_id)
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+              // .reverse();
             console.log("previousCashFlow: ", previousCashFlow);
-            
+
             setIsLoading(false)
           } else {
             console.log("Cashflow entry not found!");
@@ -238,6 +236,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
         outflows_total: outflowsTotal,
         cash_balance: newCashBalance,
         previous_cash_balance: parseFloat(latestCashflowBalance),
+        previous_loans_payable: 0,
         user_id: selectedLoanOfficer.user_id,
         entry_details: [
           ...inflows.map((inflow) => ({
@@ -256,7 +255,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
           })),
         ],
       };
-      console.log("entryData: ", entryData);
+      // console.log("entryData: ", entryData);
 
       const response = await axios.post(`${API_URL}/cashflows/${firmId}`, entryData, { headers });
 
@@ -272,10 +271,12 @@ const CashFlowScreen = ({ userRole, userId }) => {
   };
 
   const renderCashFlows = () => {
-    const filteredCashFlows = cashFlows.filter((item) => item.user_id === selectedLoanOfficer.user_id);
-    console.log('filteredCashFlows: ', filteredCashFlows);
-    console.log('cashFlows: ', cashFlows);
-    
+    const filteredCashFlows = cashFlows
+                .filter((item) => item.user_id === selectedLoanOfficer.user_id)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))  ;
+    // console.log('filteredCashFlows: ', filteredCashFlows);
+    // console.log('cashFlows: ', cashFlows);
+
     return (
       <View style={styles.tableContainer}>
         <View>
@@ -302,7 +303,7 @@ const CashFlowScreen = ({ userRole, userId }) => {
                           year: 'numeric',
                         })}
                       </Text>
-                      <Text style={[styles.columnItem, { textAlign: 'right', paddingRight: 20 }]}>
+                      <Text style={[styles.columnItem, { textAlign: 'right'}]}>
                         Rs {item.cash_balance}
                       </Text>
                     </TouchableOpacity>
@@ -642,7 +643,7 @@ const styles = StyleSheet.create({
     // elevation: 5
   },
   columnItem: {
-    // flex: 1,
+    flex: 1,
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'center',

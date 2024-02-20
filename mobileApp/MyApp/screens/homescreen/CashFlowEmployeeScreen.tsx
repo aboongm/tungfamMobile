@@ -25,6 +25,7 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [cashFlows, setCashFlows] = useState([]);
   const [latestCashflowBalance, setLatestCashflowBalance] = useState(0);
+  const [latestLoansPayable, setLatestLoansPayable] = useState(0);
   const [latestPreviousCashflowBalance, setLatestPreviousCashflowBalance] = useState(0);
   const [showCashFlowItem, setShowCashFlowItem] = useState(false);
   const [entryId, setEntryId] = useState("");
@@ -75,7 +76,7 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
           );
           if (cashFlowReponse.status === 200) {
             allCashFlows.push(...cashFlowReponse.data.entries.filter(entry => entry.user_id === userId))
-            console.log("allCashFlows", allCashFlows);
+            // console.log("allCashFlows", allCashFlows);
 
             setIsLoading(false)
           } else {
@@ -110,11 +111,11 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
         if (cashFlows.length > 0) {
           const sortedCashFlows = cashFlows.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-          console.log("sortedCashFlows: ", sortedCashFlows);
+          // console.log("sortedCashFlows: ", sortedCashFlows);
           // Get the latest cash flow entry
           const latestCashFlow = sortedCashFlows[0];
 
-          console.log("latestCashFlow: ", latestCashFlow);
+          // console.log("latestCashFlow: ", latestCashFlow);
 
           setLatestCashflowBalance(latestCashFlow.cash_balance);
           setLatestPreviousCashflowBalance(latestCashFlow.previous_cash_balance);
@@ -129,6 +130,43 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
 
     fetchLatestCashFlow();
   }, [firmData, cashFlows]);
+
+  useEffect(() => {
+    const fetchLoansOutstanding = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const headers = { Authorization: `${token}` };
+  
+        const filteredLoans = loanData.filter(item => item.loan_officer_id === userId);
+        const paymentScheduleArray = []
+        for (const loan of filteredLoans) {
+          try {
+            const paymentResponse = await axios.get(`${API_URL}/loans/${loan.loan_id}/latestpaymentschedules`, { headers });
+            const latestPaymentSchedule = paymentResponse.data;
+  
+            console.log("Latest Payment Schedule: ", latestPaymentSchedule);
+            paymentScheduleArray.push(...latestPaymentSchedule)
+          } catch (error) {
+            console.error("Error fetching latest payment schedule: ", error);
+          }
+        }
+        console.log("paymentScheduleArray: ", paymentScheduleArray);
+        // Add the outstanding_payable prop of each item
+        const totalOutstandingPayable = paymentScheduleArray.reduce((sum, item) => {
+          return sum + parseFloat(item.outstanding_payable || 0); // Convert to number and handle possible null values
+        }, 0);
+        console.log("Total Outstanding Payable: ", totalOutstandingPayable);
+        const updatedTotalOutstandingPayable = totalOutstandingPayable - inflowsTotal
+        setLatestLoansPayable(updatedTotalOutstandingPayable)
+      } catch (error) {
+        console.error("Error fetching loans: ", error);
+      }
+      
+    };
+  
+    fetchLoansOutstanding();
+  }, [loanData, userId, inflowsTotal]);
+  
 
   useEffect(() => {
     isPaymentScheduleRef.current = isPaymentSchedule;
@@ -177,7 +215,7 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
     setLatestInflowAmount('');
     setIsPaymentSchedule(false);
   };
-  console.log('inflows: ', inflows);
+  // console.log('inflows: ', inflows);
 
   const removeInflow = (index) => {
     const updatedInflows = [...inflows];
@@ -224,6 +262,7 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
         outflows_total: outflowsTotal,
         cash_balance: newCashBalance,
         previous_cash_balance: parseFloat(latestCashflowBalance),
+        previous_loans_payable: parseFloat(latestLoansPayable),
         user_id: userId,
         entry_details: [
           ...inflows.map((inflow) => ({
@@ -242,7 +281,7 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
           })),
         ],
       };
-      console.log("entryData: ", entryData);
+      // console.log("entryData: ", entryData);
 
       const response = await axios.post(`${API_URL}/cashflows/${firmId}`, entryData, { headers });
 
@@ -285,8 +324,11 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
                         year: 'numeric',
                       })}
                     </Text>
-                    <Text style={[styles.columnItem, { textAlign: 'right', paddingRight: 20 }]}>
+                    <Text style={[styles.columnItem, { textAlign: 'right'}]}>
                       Rs {item.cash_balance}
+                    </Text>
+                    <Text style={[styles.columnItem, { textAlign: 'right' }]}>
+                      Rs {item.previous_loans_payable}
                     </Text>
                   </TouchableOpacity>
 
@@ -368,8 +410,10 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
         />
       </View>
       <View style={styles.itemContainer}>
-        <Text style={styles.item}>Previous CashBalance: </Text>
-        <Text style={styles.item}>Rs {latestCashflowBalance}</Text>
+      <Text style={styles.item}>SelectedDate: </Text>
+        <Text style={styles.item}>{newPaymentDate.toISOString().split('T')[0]}</Text>
+        {/* <Text style={styles.item}>Previous CashBalance: </Text>
+        <Text style={styles.item}>Rs {latestCashflowBalance}</Text> */}
       </View>
     </View>
   )
@@ -377,8 +421,12 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
   const renderAddInflow = () => (
     <View style={styles.inflowContainer}>
       <View style={styles.itemContainer}>
-        <Text style={styles.item}>SelectedDate: </Text>
-        <Text style={styles.item}>{newPaymentDate.toISOString().split('T')[0]}</Text>
+        <Text style={styles.item}>Previous CashBalance: </Text>
+        <Text style={styles.item}>Rs {latestCashflowBalance}</Text>
+      </View>
+      <View style={styles.itemContainer}>
+        <Text style={styles.item}>Outstanding Loan Payable: </Text>
+        <Text style={styles.item}>Rs {latestLoansPayable}</Text>
       </View>
 
       <View style={styles.itemContainer}>
@@ -532,7 +580,8 @@ const CashFlowEmployeeScreen = ({ userRole, userId }) => {
         <>
           <View style={styles.tableRow}>
             <Text style={styles.columnHeader}>Date</Text>
-            <Text style={styles.columnHeader}>CashBalance</Text>
+            <Text style={styles.columnHeader}>Cash Balance</Text>
+            <Text style={styles.columnHeader}>Loans Amt</Text>
           </View>
           {renderCashFlows()}
           {cashFlows.length > 10 && (
@@ -622,7 +671,7 @@ const styles = StyleSheet.create({
     // elevation: 5
   },
   columnItem: {
-    // flex: 1,
+    flex: 1,
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'center',
