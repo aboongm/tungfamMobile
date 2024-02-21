@@ -9,6 +9,7 @@ interface UserData {
   user_name: string;
   email: string;
   password: string;
+  user_image: string;
   role: string;
   name?: string;
   aadhar: number;
