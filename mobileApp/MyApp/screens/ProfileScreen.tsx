@@ -2,7 +2,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import React, { useCallback, useState, useReducer, useEffect } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
+import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import PageTitle from '../components/PageTitle';
@@ -14,8 +14,6 @@ import { COLORS } from '../constants';
 import { updateSignInUserData, userLogout } from '../redux/actions/authActions';
 import { updateLoggedInSignInUserData } from '../redux/slices/auth/authSlice';
 import { reducer } from '../redux/reducers/formReducer';
-import ProfileImage from '../components/ProfileImage';
-import AadharImagePicker from '../components/AadharImagePicker';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -29,19 +27,11 @@ const ProfileScreen = props => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector(state => state.auth.userData);
-  console.log("userDataBefore: ", userData);
   const [name, setName] = useState(userData.name || '');
   const [password, setPassword] = useState(userData.password || '');
-  // const [aadharImage, setAadharImage] = useState(userData.aadhar_image || '');
   const [mobile, setMobile] = useState(userData.mobile || '');
   const [address, setAddress] = useState(userData.address || '');
   const [selectedImage, setSelectedImage] = useState(null);
-
-  // const name = userData.name || '';
-  // const password = userData.password || '';
-  // const aadhar_image = userData.aadhar_image || '';
-  // const mobile = userData.mobile || '';
-  // const address = userData.address || '';
 
   const initialState = {
     inputValues: { name, aadhar_image: mobile, address, password },
@@ -60,15 +50,15 @@ const ProfileScreen = props => {
   );
 
 
-  const hasChanges = () => {
-    const currentValues = formState.inputValues;
-    return (
-      currentValues.name !== name ||
-      currentValues.mobile !== mobile ||
-      currentValues.address !== address ||
-      currentValues.password !== password
-    );
-  };
+  // const hasChanges = () => {
+  //   const currentValues = formState.inputValues;
+  //   return (
+  //     currentValues.name !== name ||
+  //     currentValues.mobile !== mobile ||
+  //     currentValues.address !== address ||
+  //     currentValues.password !== password
+  //   );
+  // };
 
   const saveHandler = useCallback(async () => {
     const updateValues = formState.inputValues;
@@ -92,23 +82,51 @@ const ProfileScreen = props => {
     }
   }, [formState, dispatch]);
 
-  // useEffect(() => {
-  //   setName(userData.name || '');
-  //   setPassword(userData.password || '');
-  //   setMobile(userData.mobile || '');
-  //   setAddress(userData.address || '');
-
-  // }, [userData]);
+  const showImagePickerOptions = () => {
+    return new Promise((resolve) => {
+      Alert.alert(
+        'Select Image Source',
+        'Choose the source of the image',
+        [
+          {
+            text: 'Camera',
+            onPress: () => resolve(true),
+          },
+          {
+            text: 'Gallery',
+            onPress: () => resolve(false),
+          },
+          {
+            text: 'Cancel',
+            onPress: () => resolve(false),
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    });
+  };
 
   const handleImagePick = async () => {
     try {
-      const image = await ImagePicker.openPicker({
-        width: 300,  
-        height: 400, 
-        cropping: true, 
-        cropperCircleOverlay: true, 
-        freeStyleCropEnabled: true, 
-      });
+      const options = {
+        width: 300,
+        height: 400,
+        cropping: true,
+        cropperCircleOverlay: true,
+        freeStyleCropEnabled: true,
+      };
+
+      const isCamera = await showImagePickerOptions();
+
+      let image;
+      if (isCamera) {
+        // Capture image from camera
+        image = await ImagePicker.openCamera(options);
+      } else {
+        // Select image from gallery
+        image = await ImagePicker.openPicker(options);
+      }
 
       setSelectedImage({
         uri: image.path,
@@ -141,16 +159,24 @@ const ProfileScreen = props => {
         name: image.filename || 'image.jpg',
       });
       console.log('data: ', data);
-      
+      console.log('selectedImage>>>: ', selectedImage);
 
-      // Replace `${API_URL}/users/${userId}` with the correct endpoint on your server
       const response = await axios.put(`${API_URL}/users/${userData.user_id}`, data, { headers });
       console.log('Image upload response:', response.data);
-      
+
+      // Clean up temporary images after handling
+      ImagePicker.clean().then(() => {
+        console.log('Removed all tmp images from the tmp directory');
+      }).catch(e => {
+        console.error('Error cleaning temporary images:', e);
+      });
+
     } catch (error) {
       console.error('Image picker error:', error);
     }
   };
+
+
 
   const updatedApiEndpoint = API_URL.split("/").slice(0, 3).join("/");
 
@@ -164,19 +190,16 @@ const ProfileScreen = props => {
       <PageContainer style={styles.container}>
         <View style={styles.topPane}>
           <Text style={styles.profileText}>{userData.name}</Text>
-          {/* <View style={styles.logOutButtonContainer}> */}
-            <SubmitButton
-              title="Logout"
-              onPress={() => dispatch<any>(userLogout())}
-              style={styles.logOutButton}
-              color={COLORS.tungfamBgColor}
-            />
-          {/* </View> */}
+          <SubmitButton
+            title="Logout"
+            onPress={() => dispatch<any>(userLogout())}
+            style={styles.logOutButton}
+            color={COLORS.tungfamBgColor}
+          />
         </View>
         <View style={styles.ProfileImageContainer}>
           <View style={styles.imageContainer}>
             <Image
-              // source={userData.user_image ? { uri: `${updatedApiEndpoint}/images/users${userData.user_image}` } : profilePlaceholder}
               source={userData.user_image ? { uri: `${updatedApiEndpoint}/images/users/${userData.user_image}` } : profilePlaceholder}
               style={styles.image}
             />
@@ -200,7 +223,7 @@ const ProfileScreen = props => {
             </View>
           </View>
         </View>
-        
+
         <ScrollView contentContainerStyle={styles.formContainer}>
           <View style={styles.profileContainer}>
             <View style={{ marginTop: 20 }}>
@@ -289,7 +312,7 @@ const styles = StyleSheet.create({
   },
   topPane: {
     marginTop: 20,
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
@@ -298,7 +321,7 @@ const styles = StyleSheet.create({
     padding: 4,
     marginBottom: 20,
     backgroundColor: 'rgba(52, 152, 219, 0.15)',
-    },
+  },
   formContainer: {
     alignItems: 'center',
   },
@@ -363,8 +386,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    width: 100, 
-    height: 100, 
+    width: 100,
+    height: 100,
     borderRadius: 50,
   },
   edit: {

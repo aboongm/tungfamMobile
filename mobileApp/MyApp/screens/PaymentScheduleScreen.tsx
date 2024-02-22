@@ -16,6 +16,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 const PaymentScheduleScreen = () => {
     const navigation = useNavigation()
     const loan = useSelector((state: RootState) => state.loanSlice.selectedLoan)
+    const userData = useSelector((state: RootState) => state.auth.userData)
     const loanList = [{
         installment: 'Choose',
     }];
@@ -54,14 +55,14 @@ const PaymentScheduleScreen = () => {
             const sortedPayments = response.data.sort((a, b) => {
                 const dateA = new Date(`${a.date}`);
                 const dateB = new Date(`${b.date}`);
-          
+
                 // If dates are equal, compare by entry_id
                 if (dateA === dateB) {
-                  return a.payment_id - b.payment_id;
+                    return a.payment_id - b.payment_id;
                 }
-          
+
                 return dateA - dateB;
-              });
+            });
 
             setPayments(sortedPayments);
             // setPayments(response.data);
@@ -146,6 +147,50 @@ const PaymentScheduleScreen = () => {
     }
     console.log("payments********", payments);
 
+    const enterPayment = () => (
+        <>
+            <Text style={styles.paymentHeader}>Add A Payment</Text>
+            <View style={styles.tableInput}>
+                <View style={styles.DatePayment}>
+                    <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
+                        <Text style={styles.button}>Pick Date</Text>
+                    </Pressable>
+                    <DatePicker
+                        modal
+                        open={open}
+                        date={newPaymentDate}
+                        onConfirm={(date) => {
+                            setOpen(false);
+                            setNewPaymentDate(date);
+                        }}
+                        onCancel={() => {
+                            setOpen(false);
+                        }}
+                    />
+                    <Picker
+                        style={styles.paymentPicker}
+                        selectedValue={selectedPayment}
+                        onValueChange={(itemValue) => setSelectedPayment(itemValue)}
+                    >
+                        {loanList.map((type, index) => (
+                            <Picker.Item key={index} label={type.installment} value={type.installment} />
+                        ))}
+                    </Picker>
+                </View>
+
+                <TextInput
+                    style={styles.descriptionInput}
+                    placeholder="Enter remarks"
+                    value={remark}
+                    onChangeText={(text) => setRemark(text)}
+                />
+                <TouchableOpacity onPress={takePermission}>
+                    <Text style={styles.addPaymentButton}>Add Payment</Text>
+                </TouchableOpacity>
+            </View>
+        </>
+    )
+
     return (
         <PageContainer style={styles.container}>
             <View style={{ marginTop: 10 }}>
@@ -178,9 +223,10 @@ const PaymentScheduleScreen = () => {
             </View>
 
             <View style={styles.tableRow}>
+                <Text style={[styles.columnHeader,  { flex: 0, width: 50 }]}>Sl no</Text>
                 <Text style={styles.columnHeader}>Date</Text>
                 <Text style={styles.columnHeader}>Payment</Text>
-                <Text style={styles.columnHeader}>Remarks</Text>
+                {/* <Text style={styles.columnHeader}>Remarks</Text> */}
             </View>
             <ScrollView contentContainerStyle={styles.formContainer}>
                 <View style={{ width: '100%' }}>
@@ -192,7 +238,7 @@ const PaymentScheduleScreen = () => {
                                 </View>
                             ) : (
                                 <>
-                                    {payments.reverse().filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
+                                    {payments.slice(1).reverse().filter(item => item.loan_id === loan.loan_id).map((payment, index) => (
                                         <View style={[
                                             styles.tableBody,
                                             index % 2 === 0 ? styles.evenRow : styles.oddRow,
@@ -206,52 +252,14 @@ const PaymentScheduleScreen = () => {
                                                 })}
                                             </Text>
                                             <Text style={styles.columnItem}>Rs {payment.installment}</Text>
-                                            <Text style={styles.columnItem}>{payment.remarks}</Text>
+                                            {/* <Text style={styles.columnItem}>{payment.remarks}</Text> */}
                                         </View>
                                     ))}
                                 </>
                             )}
                         </View>
 
-                        <Text style={styles.paymentHeader}>Add A Payment</Text>
-                        <View style={styles.tableInput}>
-                            <View style={styles.DatePayment}>
-                                <Pressable style={styles.dateButton} onPress={() => setOpen(true)}>
-                                    <Text style={styles.button}>Pick Date</Text>
-                                </Pressable>
-                                <DatePicker
-                                    modal
-                                    open={open}
-                                    date={newPaymentDate}
-                                    onConfirm={(date) => {
-                                        setOpen(false);
-                                        setNewPaymentDate(date);
-                                    }}
-                                    onCancel={() => {
-                                        setOpen(false);
-                                    }}
-                                />
-                                <Picker
-                                    style={styles.paymentPicker}
-                                    selectedValue={selectedPayment}
-                                    onValueChange={(itemValue) => setSelectedPayment(itemValue)}
-                                >
-                                    {loanList.map((type, index) => (
-                                        <Picker.Item key={index} label={type.installment} value={type.installment} />
-                                    ))}
-                                </Picker>
-                            </View>
-
-                            <TextInput
-                                style={styles.descriptionInput}
-                                placeholder="Enter remarks"
-                                value={remark}
-                                onChangeText={(text) => setRemark(text)}
-                            />
-                            <TouchableOpacity onPress={takePermission}>
-                                <Text style={styles.addPaymentButton}>Add Payment</Text>
-                            </TouchableOpacity>
-                        </View>
+                        {userData.role === 'firmOwner' ? enterPayment() : null}
                     </View>
                 </View>
             </ScrollView>
@@ -326,6 +334,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 0,
         padding: 0,
+        paddingBottom: 120
     },
     tableContainer: {
         margin: 0,

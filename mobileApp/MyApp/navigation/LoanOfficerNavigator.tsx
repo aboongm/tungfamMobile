@@ -102,10 +102,10 @@ const LoanTab = () => {
     >
       <MaterialTopTabs.Screen name="LoanBookEmployee" component={LoanBookEmployeeScreen} />
       <MaterialTopTabs.Screen name="CashFlowEmployee" component={CashFlowEmployeeScreen} />
-      <MaterialTopTabs.Screen name="Expense" component={ExpenseScreen} />
+      {/* <MaterialTopTabs.Screen name="Expense" component={ExpenseScreen} />
       <MaterialTopTabs.Screen name="Investment" component={InvestmentScreen} />
       <MaterialTopTabs.Screen name="Employee" component={EmployeeScreen} />
-      <MaterialTopTabs.Screen name="LoanType" component={LoanTypeScreen} />
+      <MaterialTopTabs.Screen name="LoanType" component={LoanTypeScreen} /> */}
     </MaterialTopTabs.Navigator>
   );
 };
